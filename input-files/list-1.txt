@@ -1,0 +1,5 @@
+AMD
+AAPL
+PYPL
+META
+V
