@@ -1,0 +1,26 @@
+Thoughts here is to scan options. Find an option that is being bought for 1% or more 
+vs the money going into it ( the strike price ) AND that it's above 80-85% out of the money
+
+
+Features wanted:
+
+-> Broad Scanning:
+	-> Inputs:
+		-> list of stocks, .txt file
+		-> single input of stock
+	-> Features:
+		-> Overview of single stock:
+			- Show if stock is up or down in % and $
+			- Show what out-of-the-money % is at 1% or greater value ( sold option / strike price ). 
+			- Time restraint of less than X days to expiration ( 14 by default )
+		-> Search: 
+			- Show what value is at 85% out of the money. This is in percent and dollars
+			- Time restraint of less than X days to expiration ( 14 by default )
+		-> Search for stocks with criteria:
+			- X value ( default to 1% ) on legs that are over Y % out-of-the-money
+
+Show the ( sold price vs strike price ) value for each stock at X ( 2% ) and Y ( 85% Out of the money )
+
+
+
+
