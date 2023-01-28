@@ -1,9 +1,10 @@
-#
-#
-#
-#
-#
-#
+# Overview:
+#   This tool is meant to scan a list of stocks and return certain values. The 
+#   requirements for this file can be found in the same file path, but labeled
+#   requirements.
+
+
+
 import os
 
 
@@ -42,22 +43,18 @@ def getInput():
 
 
 
-
 # Driver of the code
 def main():
     stocks = getInput()
     print( stocks )
 
-
-
+    # Have the list of stocks, now run a scan over them. 
 
     return
 
 
 
-
 if __name__=="__main__":
     main()
-
 
 
