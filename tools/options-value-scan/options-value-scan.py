@@ -25,7 +25,7 @@ spread_width_target = float(os.getenv('SPREAD_WIDTH_TARGET'))
 
 
 # Retrieves a list of stocks from a text file and returns it as a list
-def GetInput():
+def GetInputStocks():
     # TODO: Hard coding needs to be replaced with environment variables
 
     # Paths / locations 
@@ -147,8 +147,15 @@ def GetSpreadStrikes(spread_price_target: float, spread_width_target: float, clo
 
 # Driver of the code
 def main():
-    stocks = GetInput()
+    # TODO: Add a func / feature to have user input for path, and if not use default. 
+
+    stocks = GetInputStocks()
     print( stocks )
+
+    # Start TD API usage. 
+    # ScanForOotm( %ootm target, days to exp, stocks to scan ) #Scan for out of the money %
+
+    # ScanForValue( value target, days to exp, stocks to scan ) #Scan for out of the money %
 
     # Have the list of stocks, now run a scan over them. 
     # Setup Client
