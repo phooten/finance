@@ -3,7 +3,8 @@
 #   requirements for this file can be found in the same file path, but labeled
 #   requirements.
 
-
+# TODO: initial revision was copied from here: https://github.com/pattertj/TDA-Trade-Scripts/blob/main/main.py
+#       Need to refine calls and make it unique to my use case. 
 
 import os
 import math
