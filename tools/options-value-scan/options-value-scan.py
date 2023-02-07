@@ -155,41 +155,41 @@ def main():
     c = create_client()
 
     # Get the Option Chain
-    option_chain = GetOptionChain( c )
-
-    if trade_type in ["1.1.2", "1.1.1"]:
-        spread_expiry = GetExpiration( option_chain[ 'putExpDateMap' ] )
-        otm_expiry = spread_expiry
-
-    elif trade_type == "Bear 1.1.2":
-        # Get Closest Expiration
-        spread_expiry = GetExpiration( option_chain[ 'putExpDateMap' ] )
-        otm_expiry = GetExpiration( option_chain[ 'callExpDateMap' ] )
-
-    # Get Current Price
-    ticker = GetQuote( symbol, c )
-
-    # Find OTM Strike
-    otm_put = GetOtmStrike( otm_expiry, ticker )
-
-    # Find Spread
-    best_short, best_long, best_price = GetSpreadStrikes( spread_price_target, spread_width_target, spread_expiry )
-
-    if trade_type == "1.1.1":
-        otm_count = 1
-    elif trade_type in [ "1.1.2", "Bear 1.1.2" ]:
-        otm_count = 2
-    else:
-        otm_count = 0
-    
-    # Print Results
-    print( f"{otm_count}x {otm_put['description']}" )
-    print( f"1x {best_short['description']}" )
-    print( f"1x {best_long['description']}" )
-    print( f"Short Premium: {otm_count}x ${(otm_put['bid'] + otm_put['ask'])/2}" )
-    print( f"Spread Premium: 1x ${best_price}" )
-    print( f"Total Premium: ${otm_count*float((otm_put['bid'] + otm_put['ask'])/2) - float(best_price)}" )
-    print( f"Protection: {100*(1-(otm_put['strikePrice']/ticker[symbol]['lastPrice']))}%" )
+#    option_chain = GetOptionChain( c )
+#
+#    if trade_type in ["1.1.2", "1.1.1"]:
+#        spread_expiry = GetExpiration( option_chain[ 'putExpDateMap' ] )
+#        otm_expiry = spread_expiry
+#
+#    elif trade_type == "Bear 1.1.2":
+#        # Get Closest Expiration
+#        spread_expiry = GetExpiration( option_chain[ 'putExpDateMap' ] )
+#        otm_expiry = GetExpiration( option_chain[ 'callExpDateMap' ] )
+#
+#    # Get Current Price
+#    ticker = GetQuote( symbol, c )
+#
+#    # Find OTM Strike
+#    otm_put = GetOtmStrike( otm_expiry, ticker )
+#
+#    # Find Spread
+#    best_short, best_long, best_price = GetSpreadStrikes( spread_price_target, spread_width_target, spread_expiry )
+#
+#    if trade_type == "1.1.1":
+#        otm_count = 1
+#    elif trade_type in [ "1.1.2", "Bear 1.1.2" ]:
+#        otm_count = 2
+#    else:
+#        otm_count = 0
+#    
+#    # Print Results
+#    print( f"{otm_count}x {otm_put['description']}" )
+#    print( f"1x {best_short['description']}" )
+#    print( f"1x {best_long['description']}" )
+#    print( f"Short Premium: {otm_count}x ${(otm_put['bid'] + otm_put['ask'])/2}" )
+#    print( f"Spread Premium: 1x ${best_price}" )
+#    print( f"Total Premium: ${otm_count*float((otm_put['bid'] + otm_put['ask'])/2) - float(best_price)}" )
+#    print( f"Protection: {100*(1-(otm_put['strikePrice']/ticker[symbol]['lastPrice']))}%" )
     return
 
 
