@@ -4,7 +4,8 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-tda-api = "*"
+# tda-api = "*"
+td-ameritrade-python-api = "*"
 selenium = "*"
 python-dotenv = "*"
 chromedriver-autoinstaller = "*"
@@ -13,3 +14,4 @@ chromedriver-autoinstaller = "*"
 
 [requires]
 python_version = "3.10"
+

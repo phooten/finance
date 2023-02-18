@@ -9,26 +9,54 @@
 
 import os
 import math
-from tda import auth, client
+# from tda import auth, client
 import httpx
 import datetime as dt
 from dotenv import load_dotenv
 import chromedriver_autoinstaller
 
-# Trade Settings
-symbol = os.getenv('SYMBOL')
-target_dte = int(os.getenv('TARGET_DTE'))
-trade_type = (os.getenv('TRADE_TYPE'))
-otm_price_target = float(os.getenv('OTM_PRICE_TARGET'))
-otm_percent_target = float(os.getenv('MIN_OTM_PERCENT'))
-spread_price_target = float(os.getenv('SPREAD_PRICE_TARGET'))
-spread_width_target = float(os.getenv('SPREAD_WIDTH_TARGET'))
+from td.client import TDClient
 
+
+##########################################################
+# Sample env vars
+##########################################################
+# CHANGE THIS FILE NAME TO ".ENV"
+# API_KEY='COPY FROM YOUR TDA DEVELOPER ACCOUNT APP'
+# REDIRECT_URI = 'COPY FROM YOUR TDA DEVELOPER ACCOUNT APP'
+#
+# SYMBOL = '$SPX.X'
+# TARGET_DTE = 30
+# TRADE_TYPE = "1.1.2"
+# OTM_PRICE_TARGET = 10.0
+# SPREAD_PRICE_TARGET = 6.0
+# SPREAD_WIDTH_TARGET = 30
+##########################################################
+# symbol = os.getenv('SYMBOL')
+# target_dte = int(os.getenv('TARGET_DTE'))
+# trade_type = (os.getenv('TRADE_TYPE'))
+# otm_price_target = float(os.getenv('OTM_PRICE_TARGET'))
+# otm_percent_target = float(os.getenv('MIN_OTM_PERCENT'))
+# spread_price_target = float(os.getenv('SPREAD_PRICE_TARGET'))
+# spread_width_target = float(os.getenv('SPREAD_WIDTH_TARGET'))
+##########################################################
+
+# Trade Settings
+symbol = "$AAPL"
+target_dte = 7
+trade_type = '1.1.2'
+otm_price_target = 10.0
+otm_percent_target = 6
+spread_price_target = 1
+spread_width_target = 30
+
+# Global Variables
+G_TOKEN=os.getenv('TOKEN_PATH')
 
 # Retrieves a list of stocks from a text file and returns it as a list
 def GetInputStocks():
-    # TODO: Hard coding needs to be replaced with environment variables
 
+    # TODO: Hard coding needs to be replaced with environment variables
     # Paths / locations 
     REPO_PATH = "/Users/phoot/bin/code/trading"
     THIS_PATH = str(REPO_PATH) + "/tools/options-value-scan"
@@ -58,91 +86,29 @@ def GetInputStocks():
     return stocks
 
 
-
-# TDA Function
-def GetQuote(symbol, c):
-    q = c.get_quote(symbol)
-    assert q.status_code == httpx.codes.OK, q.raise_for_status()
-    return q.json()
-
-
-
-def GetOptionChain(c: client.Client):
-    r = c.get_option_chain(symbol=symbol, strike_range=client.Client.Options.StrikeRange.OUT_OF_THE_MONEY, option_type=client.Client.Options.Type.STANDARD, from_date=dt.datetime.now() + dt.timedelta(days=target_dte-10), to_date=dt.datetime.now() + dt.timedelta(days=target_dte+10)  )
-    assert r.status_code == httpx.codes.OK, r.raise_for_status()
-    return r.json()
-
-
-
 def CreateClient():
-    token_path = 'token.json'
-    api_key = f"{os.getenv('API_KEY')}@AMER.OAUTHAP"
-    redirect_uri = os.getenv('REDIRECT_URI')
+    client = TDClient( client_id=os.getenv('CONSUMER_KEY'), 
+                       redirect_uri=os.getenv('REDIRECT_URI'),
+                       credentials_path='CREDNTIALS_PATH')
+    #client = TDClient( client_id=str(os.getenv('CONSUMER_KEY')), 
+    #                   redirect_uri=str(os.getenv('REDIRECT_URI')) )
+    #                   json_path=str(os.getenv('JSON_PATH')) )
 
-    try:
-        c = auth.client_from_token_file(token_path, api_key)
-    except FileNotFoundError:
-        from selenium import webdriver
-        with webdriver.Chrome() as driver:
-            c = auth.client_from_login_flow(
-            driver, api_key, redirect_uri, token_path)
-                
-    return c
+    client.login()
 
+        # Grab real-time quotes for 'MSFT' (Microsoft)
+    msft_quotes = client.get_quotes(instruments=['MSFT'])
 
+    # Grab real-time quotes for 'AMZN' (Amazon) and 'SQ' (Square)
+    multiple_quotes = client.get_quotes(instruments=['AMZN','SQ'])
 
-def GetOtmStrike(closest_exp: dict, ticker: dict):
-    distance = math.inf
-    otm_strike = None
-    for details in closest_exp.values():
-        short = next((type for type in details if type['settlementType'] == 'P'), None)
-
-        if short is None:
-            continue
-
-        percent_otm = abs(1 - (short['strikePrice'] / ticker[symbol]['lastPrice']))
-        if otm_percent_target > 0 and percent_otm < otm_percent_target:
-            continue
-            
-        price = (short['bid']+short['ask'])/2
-        delta = abs(otm_price_target - price)
-        if delta < distance:
-            distance = delta
-            otm_strike = short
-    return otm_strike
+    print(msft_quotes)
+    #print(multiple_quotes)
+    return client
 
 
 
-def GetSpreadStrikes(spread_price_target: float, spread_width_target: float, closest_exp: dict):
-    distance = math.inf
-    best_short = None
-    best_long = None
-    price_width = 0.0
-    for short_strike, short_details in closest_exp.items():
-        short_strike = float(short_strike)
-        long_strike = str(short_strike + spread_width_target)
 
-        long_details = closest_exp.get(long_strike)
-
-        if long_details is None:
-            continue
-
-        short = next((type for type in short_details if type['settlementType'] == 'P'), None)
-        long = next((type for type in long_details if type['settlementType'] == 'P'), None)
-
-        if short is None or long is None:
-            continue
-        
-        price_width = (long['ask']+long['bid'])/2 - (short['ask']+short['bid'])/2
-
-        delta = abs(spread_price_target - price_width)
-
-        if delta < distance:
-            distance = delta
-            best_price = price_width
-            best_short = short
-            best_long = long
-    return best_short,best_long,best_price
 
 
 
@@ -160,7 +126,7 @@ def main():
 
     # Have the list of stocks, now run a scan over them. 
     # Setup Client
-    c = create_client()
+    c = CreateClient()
 
     # Get the Option Chain
 #    option_chain = GetOptionChain( c )
