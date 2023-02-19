@@ -1,1 +1,7 @@
-https://github.com/pattertj/TDA-Trade-Scripts/blob/main/main.py
+
+# Code References
+Example 1:       https://github.com/pattertj/TDA-Trade-Scripts/blob/main/main.py
+Current library: https://github.com/areed1192/sigma_coding_youtube/tree/master/python/python-finance/td-ameritrade
+
+# References
+Setup Pipenv on vscode: https://www.youtube.com/watch?v=MgwgEiC1CqE

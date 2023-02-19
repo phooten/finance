@@ -6,15 +6,15 @@
 # TODO: initial revision was copied from here: https://github.com/pattertj/TDA-Trade-Scripts/blob/main/main.py
 #       Need to refine calls and make it unique to my use case. 
 
-
-import os
 import math
-# from tda import auth, client
-import httpx
-import datetime as dt
-from dotenv import load_dotenv
+import os
+import pprint
 import chromedriver_autoinstaller
+import datetime as dt
+import httpx
+import time
 
+from dotenv import load_dotenv
 from td.client import TDClient
 
 
@@ -96,14 +96,6 @@ def CreateClient():
 
     client.login()
 
-        # Grab real-time quotes for 'MSFT' (Microsoft)
-    msft_quotes = client.get_quotes(instruments=['MSFT'])
-
-    # Grab real-time quotes for 'AMZN' (Amazon) and 'SQ' (Square)
-    multiple_quotes = client.get_quotes(instruments=['AMZN','SQ'])
-
-    print(msft_quotes)
-    #print(multiple_quotes)
     return client
 
 
@@ -115,55 +107,28 @@ def CreateClient():
 # Driver of the code
 def main():
     # TODO: Add a func / feature to have user input for path, and if not use default. 
+    # Set Up
+    client = CreateClient()
 
     stocks = GetInputStocks()
-    print( stocks )
+    quotes = client.get_quotes(instruments=stocks)
 
-    # Start TD API usage. 
-    # ScanForOotm( %ootm target, days to exp, stocks to scan ) #Scan for out of the money %
+    # pprint.pprint( quotes )
 
-    # ScanForValue( value target, days to exp, stocks to scan ) #Scan for out of the money %
 
-    # Have the list of stocks, now run a scan over them. 
-    # Setup Client
-    c = CreateClient()
+    # account_req = ["positions", "orders"]
+    # accounts = client.get_accounts( account="all", fields=account_req )
+    # pprint.pprint( accounts )
 
-    # Get the Option Chain
-#    option_chain = GetOptionChain( c )
-#
-#    if trade_type in ["1.1.2", "1.1.1"]:
-#        spread_expiry = GetExpiration( option_chain[ 'putExpDateMap' ] )
-#        otm_expiry = spread_expiry
-#
-#    elif trade_type == "Bear 1.1.2":
-#        # Get Closest Expiration
-#        spread_expiry = GetExpiration( option_chain[ 'putExpDateMap' ] )
-#        otm_expiry = GetExpiration( option_chain[ 'callExpDateMap' ] )
-#
-#    # Get Current Price
-#    ticker = GetQuote( symbol, c )
-#
-#    # Find OTM Strike
-#    otm_put = GetOtmStrike( otm_expiry, ticker )
-#
-#    # Find Spread
-#    best_short, best_long, best_price = GetSpreadStrikes( spread_price_target, spread_width_target, spread_expiry )
-#
-#    if trade_type == "1.1.1":
-#        otm_count = 1
-#    elif trade_type in [ "1.1.2", "Bear 1.1.2" ]:
-#        otm_count = 2
-#    else:
-#        otm_count = 0
-#    
-#    # Print Results
-#    print( f"{otm_count}x {otm_put['description']}" )
-#    print( f"1x {best_short['description']}" )
-#    print( f"1x {best_long['description']}" )
-#    print( f"Short Premium: {otm_count}x ${(otm_put['bid'] + otm_put['ask'])/2}" )
-#    print( f"Spread Premium: 1x ${best_price}" )
-#    print( f"Total Premium: ${otm_count*float((otm_put['bid'] + otm_put['ask'])/2) - float(best_price)}" )
-#    print( f"Protection: {100*(1-(otm_put['strikePrice']/ticker[symbol]['lastPrice']))}%" )
+    # Might not work if not during trading hours. 
+    try: 
+        option_chain = client.get_options_chain( 'TSLA')
+    except:
+        current_time = time.ctime()
+        print("Error getting option chain. Current time: " + str(current_time))
+        option_chain = None
+    pprint.pprint(option_chain)
+
     return
 
 
