@@ -3,6 +3,7 @@
 #   requirements for this file can be found in the same file path, but labeled
 #   requirements.
 
+#         # https://tda-api.readthedocs.io/en/latest/client.html#option-chain
 # TODO: initial revision was copied from here: https://github.com/pattertj/TDA-Trade-Scripts/blob/main/main.py
 #       Need to refine calls and make it unique to my use case. 
 
@@ -98,9 +99,44 @@ def CreateClient():
 
     return client
 
+# Starting just puts for now. 
+def scan_options( stocks, quotes ):
+    for curr in stocks:
+        print( "---------------------------------------------------")
+        print( "Stock:\t\t" + str(curr))
+        last_price = quotes[str(curr)]["regularMarketLastPrice"]
+        print( "Last Price:\t$ " + str(last_price) )
+        last_price = int(str(round(last_price)))
+        
+        # Might not work if not during trading hours. 
+        try: 
+            option_chain = client.get_options_chain( 'TSLA')
+        except:
+            current_time = time.ctime()
+            print("Error getting option chain. Current time: " + str(current_time))
+            option_chain = None
+        #print("Options Chain: \n\t" + str(option_chain))
+        
 
+        # 1. Get the strike prices at 1 week exp
 
+        # 2. Go through each stock price from OTM to 90%
+        strike_interval = str(option_chan['interval'])
+        for strike in range( last_price, strike_interval):
+            value = option_chain['MarkPrice'] / strike
+            if value > 1:
+                print( "VALUE FOUND.")
+            else:
+                print( "VALUE NOT FOUND.")
+            # days_to_expiration
+            # option_type
+            # to_date
+        
+        
+        # 3. Check the Value betwen each stock
+        # 4. Print out Strike Prices with value
 
+    return
 
 
 
@@ -112,22 +148,21 @@ def main():
 
     stocks = GetInputStocks()
     quotes = client.get_quotes(instruments=stocks)
-
+    print(stocks)
+    scan_options( stocks, quotes )
+    
+    
     # pprint.pprint( quotes )
+    # pprint.pprint( quotes['TSLA'] )
 
-
+    # Saves information about my account
     # account_req = ["positions", "orders"]
     # accounts = client.get_accounts( account="all", fields=account_req )
     # pprint.pprint( accounts )
 
-    # Might not work if not during trading hours. 
-    try: 
-        option_chain = client.get_options_chain( 'TSLA')
-    except:
-        current_time = time.ctime()
-        print("Error getting option chain. Current time: " + str(current_time))
-        option_chain = None
-    pprint.pprint(option_chain)
+    # Steps:
+    #   1. Look at options at certain strike price
+    #   2. Evaluate the value / cost. If corret return. 
 
     return
 

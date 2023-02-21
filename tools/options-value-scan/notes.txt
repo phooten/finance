@@ -1,7 +1,9 @@
 
-# Code References
+# TD References
 Example 1:       https://github.com/pattertj/TDA-Trade-Scripts/blob/main/main.py
 Current library: https://github.com/areed1192/sigma_coding_youtube/tree/master/python/python-finance/td-ameritrade
+TDA API documentation:      https://developer.tdameritrade.com/option-chains/apis/get/marketdata/chains
+TDA wrapper documentation:  https://tda-api.readthedocs.io/en/latest/client.html#option-chain
 
-# References
+# Code References
 Setup Pipenv on vscode: https://www.youtube.com/watch?v=MgwgEiC1CqE
