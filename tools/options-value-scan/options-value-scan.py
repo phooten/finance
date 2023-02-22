@@ -14,9 +14,12 @@ import chromedriver_autoinstaller
 import datetime as dt
 import httpx
 import time
+import json
 
+from datetime import datetime, timedelta
 from dotenv import load_dotenv
-from td.client import TDClient
+# from td.client import TDClient
+from tda import auth, client
 
 
 ##########################################################
@@ -52,6 +55,7 @@ spread_price_target = 1
 spread_width_target = 30
 
 # Global Variables
+load_dotenv()
 G_TOKEN=os.getenv('TOKEN_PATH')
 
 # Retrieves a list of stocks from a text file and returns it as a list
@@ -88,19 +92,28 @@ def GetInputStocks():
 
 
 def CreateClient():
-    client = TDClient( client_id=os.getenv('CONSUMER_KEY'), 
-                       redirect_uri=os.getenv('REDIRECT_URI'),
-                       credentials_path='CREDNTIALS_PATH')
-    #client = TDClient( client_id=str(os.getenv('CONSUMER_KEY')), 
-    #                   redirect_uri=str(os.getenv('REDIRECT_URI')) )
-    #                   json_path=str(os.getenv('JSON_PATH')) )
+    try:
+        print("Token_path = " + str(os.getenv("TOKEN_PATH")))
+        print("repo_path = " + str(os.getenv("REPO_PATH")))
+        c = auth.client_from_token_file( str(os.getenv("TOKEN_PATH")), 
+                                         str(os.getenv("CONSUMER_KEY")))
+    # except FileNotFoundError:
+    except:
+        from selenium import webdriver
+        with webdriver.Chrome() as driver:
+            print("Token_path = " + str(os.getenv("TOKEN_PATH")))
+            print("repo_path = " + str(os.getenv("REPO_PATH")))
+            c = auth.client_from_login_flow( driver, 
+                                             api_key=str(os.getenv("CONSUMER_KEY")),
+                                             redirect_url=str(os.getenv("REDIRECT_URI")),
+                                             token_path=str(os.getenv("TOKEN_PATH")) )
 
-    client.login()
-
-    return client
+    return c
 
 # Starting just puts for now. 
-def scan_options( client, stocks, quotes ):
+def scan_options( client, stocks, quotes, dte):
+
+
     for curr in stocks:
         print( "---------------------------------------------------")
         print( "Stock:\t\t" + str(curr))
@@ -109,8 +122,14 @@ def scan_options( client, stocks, quotes ):
         last_price = int(str(round(last_price)))
         
         # Might not work if not during trading hours. 
-        op_chain = client.get_options_chain( option_chain={'symbol':str(curr)} )
-        pprint.pprint( op_chain )
+        # if str(curr) == "AMD":
+            # op_chain = client.get_options_chain( 
+            #                 option_chain={ 'symbol':str(curr),
+            #                                'contract_type':TDClient. })
+                                        #    'days_to_expiration':7,
+                                        #    'strike_count':1,
+                                        #    'strike_range':"OTM" } )
+            # pprint.pprint( op_chain )
         #try: 
         #    option_chain = client.get_option_chain( curr, days_to_expiration=3 )
         #except:
@@ -149,9 +168,12 @@ def main():
     client = CreateClient()
 
     stocks = GetInputStocks()
-    quotes = client.get_quotes(instruments=stocks)
-    print(stocks)
-    scan_options( client, stocks, quotes )
+    quotes = client.get_quotes(stocks)
+    print(json.dumps(quotes.json(), indent=4 ))
+    
+    dte = ( datetime.today() + timedelta(days=7) ).date()
+    print("Next week is: ", dte)
+    #scan_options( client, stocks, quotes, dte)
     
     
     # pprint.pprint( quotes )
