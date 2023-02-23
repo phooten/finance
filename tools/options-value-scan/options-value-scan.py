@@ -97,7 +97,7 @@ def CreateClient():
         print("repo_path = " + str(os.getenv("REPO_PATH")))
         c = auth.client_from_token_file( str(os.getenv("TOKEN_PATH")), 
                                          str(os.getenv("CONSUMER_KEY")))
-    # except FileNotFoundError:
+
     except:
         from selenium import webdriver
         with webdriver.Chrome() as driver:
@@ -111,19 +111,68 @@ def CreateClient():
     return c
 
 # Starting just puts for now. 
-def scan_options( client, stocks, quotes, dte):
-
-
+def scan_options( client, stocks, quotes ):
     for curr in stocks:
         print( "---------------------------------------------------")
         print( "Stock:\t\t" + str(curr))
-        last_price = quotes[str(curr)]["regularMarketLastPrice"]
-        print( "Last Price:\t$ " + str(last_price) )
-        last_price = int(str(round(last_price)))
+        # last_price = quotes[str(curr)]["regularMarketLastPrice"]
+        # print( "Last Price:\t$ " + str(last_price) )
+        # last_price = int(str(round(last_price)))
         
         # Might not work if not during trading hours. 
-        # if str(curr) == "AMD":
-            # op_chain = client.get_options_chain( 
+        if str(curr) == "AMD":
+            dte = ( datetime.today() + timedelta(days=7) ).date()
+            print("Next week is: ", dte)
+            
+            delta_max = 0.9
+            strike = 93
+            strike_interval = 1
+            strike_range = 5
+            strike_max = strike + ( strike_interval * strike_range )
+            strike_min = strike - ( strike_interval * strike_range )
+
+            loop = True
+            while loop == True:
+                op_chain = client.get_option_chain( symbol=curr, 
+                                                to_date=dte,
+                                                strike=strike,
+                                                contract_type=client.Options.ContractType.PUT)
+                op_chain_j = op_chain.json()
+                # print(json.dumps(op_chain_j, indent=4))
+
+                op_chain_expmap = op_chain_j['putExpDateMap']
+                # Checks the chain exists
+                if not bool(op_chain_expmap):
+                    print("No results for strike: " + str(strike))
+                    break
+                strike_f = "{:.1f}".format(strike)
+
+                # Checks the delat is in the right range
+                op_chain_curr = op_chain_expmap['2023-02-24:1'][strike_f][0]
+                delta = op_chain_curr['delta']
+                if delta > delta_max:
+                    print("delta [" + str(delta) + "] at strike [" + str(strike_f) + "] is greater than max wanted [" + str(delta_max) +"]")
+                    loop = False
+                    break
+                
+                # Finds the value of the trade
+                mark = int( op_chain_curr['mark'] )
+                value = mark / strike
+                if value > 0.01:
+                    print("Strike:\t" + strike_f)
+                    print("OTM:\t" + str(delta) + " [{0:.1%}]".format(1-delta))
+                    print( "Value:\t{0:.1%}".format(value))
+                    print("\n")
+                # Notes if stock is up or down
+
+                # Checks the maximum amount of strikes to search
+                # TODO: Might only use delta instead
+                if strike > strike_max:
+                    print("strike_max reached. Max: " + str(strike_max))
+                    loop = False
+                strike += strike_interval
+
+            # print(json.dumps(op_chain.json(), indent=4))
             #                 option_chain={ 'symbol':str(curr),
             #                                'contract_type':TDClient. })
                                         #    'days_to_expiration':7,
@@ -169,11 +218,10 @@ def main():
 
     stocks = GetInputStocks()
     quotes = client.get_quotes(stocks)
-    print(json.dumps(quotes.json(), indent=4 ))
+    #print(json.dumps(quotes.json(), indent=4 ))
     
-    dte = ( datetime.today() + timedelta(days=7) ).date()
-    print("Next week is: ", dte)
-    #scan_options( client, stocks, quotes, dte)
+
+    scan_options( client, stocks, quotes )
     
     
     # pprint.pprint( quotes )
