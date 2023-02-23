@@ -115,62 +115,72 @@ def scan_options( client, stocks, quotes ):
     for curr in stocks:
         print( "---------------------------------------------------")
         print( "Stock:\t\t" + str(curr))
-        # last_price = quotes[str(curr)]["regularMarketLastPrice"]
-        # print( "Last Price:\t$ " + str(last_price) )
-        # last_price = int(str(round(last_price)))
-        
-        # Might not work if not during trading hours. 
-        if str(curr) == "AMD":
-            dte = ( datetime.today() + timedelta(days=7) ).date()
-            print("Next week is: ", dte)
-            
-            delta_max = 0.9
-            strike = 93
-            strike_interval = 1
-            strike_range = 5
-            strike_max = strike + ( strike_interval * strike_range )
-            strike_min = strike - ( strike_interval * strike_range )
 
+        dte = ( datetime.today() + timedelta(days=7) ).date()
+        print("Next week is: ", dte)
+        
+        delta_max = 0.9
+        otm_prob_max = 90
+        stock_info_j = client.get_quote(curr).json()[curr]
+        # print(json.dumps(stock_info_j, indent=4))
+        stock_price = stock_info_j['mark']
+        strike_start = int( stock_price )
+        strike_interval = 1
+        strike_range = 10
+        strike_max = strike_start + ( strike_interval * strike_range )
+        strike_min = strike_start - ( strike_interval * strike_range )
+        strike_curr = strike_start
+        value_count = 0
+        print("Current price:\t" + str(stock_price))
+
+        if curr == "AMD":
             loop = True
             while loop == True:
                 op_chain = client.get_option_chain( symbol=curr, 
                                                 to_date=dte,
-                                                strike=strike,
+                                                strike=strike_curr,
                                                 contract_type=client.Options.ContractType.PUT)
                 op_chain_j = op_chain.json()
                 # print(json.dumps(op_chain_j, indent=4))
-
+                
                 op_chain_expmap = op_chain_j['putExpDateMap']
                 # Checks the chain exists
                 if not bool(op_chain_expmap):
-                    print("No results for strike: " + str(strike))
+                    print("No results for strike: " + str(strike_curr))
                     break
-                strike_f = "{:.1f}".format(strike)
+                strike_f = "{:.1f}".format(strike_curr)
 
                 # Checks the delat is in the right range
                 op_chain_curr = op_chain_expmap['2023-02-24:1'][strike_f][0]
                 delta = op_chain_curr['delta']
-                if delta > delta_max:
-                    print("delta [" + str(delta) + "] at strike [" + str(strike_f) + "] is greater than max wanted [" + str(delta_max) +"]")
+                if int(delta) == None:
+                    print("NaN error.")
+                    break
+
+                otm_prob = 1+delta
+                if otm_prob > otm_prob_max:
+                    print("delta [ " + str(delta) + " ] at strike [ " + str(strike_f) + " ] is greater than max wanted [ " + str(delta_max) +" ]")
                     loop = False
                     break
-                
+
                 # Finds the value of the trade
                 mark = int( op_chain_curr['mark'] )
-                value = mark / strike
-                if value > 0.01:
-                    print("Strike:\t" + strike_f)
-                    print("OTM:\t" + str(delta) + " [{0:.1%}]".format(1-delta))
-                    print( "Value:\t{0:.1%}".format(value))
-                    print("\n")
-                # Notes if stock is up or down
+                value = mark / strike_curr
+                if value < 0.01:
+                    print("** LESS THAN VALUE")
+                print("Strike:\t" + strike_f)
+                print("OTM:\t" + str(delta) + " [ {0:.2%} ]".format(otm_prob))
+                print( "Value:\t{0:.2%}".format(value))
+                print("\n")
+            # Notes if stock is up or down
 
-                # Checks the maximum amount of strikes to search
-                # TODO: Might only use delta instead
-                if strike > strike_max:
+            # Checks the maximum amount of strikes to search
+            # TODO: Might only use delta instead
+                if strike_curr < strike_min:
                     print("strike_max reached. Max: " + str(strike_max))
                     loop = False
-                strike += strike_interval
+
+                strike_curr -= strike_interval
 
             # print(json.dumps(op_chain.json(), indent=4))
             #                 option_chain={ 'symbol':str(curr),
