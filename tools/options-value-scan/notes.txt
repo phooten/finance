@@ -9,6 +9,8 @@ TDA wrapper documentation:  https://tda-api.readthedocs.io/en/latest/client.html
 Setup Pipenv on vscode: https://www.youtube.com/watch?v=MgwgEiC1CqE
 
 # VS Code Running
-when running in vs code, pipenv needs to be set in the trading directory or the .env
-file won't work. Becareful where the debugger is run because that will source the 
+When running in vs code, pipenv needs to be set in the trading directory or the .env
+file won't work. Be careful where the debugger is run because that will source the 
 .env file.
+
+UPDATE: run "source .env" is graunteed to set .env variables

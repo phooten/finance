@@ -112,109 +112,71 @@ def CreateClient():
 
 # Starting just puts for now. 
 def scan_options( client, stocks, quotes ):
-    for curr in stocks:
+    # TODO: print out stock only if there is a match
+    for curr_stock in stocks:
         print( "---------------------------------------------------")
-        print( "Stock:\t\t" + str(curr))
+        print( "Stock:\t\t" + str(curr_stock))
 
-        dte = ( datetime.today() + timedelta(days=7) ).date()
+        dte = ( datetime.today() + timedelta(days=10) ).date()
         print("Next week is: ", dte)
-        
-        delta_max = 0.9
-        otm_prob_max = 90
-        stock_info_j = client.get_quote(curr).json()[curr]
-        # print(json.dumps(stock_info_j, indent=4))
+
+        stock_info_j = client.get_quote(curr_stock).json()[curr_stock]
         stock_price = stock_info_j['mark']
         strike_start = int( stock_price )
         strike_interval = 1
         strike_range = 10
-        strike_max = strike_start + ( strike_interval * strike_range )
-        strike_min = strike_start - ( strike_interval * strike_range )
-        strike_curr = strike_start
-        value_count = 0
+
+        # Ideas:
+        #   1. Only show option if correct otm% and value. have a total count
+        #   2. Flag to print out the options if I want to, or only those from 1.
         print("Current price:\t" + str(stock_price))
 
-        if curr == "AMD":
-            loop = True
-            while loop == True:
-                op_chain = client.get_option_chain( symbol=curr, 
-                                                to_date=dte,
-                                                strike=strike_curr,
-                                                contract_type=client.Options.ContractType.PUT)
-                op_chain_j = op_chain.json()
-                # print(json.dumps(op_chain_j, indent=4))
-                
-                op_chain_expmap = op_chain_j['putExpDateMap']
-                # Checks the chain exists
-                if not bool(op_chain_expmap):
-                    print("No results for strike: " + str(strike_curr))
-                    break
-                strike_f = "{:.1f}".format(strike_curr)
+        # Settings:
+        # delta_max = 0.9
+        group = 3
+        if group == 1:
+            a = 1
+            b = 80
+        elif group == 2:
+            a = 1
+            b = 85
+        elif group == 3:
+            a = 1.5
+            b = 80
 
-                # Checks the delat is in the right range
-                op_chain_curr = op_chain_expmap['2023-02-24:1'][strike_f][0]
-                delta = op_chain_curr['delta']
-                if int(delta) == None:
-                    print("NaN error.")
-                    break
+        value_min = a / 100
+        otm_prob_min = b / 100
+        otm_prob_max = 100 / 100
 
-                otm_prob = 1+delta
-                if otm_prob > otm_prob_max:
-                    print("delta [ " + str(delta) + " ] at strike [ " + str(strike_f) + " ] is greater than max wanted [ " + str(delta_max) +" ]")
-                    loop = False
-                    break
+        op_chain = client.get_option_chain( symbol=curr_stock,
+                                            to_date=dte,
+                                            # strike=strike_curr,
+                                            contract_type=client.Options.ContractType.PUT)
+        op_chain_j = op_chain.json()
+        op_chain_expmap = op_chain_j['putExpDateMap']
+        # Checks the chain exists
+        if not bool(op_chain_expmap):
+            print("No results for strike: " + str(curr_stock))
+            continue
 
-                # Finds the value of the trade
-                mark = int( op_chain_curr['mark'] )
-                value = mark / strike_curr
-                if value < 0.01:
-                    print("** LESS THAN VALUE")
-                print("Strike:\t" + strike_f)
-                print("OTM:\t" + str(delta) + " [ {0:.2%} ]".format(otm_prob))
-                print( "Value:\t{0:.2%}".format(value))
-                print("\n")
-            # Notes if stock is up or down
+        # Checks each strike in the date
+        for date in op_chain_expmap:
+            for strike in op_chain_expmap[date]:
 
-            # Checks the maximum amount of strikes to search
-            # TODO: Might only use delta instead
-                if strike_curr < strike_min:
-                    print("strike_max reached. Max: " + str(strike_max))
-                    loop = False
+                # Gathers variables to filter
+                strike_map = op_chain_expmap[date][strike][0]
+                mark = float(strike_map['mark'])
+                value = mark / float(strike)
+                delta = strike_map['delta']
+                otm_prob = 1 + float(delta)
 
-                strike_curr -= strike_interval
-
-            # print(json.dumps(op_chain.json(), indent=4))
-            #                 option_chain={ 'symbol':str(curr),
-            #                                'contract_type':TDClient. })
-                                        #    'days_to_expiration':7,
-                                        #    'strike_count':1,
-                                        #    'strike_range':"OTM" } )
-            # pprint.pprint( op_chain )
-        #try: 
-        #    option_chain = client.get_option_chain( curr, days_to_expiration=3 )
-        #except:
-        #    current_time = time.ctime()
-        #    print("Error getting option chain. Current time: " + str(current_time))
-        #    option_chain = None
-        #print("Options Chain: \n\t" + str(option_chain))
-        
-
-        # 1. Get the strike prices at 1 week exp
-
-        # 2. Go through each stock price from OTM to 90%
-        #strike_interval = str(option_chain['interval'])
-        #for strike in range( last_price, strike_interval):
-        #    value = option_chain['MarkPrice'] / strike
-        #    if value > 1:
-        #        print( "VALUE FOUND.")
-        #    else:
-        #        print( "VALUE NOT FOUND.")
-            # days_to_expiration
-            # option_type
-            # to_date
-        
-        
-        # 3. Check the Value betwen each stock
-        # 4. Print out Strike Prices with value
+                # Filters out what is wanted
+                if ( value > value_min ) and ( otm_prob > otm_prob_min ):
+                    print( "[ " + str(date) + " ]\t" +\
+                           "Stike: " + str(strike) +
+                           "\tMark: " + str(mark) +\
+                           "\tValue: {0:.2%}".format(value) + "  [{0:.3}]".format(value) +\
+                           "\tDelta: " + " {0:.3}".format(delta) + " [ {0:.2%} ]".format(otm_prob))
 
     return
 
