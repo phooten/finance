@@ -126,6 +126,8 @@ def scan_options( client, stocks, quotes ):
         strike_interval = 1
         strike_range = 10
 
+        # volatility = 
+
         # Ideas:
         #   1. Only show option if correct otm% and value. have a total count
         #   2. Flag to print out the options if I want to, or only those from 1.
@@ -133,7 +135,7 @@ def scan_options( client, stocks, quotes ):
 
         # Settings:
         # delta_max = 0.9
-        group = 3
+        group = 1
         if group == 1:
             a = 1
             b = 80
@@ -145,8 +147,10 @@ def scan_options( client, stocks, quotes ):
             b = 80
 
         value_min = a / 100
-        otm_prob_min = b / 100
+        otm_prob_min = ( b / 100 ) - 0.02
         otm_prob_max = 100 / 100
+        bid_min = 0.10  # minimum bid size ( $ 10 )
+        bid_diff_max = 0.30  # Biggest difference in asking size
 
         op_chain = client.get_option_chain( symbol=curr_stock,
                                             to_date=dte,
@@ -169,14 +173,26 @@ def scan_options( client, stocks, quotes ):
                 value = mark / float(strike)
                 delta = strike_map['delta']
                 otm_prob = 1 + float(delta)
+                # print(json.dumps(strike_map, indent=4))
+    
+                # break
+                # bid/ask needs to be reasonably close together, or bid needs to be > 1
+                bid_curr = strike_map['bid']
+                ask_curr = strike_map['ask']
+                bid_diff = abs( int(ask_curr) - int(bid_curr) )
 
                 # Filters out what is wanted
                 if ( value > value_min ) and ( otm_prob > otm_prob_min ):
+                    # if bid_diff > bid_diff_max:
+                        # print("\n** Large difference in bid / ask.\nbid: " + str(bid_curr) + "\nask:" + str(ask_curr) + "\n")
+
+                    # if bid_curr > bid_min:
                     print( "[ " + str(date) + " ]\t" +\
-                           "Stike: " + str(strike) +
-                           "\tMark: " + str(mark) +\
-                           "\tValue: {0:.2%}".format(value) + "  [{0:.3}]".format(value) +\
-                           "\tDelta: " + " {0:.3}".format(delta) + " [ {0:.2%} ]".format(otm_prob))
+                        "Stike: " + str(strike) +
+                        "\tMark: " + str(mark) +\
+                        "\tBid: " + str(bid_curr) +\
+                        "\tValue: {0:.2%}".format(value) + "  [{0:.3}]".format(value) +\
+                        "\tDelta: " + " {0:.3}".format(delta) + " [ {0:.2%} ]".format(otm_prob))
 
     return
 
