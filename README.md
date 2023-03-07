@@ -11,6 +11,7 @@ tools:  useful for various tasks relating to trading
 util:   utility files for this repo
 
 # TODO:
+0. Make a script for or work it into the current option search script
 1. Finish the informative tools script about my current account
 2. Show the stock change for the day in the options tools
 

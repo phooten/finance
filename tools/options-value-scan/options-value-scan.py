@@ -121,6 +121,8 @@ def scan_options( client, stocks, quotes ):
         print("Next week is: ", dte)
 
         stock_info_j = client.get_quote(curr_stock).json()[curr_stock]
+        # print( json.dumps(stock_info_j, indent=4))
+        # break
         stock_price = stock_info_j['mark']
         strike_start = int( stock_price )
         strike_interval = 1
@@ -132,10 +134,11 @@ def scan_options( client, stocks, quotes ):
         #   1. Only show option if correct otm% and value. have a total count
         #   2. Flag to print out the options if I want to, or only those from 1.
         print("Current price:\t" + str(stock_price))
+        print("Today's Gain / Loss: \t")
 
         # Settings:
         # delta_max = 0.9
-        group = 1
+        group = 2
         if group == 1:
             a = 1
             b = 80
@@ -158,6 +161,7 @@ def scan_options( client, stocks, quotes ):
                                             contract_type=client.Options.ContractType.PUT)
         op_chain_j = op_chain.json()
         op_chain_expmap = op_chain_j['putExpDateMap']
+
         # Checks the chain exists
         if not bool(op_chain_expmap):
             print("No results for strike: " + str(curr_stock))
@@ -166,6 +170,8 @@ def scan_options( client, stocks, quotes ):
         # Checks each strike in the date
         for date in op_chain_expmap:
             for strike in op_chain_expmap[date]:
+            # print(json.dumps(op_chain_j, indent=4))
+            # break
 
                 # Gathers variables to filter
                 strike_map = op_chain_expmap[date][strike][0]
@@ -174,7 +180,8 @@ def scan_options( client, stocks, quotes ):
                 delta = strike_map['delta']
                 otm_prob = 1 + float(delta)
                 # print(json.dumps(strike_map, indent=4))
-    
+                # break
+
                 # break
                 # bid/ask needs to be reasonably close together, or bid needs to be > 1
                 bid_curr = strike_map['bid']
@@ -182,7 +189,7 @@ def scan_options( client, stocks, quotes ):
                 bid_diff = abs( int(ask_curr) - int(bid_curr) )
 
                 # Filters out what is wanted
-                if ( value > value_min ) and ( otm_prob > otm_prob_min ):
+                if ( value > value_min ) and ( otm_prob > otm_prob_min ) and ( bid_curr > 0.10):
                     # if bid_diff > bid_diff_max:
                         # print("\n** Large difference in bid / ask.\nbid: " + str(bid_curr) + "\nask:" + str(ask_curr) + "\n")
 
