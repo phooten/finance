@@ -12,6 +12,7 @@ util:   utility files for this repo
 
 # TODO:
 0. Make a script for or work it into the current option search script
+- Add in a weight for the time times the value -> weight * ( mark / strike )
 1. Finish the informative tools script about my current account
 2. Show the stock change for the day in the options tools
 

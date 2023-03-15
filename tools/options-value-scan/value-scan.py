@@ -111,20 +111,23 @@ def CreateClient():
     return c
 
 # Starting just puts for now. 
-def scan_options( client, stocks, quotes ):
+def scan_put_options( client, stocks, quotes ):
     # TODO: print out stock only if there is a match
     for curr_stock in stocks:
         print( "---------------------------------------------------")
         print( "Stock:\t\t" + str(curr_stock))
 
         dte = ( datetime.today() + timedelta(days=10) ).date()
-        print("Next week is: ", dte)
+        print("Next week:\t" + str(dte))
 
-        stock_info_j = client.get_quote(curr_stock).json()[curr_stock]
-        # print( json.dumps(stock_info_j, indent=4))
+        stock_info_json = client.get_quote(curr_stock).json()[curr_stock]
+        # print( json.dumps(stock_info_json, indent=4))
         # break
-        stock_price = stock_info_j['mark']
-        strike_start = int( stock_price )
+        stock_price = float( stock_info_json['mark'] )
+        close_price = float(stock_info_json['closePrice'])
+        net_change = float(stock_info_json['netChange'])
+        percent_change = net_change / close_price
+        strike_start = int(stock_price)
         strike_interval = 1
         strike_range = 10
 
@@ -133,8 +136,8 @@ def scan_options( client, stocks, quotes ):
         # Ideas:
         #   1. Only show option if correct otm% and value. have a total count
         #   2. Flag to print out the options if I want to, or only those from 1.
-        print("Current price:\t" + str(stock_price))
-        print("Today's Gain / Loss: \t")
+        print("Current price:\t$ {0:.2f}".format(stock_price))
+        print("Net Change:\t% {0:.2%}".format(percent_change) )
 
         # Settings:
         # delta_max = 0.9
@@ -215,9 +218,8 @@ def main():
     quotes = client.get_quotes(stocks)
     #print(json.dumps(quotes.json(), indent=4 ))
     
+    scan_put_options( client, stocks, quotes)
 
-    scan_options( client, stocks, quotes )
-    
     
     # pprint.pprint( quotes )
     # pprint.pprint( quotes['TSLA'] )
