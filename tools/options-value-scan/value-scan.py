@@ -7,14 +7,15 @@
 # TODO: initial revision was copied from here: https://github.com/pattertj/TDA-Trade-Scripts/blob/main/main.py
 #       Need to refine calls and make it unique to my use case. 
 
-import math
-import os
-import pprint
+import argparse
 import chromedriver_autoinstaller
 import datetime as dt
 import httpx
-import time
 import json
+import math
+import os
+import pprint
+import time
 
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
@@ -59,14 +60,15 @@ load_dotenv()
 G_TOKEN=os.getenv('TOKEN_PATH')
 
 # Retrieves a list of stocks from a text file and returns it as a list
-def GetInputStocks():
+def GetInputStocks( stock_input_list ):
 
     # TODO: Hard coding needs to be replaced with environment variables
     # Paths / locations 
     REPO_PATH = "/Users/phoot/bin/code/trading"
     THIS_PATH = str(REPO_PATH) + "/tools/options-value-scan"
     THIS_NAME = os.path.basename(__file__)
-    INPUT_NAME="list-1.txt"
+    # INPUT_NAME="list-1.txt"
+    INPUT_NAME=stock_input_list
     INPUT_PATH= str(REPO_PATH) + "/input/" + str( INPUT_NAME )
 
 
@@ -111,7 +113,7 @@ def CreateClient():
     return c
 
 # Starting just puts for now. 
-def scan_put_options( client, stocks, quotes ):
+def ScanOptions( client, stocks, quotes, option ):
     # TODO: print out stock only if there is a match
     for curr_stock in stocks:
         print( "---------------------------------------------------")
@@ -140,30 +142,36 @@ def scan_put_options( client, stocks, quotes ):
         print("Net Change:\t% {0:.2%}".format(percent_change) )
 
         # Settings:
-        # delta_max = 0.9
-        group = 2
-        if group == 1:
-            a = 1
-            b = 80
-        elif group == 2:
-            a = 1
-            b = 85
-        elif group == 3:
-            a = 1.5
-            b = 80
+        if option == "put":
+            contract_type = client.Options.ContractType.PUT
+            option_map = 'putExpDateMap'
+            val_nom = 1    # % value
+            prob_nom = 82  # % OTM
 
-        value_min = a / 100
-        otm_prob_min = ( b / 100 ) - 0.02
+        elif option == "call":
+            contract_type = client.Options.ContractType.CALL
+            option_map = 'callExpDateMap'
+            val_nom = 0.25  # % value
+            prob_nom = 85   # % OTM
+
+        else:
+            print( "Should neve get here. Error. Exiting." )
+            exit(1)
+
+        value_min = val_nom / 100
+        otm_prob_min = ( prob_nom / 100 ) - 0.02
         otm_prob_max = 100 / 100
         bid_min = 0.10  # minimum bid size ( $ 10 )
         bid_diff_max = 0.30  # Biggest difference in asking size
 
+
         op_chain = client.get_option_chain( symbol=curr_stock,
                                             to_date=dte,
                                             # strike=strike_curr,
-                                            contract_type=client.Options.ContractType.PUT)
+                                            contract_type=contract_type )
+
         op_chain_j = op_chain.json()
-        op_chain_expmap = op_chain_j['putExpDateMap']
+        op_chain_expmap = op_chain_j[option_map]
 
         # Checks the chain exists
         if not bool(op_chain_expmap):
@@ -181,11 +189,10 @@ def scan_put_options( client, stocks, quotes ):
                 mark = float(strike_map['mark'])
                 value = mark / float(strike)
                 delta = strike_map['delta']
+                if option == "call":
+                    delta = float(delta) * (-1)
                 otm_prob = 1 + float(delta)
-                # print(json.dumps(strike_map, indent=4))
-                # break
 
-                # break
                 # bid/ask needs to be reasonably close together, or bid needs to be > 1
                 bid_curr = strike_map['bid']
                 ask_curr = strike_map['ask']
@@ -201,7 +208,7 @@ def scan_put_options( client, stocks, quotes ):
                         "Stike: " + str(strike) +
                         "\tMark: " + str(mark) +\
                         "\tBid: " + str(bid_curr) +\
-                        "\tValue: {0:.2%}".format(value) + "  [{0:.3}]".format(value) +\
+                        "\tValue: {0:.2%}".format(value) + "  [ {0:.3} ]".format(value) +\
                         "\tDelta: " + " {0:.3}".format(delta) + " [ {0:.2%} ]".format(otm_prob))
 
     return
@@ -211,14 +218,28 @@ def scan_put_options( client, stocks, quotes ):
 # Driver of the code
 def main():
     # TODO: Add a func / feature to have user input for path, and if not use default. 
+    parser = argparse.ArgumentParser()
+    parser.add_argument( "-s", "--stocks", 
+                        default="list-1.0.txt",
+                        required=False,
+                        help="List of stocks used to query for puts." )
+    parser.add_argument( "-o", "--option",
+                         default="put",
+                         required=False,
+                         help="List of stocks used to query for calls.")
+    args = parser.parse_args()
+
+    stock_input_list = args.stocks
+    option = args.option
+    
     # Set Up
     client = CreateClient()
 
-    stocks = GetInputStocks()
-    quotes = client.get_quotes(stocks)
+    stocks = GetInputStocks( stock_input_list )
+    quotes = client.get_quotes( stocks )
     #print(json.dumps(quotes.json(), indent=4 ))
     
-    scan_put_options( client, stocks, quotes)
+    ScanOptions( client, stocks, quotes, option )
 
     
     # pprint.pprint( quotes )
