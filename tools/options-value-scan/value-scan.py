@@ -246,14 +246,14 @@ def PrintFound():
 def main():
     # TODO: Add a func / feature to have user input for path, and if not use default. 
     parser = argparse.ArgumentParser()
-    parser.add_argument( "-s", "--stocks", 
+    parser.add_argument( "-s", "--stock_list", 
                         default="list-1.0.txt",
                         required=False,
-                        help="List of stocks used to query for puts." )
-    parser.add_argument( "-o", "--option",
+                        help="List of stocks used to query for puts. Held under <home-path>/bin/code/trading/input/" )
+    parser.add_argument( "-o", "--option_type",
                          default="put",
                          required=False,
-                         help="List of stocks used to query for calls.")
+                         help="List of stocks used to query for calls. Options are 'put' or 'call'")
     args = parser.parse_args()
 
     stock_input_list = args.stocks
@@ -287,5 +287,9 @@ def main():
 
 if __name__=="__main__":
     main()
+    # TODO: Make a status bar for querying stocks
+    # TODO: show options for -Option argument and -Stock argument
+    # TODO: Check for 'put' or 'call'
+    # TODO: Move bitbucket repo's out of bin directory.
 
 
