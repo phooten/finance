@@ -115,12 +115,12 @@ def CreateClient():
 # Starting just puts for now. 
 def ScanOptions( client, stocks, quotes, option ):
     # TODO: print out stock only if there is a match
-    for curr_stock in stocks:
-        print( "---------------------------------------------------")
-        print( "Stock:\t\t" + str(curr_stock))
+    print_to_file = False
+    if print_to_file == True:
+        result_obj = open("/Users/phoot/bin/code/trading/option_scan_results.txt", "w")
 
+    for curr_stock in stocks:
         dte = ( datetime.today() + timedelta(days=10) ).date()
-        print("Next week:\t" + str(dte))
 
         stock_info_json = client.get_quote(curr_stock).json()[curr_stock]
         # print( json.dumps(stock_info_json, indent=4))
@@ -138,8 +138,19 @@ def ScanOptions( client, stocks, quotes, option ):
         # Ideas:
         #   1. Only show option if correct otm% and value. have a total count
         #   2. Flag to print out the options if I want to, or only those from 1.
-        print("Current price:\t$ {0:.2f}".format(stock_price))
-        print("Net Change:\t% {0:.2%}".format(percent_change) )
+        if print_to_file == True:
+            result_obj.write("---------------------------------------------------")
+            result_obj.write("Stock:\t\t" + str(curr_stock))
+            result_obj.write("Next week:\t" + str(dte))
+            result_obj.write("Current price:\t$ {0:.2f}".format(stock_price))
+            result_obj.write("Net Change:\t% {0:.2%}".format(percent_change))
+        else:
+            print( "---------------------------------------------------")
+            print( "Stock:\t\t" + str(curr_stock))
+            print("Next week:\t" + str(dte))
+            print("Current price:\t$ {0:.2f}".format(stock_price))
+            print("Net Change:\t% {0:.2%}".format(percent_change))
+
 
         # Settings:
         if option == "put":
@@ -152,7 +163,7 @@ def ScanOptions( client, stocks, quotes, option ):
             contract_type = client.Options.ContractType.CALL
             option_map = 'callExpDateMap'
             val_nom = 0.25  # % value
-            prob_nom = 85   # % OTM
+            prob_nom = 85   #   % OTM
 
         else:
             print( "Should neve get here. Error. Exiting." )
@@ -175,7 +186,10 @@ def ScanOptions( client, stocks, quotes, option ):
 
         # Checks the chain exists
         if not bool(op_chain_expmap):
-            print("No results for strike: " + str(curr_stock))
+            if print_to_file == True:
+                result_obj.write("No results for strike: " + str(curr_stock))
+            else:
+                print("No results for strike: " + str(curr_stock))
             continue
 
         # Checks each strike in the date
@@ -200,20 +214,33 @@ def ScanOptions( client, stocks, quotes, option ):
 
                 # Filters out what is wanted
                 if ( value > value_min ) and ( otm_prob > otm_prob_min ) and ( bid_curr > 0.10):
-                    # if bid_diff > bid_diff_max:
-                        # print("\n** Large difference in bid / ask.\nbid: " + str(bid_curr) + "\nask:" + str(ask_curr) + "\n")
 
-                    # if bid_curr > bid_min:
-                    print( "[ " + str(date) + " ]\t" +\
-                        "Stike: " + str(strike) +
-                        "\tMark: " + str(mark) +\
-                        "\tBid: " + str(bid_curr) +\
-                        "\tValue: {0:.2%}".format(value) + "  [ {0:.3} ]".format(value) +\
-                        "\tDelta: " + " {0:.3}".format(delta) + " [ {0:.2%} ]".format(otm_prob))
+                    if print_to_file == True:
+                        # if bid_diff > bid_diff_max:
+                            # print("\n** Large difference in bid / ask.\nbid: " + str(bid_curr) + "\nask:" + str(ask_curr) + "\n")
+                        result_obj.write("[ " + str(date) + " ]\t" +
+                            "Stike: " + str(strike) +
+                            "\tMark: " + str(mark) +
+                            "\tBid: " + str(bid_curr) +
+                            "\tValue: {0:.2%}".format(value) + "  [ {0:.3} ]".format(value) +
+                            "\tDelta: " + " {0:.3}".format(delta) + " [ {0:.2%} ]".format(otm_prob))
+                    else:
+                        # if bid_curr > bid_min:
+                        print( "[ " + str(date) + " ]\t" +\
+                            "Stike: " + str(strike) +
+                            "\tMark: " + str(mark) +\
+                            "\tBid: " + str(bid_curr) +\
+                            "\tValue: {0:.2%}".format(value) + "  [ {0:.3} ]".format(value) +\
+                            "\tDelta: " + " {0:.3}".format(delta) + " [ {0:.2%} ]".format(otm_prob))
+
+
 
     return
 
+# Pasrses the document and only prints the found stocks
+def PrintFound():
 
+    return
 
 # Driver of the code
 def main():
