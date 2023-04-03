@@ -2,11 +2,12 @@
 #   This tool is meant to scan a list of stocks and return certain values. The 
 #   requirements for this file can be found in the same file path, but labeled
 #   requirements.
+# References:
+#       API: https://tda-api.readthedocs.io/en/latest/client.html#option-chain
+#            alternative API library: 'from td.client import TDClient'
+#       Based on: https://github.com/pattertj/TDA-Trade-Scripts/blob/main/main.py
 
-#         # https://tda-api.readthedocs.io/en/latest/client.html#option-chain
-# TODO: initial revision was copied from here: https://github.com/pattertj/TDA-Trade-Scripts/blob/main/main.py
-#       Need to refine calls and make it unique to my use case. 
-
+# Imports 
 import argparse
 import chromedriver_autoinstaller
 import datetime as dt
@@ -16,48 +17,12 @@ import math
 import os
 import pprint
 import time
-
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
-# from td.client import TDClient
 from tda import auth, client
-
-
-##########################################################
-# Sample env vars
-##########################################################
-# CHANGE THIS FILE NAME TO ".ENV"
-# API_KEY='COPY FROM YOUR TDA DEVELOPER ACCOUNT APP'
-# REDIRECT_URI = 'COPY FROM YOUR TDA DEVELOPER ACCOUNT APP'
-#
-# SYMBOL = '$SPX.X'
-# TARGET_DTE = 30
-# TRADE_TYPE = "1.1.2"
-# OTM_PRICE_TARGET = 10.0
-# SPREAD_PRICE_TARGET = 6.0
-# SPREAD_WIDTH_TARGET = 30
-##########################################################
-# symbol = os.getenv('SYMBOL')
-# target_dte = int(os.getenv('TARGET_DTE'))
-# trade_type = (os.getenv('TRADE_TYPE'))
-# otm_price_target = float(os.getenv('OTM_PRICE_TARGET'))
-# otm_percent_target = float(os.getenv('MIN_OTM_PERCENT'))
-# spread_price_target = float(os.getenv('SPREAD_PRICE_TARGET'))
-# spread_width_target = float(os.getenv('SPREAD_WIDTH_TARGET'))
-##########################################################
-
-# Trade Settings
-symbol = "$AAPL"
-target_dte = 7
-trade_type = '1.1.2'
-otm_price_target = 10.0
-otm_percent_target = 6
-spread_price_target = 1
-spread_width_target = 30
 
 # Global Variables
 load_dotenv()
-G_TOKEN=os.getenv('TOKEN_PATH')
 
 # Retrieves a list of stocks from a text file and returns it as a list
 def GetInputStocks( stock_input_list ):
@@ -82,6 +47,7 @@ def GetInputStocks( stock_input_list ):
     print("\n\n")
 
     file = open( INPUT_PATH, mode = 'r', encoding = 'utf-8-sig')
+    # TODO: Add feature to ignore any lines prefaced with '#' or just blank
     stock_list = file.readlines()
     file.close()
 
@@ -93,6 +59,8 @@ def GetInputStocks( stock_input_list ):
     return stocks
 
 
+# TODO: Fix header comment
+# Builds and returns the client based on token and envirenmental variables. 
 def CreateClient():
     try:
         print("Token_path = " + str(os.getenv("TOKEN_PATH")))
@@ -112,7 +80,19 @@ def CreateClient():
 
     return c
 
-# Starting just puts for now. 
+# TODO: Fix this header
+# Scans a list of options ( puts or calls ) based on input text file list from user
+# and prints out applicable strikes based on options. Current settings:
+# 
+# Puts:
+#   1. > 80% OTM
+#   2. Difference between bid / ask < 0.10
+#   3. Value ( money used vs. profit gained ) > 1%
+# 
+# Calls:
+#   1. > 80% OTM
+#   2. Difference between bid / ask < 0.10
+#   3.
 def ScanOptions( client, stocks, quotes, option ):
     # TODO: print out stock only if there is a match
     print_to_file = False
@@ -156,21 +136,23 @@ def ScanOptions( client, stocks, quotes, option ):
         if option == "put":
             contract_type = client.Options.ContractType.PUT
             option_map = 'putExpDateMap'
-            val_nom = 1    # % value
-            prob_nom = 82  # % OTM
+            # val_num = 1    # % value ( numerator )
+            val_num = 0.7    # % value ( numerator ) -> This is better to change than probability
+            prob_num = 82   # % OTM ( numerator )
 
         elif option == "call":
             contract_type = client.Options.ContractType.CALL
             option_map = 'callExpDateMap'
-            val_nom = 0.25  # % value
-            prob_nom = 85   #   % OTM
+            val_num = 0.2  # % value ( numerator )
+            val_num = 0.25  # % value ( numerator )
+            prob_num = 85   # % OTM ( numerator )
 
         else:
             print( "Should neve get here. Error. Exiting." )
             exit(1)
 
-        value_min = val_nom / 100
-        otm_prob_min = ( prob_nom / 100 ) - 0.02
+        value_min = val_num / 100
+        otm_prob_min = ( prob_num / 100 ) - 0.02
         otm_prob_max = 100 / 100
         bid_min = 0.10  # minimum bid size ( $ 10 )
         bid_diff_max = 0.30  # Biggest difference in asking size
@@ -237,11 +219,13 @@ def ScanOptions( client, stocks, quotes, option ):
 
     return
 
+# TODO: Fix this header
 # Pasrses the document and only prints the found stocks
 def PrintFound():
 
     return
 
+# TODO: Fix this header
 # Driver of the code
 def main():
     # TODO: Add a func / feature to have user input for path, and if not use default. 
@@ -256,8 +240,8 @@ def main():
                          help="List of stocks used to query for calls. Options are 'put' or 'call'")
     args = parser.parse_args()
 
-    stock_input_list = args.stocks
-    option = args.option
+    stock_input_list = args.stock_list
+    option = args.option_type
     
     # Set Up
     client = CreateClient()
@@ -284,12 +268,12 @@ def main():
     return
 
 
+# TODO: Fix this header
 
 if __name__=="__main__":
     main()
     # TODO: Make a status bar for querying stocks
     # TODO: show options for -Option argument and -Stock argument
-    # TODO: Check for 'put' or 'call'
-    # TODO: Move bitbucket repo's out of bin directory.
+    # TODO: Move github repo's out of bin directory.
 
 
