@@ -15,6 +15,7 @@ util:   utility files for this repo
 - Add in a weight for the time times the value -> weight * ( mark / strike )
 1. Finish the informative tools script about my current account
 2. Show the stock change for the day in the options tools
+3. Create a "showme" or something for how to show tools and usage.
 
 # Notes
 Really good video for how to get started: https://www.youtube.com/watch?v=8N1IxYXs4e8

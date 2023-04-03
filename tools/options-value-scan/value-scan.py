@@ -136,8 +136,8 @@ def ScanOptions( client, stocks, quotes, option ):
         if option == "put":
             contract_type = client.Options.ContractType.PUT
             option_map = 'putExpDateMap'
-            # val_num = 1    # % value ( numerator )
-            val_num = 0.7    # % value ( numerator ) -> This is better to change than probability
+            val_num = 1    # % value ( numerator )
+            # val_num = 0.7    # % value ( numerator ) -> This is better to change than probability
             prob_num = 82   # % OTM ( numerator )
 
         elif option == "call":
