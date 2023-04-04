@@ -1,11 +1,49 @@
-# Overview:
-#   This tool is meant to scan a list of stocks and return certain values. The 
-#   requirements for this file can be found in the same file path, but labeled
-#   requirements.
-# References:
-#       API: https://tda-api.readthedocs.io/en/latest/client.html#option-chain
-#            alternative API library: 'from td.client import TDClient'
-#       Based on: https://github.com/pattertj/TDA-Trade-Scripts/blob/main/main.py
+# TODO: Complete / remove all TODOs. 
+# TODO: Create requirements for this tool
+
+"""
+*********************************** DISCLAIMER: ********************************
+I ( or this code ) am not responsable for any financial losses or gains incured from the use of this program / software. 
+This is purally for personal use and educational purposes. Feel free to look through this code or use for fun.
+
+Don't use this for any real life financial analysis or information. There are most likley many errors in here. 
+
+Proceed at your own risk. 
+********************************************************************************
+
+
+Overivew: 
+    Scans options / puts based on user input for strikes that meet certain criteria.
+
+    Program scans for list of stocks contained under <workspace path>/input. See that location's README for more info.
+    This scan is based on a hardcoded settings. There is no intension of allowing the user to change these, since they
+    are tuned based on trial and error, and set for a low risk tolerance while allowing for maximum value reward. You
+    can manually change these, but proceed with caution. Review the disclaimer above. 
+
+Strikes only analyzed if: 
+    - within X days from today: 10
+    - within X ticks OTM:       10
+    - Bid minimum is:           0.10
+    - Bid / Ask diff is:        0.30
+    - Probability OTM:          82.0 % ( put )
+                                85.0 % ( call )
+    - Value:                    1.00 % ( put ) ( potential gain / capital used )
+                                0.25 % ( call )
+Note: Settings are according to infor returned from TD Ameritrade API. 
+Note: Probabilities are based on DELTA.
+
+
+Typical usage example:
+    python value-scan.py -e
+    python value-scan.py -c -s <some-list-here>.txt
+    python value-scan.py -p -s <some-list-here>.txt
+
+
+References:
+    API: https://tda-api.readthedocs.io/en/latest/client.html#option-chain
+         alternative API library: 'from td.client import TDClient'
+    Based on: https://github.com/pattertj/TDA-Trade-Scripts/blob/main/main.py
+"""
 
 # Imports 
 import argparse
@@ -29,7 +67,7 @@ def GetInputStocks( stock_input_list ):
 
     # TODO: Hard coding needs to be replaced with environment variables
     # Paths / locations 
-    REPO_PATH = "/Users/phoot/bin/code/trading"
+    REPO_PATH = "/Users/phoot/code/trading"
     THIS_PATH = str(REPO_PATH) + "/tools/options-value-scan"
     THIS_NAME = os.path.basename(__file__)
     # INPUT_NAME="list-1.txt"
@@ -95,9 +133,11 @@ def CreateClient():
 #   3.
 def ScanOptions( client, stocks, quotes, option ):
     # TODO: print out stock only if there is a match
+    # TODO: Create a spot for ALL settings. Maybe as globals?
+
     print_to_file = False
     if print_to_file == True:
-        result_obj = open("/Users/phoot/bin/code/trading/option_scan_results.txt", "w")
+        result_obj = open("/Users/phoot/code/trading/option_scan_results.txt", "w")
 
     for curr_stock in stocks:
         dte = ( datetime.today() + timedelta(days=10) ).date()
@@ -143,8 +183,9 @@ def ScanOptions( client, stocks, quotes, option ):
         elif option == "call":
             contract_type = client.Options.ContractType.CALL
             option_map = 'callExpDateMap'
-            val_num = 0.2  # % value ( numerator )
-            val_num = 0.25  # % value ( numerator )
+            # w/ 85% OTM, These values are not that common: 0.25%, 
+            val_num = 0.1  # % value ( numerator )
+            # val_num = 0.20  # % value ( numerator )
             prob_num = 85   # % OTM ( numerator )
 
         else:
@@ -231,14 +272,27 @@ def main():
     # TODO: Add a func / feature to have user input for path, and if not use default. 
     parser = argparse.ArgumentParser()
     parser.add_argument( "-s", "--stock_list", 
-                        default="list-1.0.txt",
+                        default="puts_mid-priced.txt",
                         required=False,
-                        help="List of stocks used to query for puts. Held under <home-path>/bin/code/trading/input/" )
+                        help="List of stocks used to query for puts. Held under <home-path>/code/trading/input/" )
     parser.add_argument( "-o", "--option_type",
                          default="put",
                          required=False,
                          help="List of stocks used to query for calls. Options are 'put' or 'call'")
+    parser.add_argument("-e", "--example_cases",
+                        # default=False,
+                        action='store_true',
+                        required=False,
+                        help="Shows current tool usage cases.")
     args = parser.parse_args()
+
+    if args.example_cases:
+        example_cases = "\n"\
+            "python /Users/phoot/code/trading/tools/options-value-scan/value-scan.py -o <put|call> -s <see_list_below>\n"
+        print( example_cases )
+        subprocess.call(
+            ['sh', '/Users/phoot/code/trading/tools/utility/show_stock_lists.sh'])
+        exit(1)
 
     stock_input_list = args.stock_list
     option = args.option_type
@@ -273,7 +327,7 @@ def main():
 if __name__=="__main__":
     main()
     # TODO: Make a status bar for querying stocks
-    # TODO: show options for -Option argument and -Stock argument
-    # TODO: Move github repo's out of bin directory.
+    # TODO: Update the options flag to a true / false so the user doesn't have to specify 'call'/'put'. They can just
+    #       run '-c' or '-p'. 
 
 
