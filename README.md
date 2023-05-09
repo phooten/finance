@@ -16,6 +16,10 @@ util:   utility files for this repo
 1. Finish the informative tools script about my current account
 2. Create a "showme" or something for how to show tools and usage.
 
+# New tool ideas
+1. Show cost basis / profit vs loss for each stock. Maybe this can be used to show
+    the status of my account. 
+2. Scanner to show if if a stock drops more than 30-40% in a day.
 
 # Notes
 Really good video for how to get started: https://www.youtube.com/watch?v=8N1IxYXs4e8
