@@ -179,13 +179,13 @@ def ScanOptions( client, stocks, quotes, option ):
             option_map = 'putExpDateMap'
             val_num = 1    # % value ( numerator )
             # val_num = 0.7    # % value ( numerator ) -> This is better to change than probability
-            prob_num = 82   # % OTM ( numerator )
+            prob_num = 85   # % OTM ( numerator )
 
         elif option == "call":
             contract_type = client.Options.ContractType.CALL
             option_map = 'callExpDateMap'
             # w/ 85% OTM, These values are not that common: 0.25%, 
-            val_num = 0.1  # % value ( numerator )
+            val_num = 0.05  # % value ( numerator )
             # val_num = 0.20  # % value ( numerator )
             prob_num = 85   # % OTM ( numerator )
 
