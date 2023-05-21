@@ -35,7 +35,7 @@ def ConvertPdfToText():
 
     # TODO: Fix this and the option-value-scan script. They are ahard coded values and 
     #       Need to be replaced with environmental variables. 
-    REPO_PATH="User/phoot/code/finance/"
+    REPO_PATH="/Users/phoot/code/finance/"
     PATH_TO_PDF = str(REPO_PATH) + "input/test_statement.pdf"
     # creating a pdf reader object
     reader = PdfReader( PATH_TO_PDF )
@@ -51,6 +51,8 @@ def ConvertPdfToText():
     text = page.extract_text()
     print("text")
     print(text)
+
+    text_block=''
     return text_block
 
 def main():
