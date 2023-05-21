@@ -9,9 +9,17 @@ This file is meant to automate moving my paycheck into an xml file.
           manually enter it, or have a secure automated technique. 
 '''
 
+# TODO: Find a better way to set/use environmental variables
 
-class Paycheck:
+from PyPDF2 import PdfReader
+from dotenv import load_dotenv
+
+# Environmental variables
+load_dotenv()
+
+#class Paycheck:
     
+
 
 
 def DownloadPaycheck():
@@ -22,9 +30,35 @@ def DownloadPaycheck():
 
     return paycheck
 
-def main():
 
+def ConvertPdfToText():
+
+    # TODO: Fix this and the option-value-scan script. They are ahard coded values and 
+    #       Need to be replaced with environmental variables. 
+    REPO_PATH="User/phoot/code/finance/"
+    PATH_TO_PDF = str(REPO_PATH) + "input/test_statement.pdf"
+    # creating a pdf reader object
+    reader = PdfReader( PATH_TO_PDF )
+
+    # printing number of pages in pdf file
+    print("len(reader.pages)")
+    print(len(reader.pages))
+
+    # getting a specific page from the pdf file
+    page = reader.pages[0]
+
+    # extracting text from page
+    text = page.extract_text()
+    print("text")
+    print(text)
+    return text_block
+
+def main():
+    ConvertPdfToText()
     return
 
 if __name__ == "__main__":
     main()
+
+
+

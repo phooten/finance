@@ -10,9 +10,10 @@ tda-api = "*"
 selenium = "*"
 python-dotenv = "*"
 chromedriver-autoinstaller = "*"
+PyPDF2 = "*"
 
 [dev-packages]
 
 [requires]
-python_version = "3.8"
+python_version = "3"
 
