@@ -11,16 +11,28 @@ This file is meant to automate moving my paycheck into an xml file.
 
 # TODO: Find a better way to set/use environmental variables
 
-from PyPDF2 import PdfReader
+#from PyPDF2 import PdfReader
 from dotenv import load_dotenv
+import pdfplumber
 
 # Environmental variables
 load_dotenv()
 
 #class Paycheck:
-    
-
-
+#    gross_salary
+#    gross_eip
+#    gross_2nd_shift_premium
+#    gross_3rd_shift_premium
+#    gross_overtime
+#    deduction_401k_pre_tax
+#    deduction_medical
+#    deduction_dental
+#    deduction_hsa
+#    tax_fed_withholding
+#    tax_ss
+#    tax_medicare
+#    tax_co_witholding
+#    tax_pfml_tax_state_plan
 
 def DownloadPaycheck():
     # ULA ADP site
@@ -36,27 +48,23 @@ def ConvertPdfToText():
     # TODO: Fix this and the option-value-scan script. They are ahard coded values and 
     #       Need to be replaced with environmental variables. 
     REPO_PATH="/Users/phoot/code/finance/"
-    PATH_TO_PDF = str(REPO_PATH) + "input/test_statement.pdf"
-    # creating a pdf reader object
-    reader = PdfReader( PATH_TO_PDF )
+    PDF_PATH = str(REPO_PATH) + "input/test_statement.pdf"
+    with pdfplumber.open(PDF_PATH) as pdf:
+        text = ""
+        for page in pdf.pages:
+            extracted_text = page.extract_text()
+            text += f"Page {page.page_number + 1}:\n\n{extracted_text}\n\n"
 
-    # printing number of pages in pdf file
-    print("len(reader.pages)")
-    print(len(reader.pages))
+    return text
 
-    # getting a specific page from the pdf file
-    page = reader.pages[0]
+def ExtractInformation():
 
-    # extracting text from page
-    text = page.extract_text()
-    print("text")
-    print(text)
-
-    text_block=''
-    return text_block
+    return
 
 def main():
-    ConvertPdfToText()
+    paycheck_text = ConvertPdfToText()
+    ExtractInformation( paycheck_text )
+
     return
 
 if __name__ == "__main__":

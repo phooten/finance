@@ -3,3 +3,6 @@
 
 # Personal
 token.json
+
+# Paystubs
+input/paystubs/*
