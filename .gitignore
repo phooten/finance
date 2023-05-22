@@ -2,7 +2,7 @@
 .env
 
 # Personal
-token.json
+util/token.json
 
 # Paystubs
 input/paystubs/*

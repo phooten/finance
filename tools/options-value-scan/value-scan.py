@@ -68,7 +68,7 @@ def GetInputStocks( stock_input_list ):
 
     # TODO: Hard coding needs to be replaced with environment variables
     # Paths / locations 
-    REPO_PATH = "/Users/phoot/code/trading"
+    REPO_PATH = "/Users/phoot/code/finance"
     THIS_PATH = str(REPO_PATH) + "/tools/options-value-scan"
     THIS_NAME = os.path.basename(__file__)
     # INPUT_NAME="list-1.txt"
@@ -138,7 +138,7 @@ def ScanOptions( client, stocks, quotes, option ):
 
     print_to_file = False
     if print_to_file == True:
-        result_obj = open("/Users/phoot/code/trading/option_scan_results.txt", "w")
+        result_obj = open("/Users/phoot/code/finance/option_scan_results.txt", "w")
 
     for curr_stock in stocks:
         dte = ( datetime.today() + timedelta(days=10) ).date()
@@ -275,7 +275,7 @@ def main():
     parser.add_argument( "-s", "--stock_list", 
                         default="puts_mid-priced.txt",
                         required=False,
-                        help="List of stocks used to query for puts. Held under <home-path>/code/trading/input/" )
+                        help="List of stocks used to query for puts. Held under <home-path>/code/finance/input/" )
     parser.add_argument( "-o", "--option_type",
                          default="put",
                          required=False,
@@ -289,10 +289,10 @@ def main():
 
     if args.example_cases:
         example_cases = "\n"\
-            "python /Users/phoot/code/trading/tools/options-value-scan/value-scan.py -o <put|call> -s <see_list_below>\n"
+            "python /Users/phoot/code/finance/tools/options-value-scan/value-scan.py -o <put|call> -s <see_list_below>\n"
         print( example_cases )
         subprocess.call(
-            ['sh', '/Users/phoot/code/trading/tools/utility/show_stock_lists.sh'])
+            ['sh', '/Users/phoot/code/finance/tools/utility/show_stock_lists.sh'])
         exit(1)
 
     stock_input_list = args.stock_list
