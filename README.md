@@ -26,4 +26,9 @@ Really good video for how to get started: https://www.youtube.com/watch?v=8N1IxY
 
 
 
+Messed up and removed files that were being tracked by git ignore:
+    .env
+    token.json
+Need to make a template for these so this doens't happen again, or it will at 
+least be easier to recover.
 
