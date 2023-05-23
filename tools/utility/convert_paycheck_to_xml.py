@@ -18,7 +18,8 @@ import pdfplumber
 # Environmental variables
 load_dotenv()
 
-#class Paycheck:
+class Paycheck:
+    hours_worked='Testing'
 #    gross_salary
 #    gross_eip
 #    gross_2nd_shift_premium
@@ -34,6 +35,8 @@ load_dotenv()
 #    tax_co_witholding
 #    tax_pfml_tax_state_plan
 
+
+
 def DownloadPaycheck():
     # ULA ADP site
     paycheck_site=''
@@ -43,12 +46,13 @@ def DownloadPaycheck():
     return paycheck
 
 
+
 def ConvertPdfToText():
 
     # TODO: Fix this and the option-value-scan script. They are ahard coded values and 
     #       Need to be replaced with environmental variables. 
     REPO_PATH="/Users/phoot/code/finance/"
-    PDF_PATH = str(REPO_PATH) + "input/test_statement.pdf"
+    PDF_PATH = str(REPO_PATH) + "input/paystubs/test_statement.pdf"
     with pdfplumber.open(PDF_PATH) as pdf:
         text = ""
         for page in pdf.pages:
@@ -57,15 +61,25 @@ def ConvertPdfToText():
 
     return text
 
-def ExtractInformation():
+
+
+def ExtractInformation( pay_stub_obj, text_block ):
+    
+
 
     return
+
+
 
 def main():
     paycheck_text = ConvertPdfToText()
-    ExtractInformation( paycheck_text )
+
+    stub = Paycheck()
+    ExtractInformation( stub, paycheck_text )
 
     return
+
+
 
 if __name__ == "__main__":
     main()
