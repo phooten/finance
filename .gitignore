@@ -3,6 +3,7 @@
 
 # Personal
 util/token.json
+.DS_Store
 
 # Paystubs
 input/paystubs/*
