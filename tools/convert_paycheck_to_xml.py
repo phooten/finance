@@ -106,7 +106,14 @@ def FormatUlaTextBlock( text_block ):
              "Net Pay",
              "Imputed Income",
              "FED Taxable",
-             "CO Taxable" ]
+             "CO Taxable",
+             # These will be removed
+             "Total Earnings",
+             "Net Pay",
+             "PTO Bank",
+             "Imputed Income",
+             "EMP Term Life",
+             "If you have any questions regarding your" ]
 
     text = text_block.split('\n')
     filtered_text = []
@@ -117,7 +124,20 @@ def FormatUlaTextBlock( text_block ):
             if word in line:
                 filtered_text.append( line )
 
-    for line in filtered_text:
+    # Removes duplicate entries
+    unique_text = []
+    [unique_text.append(line) for line in filtered_text if line not in unique_text]
+
+    # TODO: Need to filter out 2 numbers after the key is found
+    # Removes key from line
+    for curr in range(len(unique_text)):
+        for key in keys:
+            unique_text[curr] = unique_text[curr].replace(key, '')
+            #unique_text.insert(curr-1, str(key) + ":")
+            #unique_text[curr] = unique_text[curr].replace(key, str(key) + ":\n\t")
+
+    # Prints out text block
+    for line in unique_text:
         print( line )
 
     return filtered_text
