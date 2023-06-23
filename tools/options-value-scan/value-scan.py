@@ -102,16 +102,16 @@ def GetInputStocks( stock_input_list ):
 # Builds and returns the client based on token and envirenmental variables. 
 def CreateClient():
     try:
-        print("Token_path = " + str(os.getenv("TOKEN_PATH")))
-        print("repo_path = " + str(os.getenv("REPO_PATH")))
+        print("Try: TOKEN_PATH = '" + str(os.getenv("TOKEN_PATH")) + "'")
+        print("Try: REPO_PATH = '" + str(os.getenv("REPO_PATH")) + "'")
         c = auth.client_from_token_file( str(os.getenv("TOKEN_PATH")), 
                                          str(os.getenv("CONSUMER_KEY")))
 
     except:
         from selenium import webdriver
         with webdriver.Chrome() as driver:
-            print("Token_path = " + str(os.getenv("TOKEN_PATH")))
-            print("repo_path = " + str(os.getenv("REPO_PATH")))
+            print("Except: TOKEN_PATH = '" + str(os.getenv("TOKEN_PATH")) + "'")
+            print("Except: REPO_PATH = '" + str(os.getenv("REPO_PATH")) + "'")
             c = auth.client_from_login_flow( driver, 
                                              api_key=str(os.getenv("CONSUMER_KEY")),
                                              redirect_url=str(os.getenv("REDIRECT_URI")),

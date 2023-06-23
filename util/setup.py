@@ -1,4 +1,4 @@
-# INWoRKS. DOESNOT FUNCTION.
+# INWORKS. DOESNOT FUNCTION.
 
 # This file is meant to set global variables in this repository. 
 
