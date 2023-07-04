@@ -12,6 +12,7 @@ python-dotenv = "*"
 chromedriver-autoinstaller = "*"
 PyPDF2 = "*"
 pdfplumber = "*"
+
 [dev-packages]
 
 [requires]
