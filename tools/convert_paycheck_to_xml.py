@@ -13,6 +13,7 @@ This file is meant to automate moving my paycheck into an xml file.
 
 #from PyPDF2 import PdfReader
 from dotenv import load_dotenv
+import pprint
 import pdfplumber
 
 # Environmental variables
@@ -80,11 +81,11 @@ def ConvertPdfToText():
 
 
 def FormatUlaTextBlock( text_block ):
-    
+
     keys = [ "Period Beginning",
              "Period Ending",
              "Total Hours Worked",
-             "Pay Rate"
+             "Pay Rate",
              "Salary",
              "EIP",
              "2nd Shift Prem 1.0",
@@ -107,7 +108,7 @@ def FormatUlaTextBlock( text_block ):
              "Imputed Income",
              "FED Taxable",
              "CO Taxable",
-             # These will be removed
+             # These will be removed / not used
              "Total Earnings",
              "Net Pay",
              "PTO Bank",
@@ -124,34 +125,48 @@ def FormatUlaTextBlock( text_block ):
             if word in line:
                 filtered_text.append( line )
 
+    # Useful to see what the filtered text contains
+    #pp = pprint.PrettyPrinter(width=41, compact=True)
+    #pp.pprint( filtered_text )
+
     # Removes duplicate entries
     unique_text = []
     [unique_text.append(line) for line in filtered_text if line not in unique_text]
 
     # TODO: Need to filter out 2 numbers after the key is found
     # Removes key from line
-    for curr in range(len(unique_text)):
-        for key in keys:
-            unique_text[curr] = unique_text[curr].replace(key, '')
+    #for curr in range(len(unique_text)):
+    #    for key in keys:
+    #        unique_text[curr] = unique_text[curr].replace(key, '')
             #unique_text.insert(curr-1, str(key) + ":")
             #unique_text[curr] = unique_text[curr].replace(key, str(key) + ":\n\t")
 
     # Prints out text block
-    for line in unique_text:
-        print( line )
+    #for line in unique_text:
+    #    print( line )
 
-    return filtered_text
-
+    #return filtered_text
+    return unique_text
 
 
 def ExtractInformation( pay_stub_obj, text_block ):
     # Key words to scan through paycheck
+    extracted_info = dict()
 
-    for key in key_list_other:
+    # Extracts the payperiod ( start / end ), hours, payrate
+    for key in pay_stub_obj.key_list_other:
+        #print("Looking for '" + str(key) + "'")
+        for line in text_block:
+            if key in line:
+                extracted_info[str(key)] = line
+
+    # Extracts
+    for key in pay_stub_obj.key_list_earnings:
         print("Looking for '" + str(key) + "'")
         for line in text_block:
             if key in line:
-                print(line)
+                extracted_info[str(key)] = line
+                print( line )
 
     return
 
@@ -161,10 +176,13 @@ def main():
     paycheck_text = ConvertPdfToText()
 
     paycheck_text = FormatUlaTextBlock( paycheck_text )
-    # print(paycheck_text)
-    stub = Paycheck()
 
-    #ExtractInformation( stub, paycheck_text )
+    # Useful to see what the paycheck_text was
+    #pp = pprint.PrettyPrinter(width=41, compact=True)
+    #pp.pprint(paycheck_text)
+
+    stub = Paycheck()
+    ExtractInformation( stub, paycheck_text )
 
     return
 
