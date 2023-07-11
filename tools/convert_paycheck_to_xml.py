@@ -19,38 +19,49 @@ import pdfplumber
 # Environmental variables
 load_dotenv()
 
-class Paycheck:
-    key_list_other = [ "Period Beginning",
-                        "Period Ending",
-                        "Total Hours Worked",
-                        "Pay Rate" ]
+class ExcelHeader:
+    header_ula = [  "Period Beginning",
+                    "Period Ending",
+                    "Total Hours Worked",
+                    "Pay Rate",
+                    "Salary",
+                    "EIP",
+                    "2nd Shift Prem 1.0",
+                    "3rd Shift Prem 1.0",
+                    "Overtime 1.0",
+                    "Gross Pay",
+                    "D-401K Pre Tax",
+                    "D-Medical BT",
+                    "D-Dental BT",
+                    "D-Health Savings Accnt BT",
+                    "FED Withholding Tax",
+                    "Social Security Tax",
+                    "Medicare Tax",
+                    "CO Withholding Tax",
+                    "CO PFML Tax State Plan",
+                    "Total Earnings",
+                    "Total Taxes",
+                    "Total Deductions",
+                    "Net Pay",
+                    "Imputed Income",
+                    "FED Taxable",
+                    "CO Taxable",
+                    # These will be removed / not used
+                    "Total Earnings",
+                    "Net Pay",
+                    "PTO Bank",
+                    "Imputed Income",
+                    "EMP Term Life" ]
 
-    key_list_earnings = [ "Salary",
-                          "EIP",
-                          "2nd Shift Prem 1.0",
-                          "3rd Shift Prem 1.0",
-                          "Overtime 1.0",
-                          "Gross Pay" ]
 
-    key_list_taxes = [ "D-401K Pre Tax",
-                        "D-Medical BT",
-                        "D-Dental BT",
-                        "D-Health Savings Accnt BT",
-                        "FED Withholding Tax",
-                        "Social Security Tax",
-                        "Medicare Tax",
-                        "CO Withholding Tax",
-                        "CO PFML Tax State Plan",
-                        "Total Taxes" ]
-
-    key_list_gross_to_net = [ "Total Earnings",
-                                "Total Taxes",
-                                "Total Deductions",
-                                "Net Pay",
-                                "Imputed Income",
-                                "FED Taxable",
-                                "CO Taxable" ]
-
+# Prints out text in pretty format, then quits if explicitly selected. 
+def Pretty( text, stop=False):
+    # Useful to see what the paycheck_text was
+    pp = pprint.PrettyPrinter( width=41, compact=True )
+    pp.pprint( text )
+    if stop:
+        exit(1)
+    return
 
 
 
@@ -75,6 +86,8 @@ def ConvertPdfToText():
         for page in pdf.pages:
             extracted_text = page.extract_text()
             text += f"Page {page.page_number + 1}:\n\n{extracted_text}\n\n"
+
+    Pretty(text, True)
 
     return text
 
@@ -145,15 +158,14 @@ def FormatUlaTextBlock( text_block ):
     #for line in unique_text:
     #    print( line )
 
-    #return filtered_text
-    return unique_text
-
-
-def ExtractInformation( pay_stub_obj, text_block ):
     # Key words to scan through paycheck
     extracted_info = dict()
 
     # Extracts the payperiod ( start / end ), hours, payrate
+    #   - Begining
+    #   - End
+    #   - Total Hours
+    #   - Payrate
     for key in pay_stub_obj.key_list_other:
         #print("Looking for '" + str(key) + "'")
         for line in text_block:
@@ -168,21 +180,20 @@ def ExtractInformation( pay_stub_obj, text_block ):
                 extracted_info[str(key)] = line
                 print( line )
 
-    return
+    return unique_text
 
 
 
 def main():
+    # Takes out text into a pdf
     paycheck_text = ConvertPdfToText()
 
+    # Formats text block based on ULA formating
     paycheck_text = FormatUlaTextBlock( paycheck_text )
 
     # Useful to see what the paycheck_text was
     #pp = pprint.PrettyPrinter(width=41, compact=True)
     #pp.pprint(paycheck_text)
-
-    stub = Paycheck()
-    ExtractInformation( stub, paycheck_text )
 
     return
 
