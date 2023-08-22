@@ -2,8 +2,10 @@
 .env
 
 # Personal
+sensitive_files/*
 util/token.json
 .DS_Store
 
 # Paystubs
 input/paystubs/*
+
