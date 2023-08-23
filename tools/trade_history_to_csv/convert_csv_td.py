@@ -1,24 +1,10 @@
 #!/bin/
 
 # Overview:
-#   Goals of this script:
-#       - convert the .csv of option trades from TD trade history to readable format
-#       - show data in some sort of QT format. Maybe display the data and allow user customization?
-#
+#   Every year, download a TD Ameritrade history of my trades. At any point,
+#   download the current year to add to the list. 
 #
 
-# Outline / Plan:
-#   - take in newest input file, OR argument file
-#   - ensure argument exists if applicable
-#   - filter through excel, and append to a new file
-#   - 
-
-# Concerns Important note:
-#   - This script is written with the assumption that only single legs are being
-#     performed. It's already getting complicated / tedious dealing with just this. 
-#     Not sure what it would look like trying to connect which options were performed
-#     together. Maybe utilizing the same date would be benefitial? but what if I 
-#     made two or more scalps on the same day with the same tickers? 
 
 # Libraries
 import csv
@@ -26,11 +12,13 @@ import os
 import pandas as pd
 import sys
 
+
 # TODO: Make a library for personal use
 # Global Variables
 global_error = "ERROR: "
 NaN = "NaN"
 global_commission = 0.65
+
 
 # This needs to corrolate with 
 def makeRow( pExpDate=NaN, pType=NaN, pAction=NaN, pTicker=NaN, pStrike=NaN, pAmount=NaN, pPrice=NaN, pCommission=NaN ): #, pDividend=NaN ):
@@ -49,6 +37,7 @@ def makeRow( pExpDate=NaN, pType=NaN, pAction=NaN, pTicker=NaN, pStrike=NaN, pAm
     # row.append( pDividend )
 
     return row
+
 
 # Converts 'MM DD YYYY' ( month day year ) to 'MM/DD/YYYY' 
 def dateFormatConversion( pDate ):
@@ -225,42 +214,46 @@ def filterDescriptionColumn( pColLen, pCell, pRow ):
 
     # Error if anything else
     else:
-        print( global_error + "Nothing found." + " " + pCell)
+        print( global_error + "Nothing found. Issue in this cell: '" + pCell + "'")
         f_row = []
 
     return f_row
 
 
-# Main:
-def main():
-    # TODO: find the newest file by default
-    # TODO: make this runable from anywhere
-
+def getInputPath():
     # Variables: CSV files
-    io_path = "../io/"
-    # csv_input_name = 'transactions.csv'
-
-    # TODO: 2021 has alot of specifics in it
+    io_path = "../../sensitive_files/"
     csv_input_name = 'transactions'
     csv_year = 2022
     csv_year_str = str( csv_year )
     csv_extra = ".csv"
     csv_input_name += "_" + csv_year_str + csv_extra
-    csv_input_path = io_path + 'input/' + csv_input_name # input/transactions_20xx.csv
-
-    csv_input_path = '../io/input/' + csv_input_name
+    csv_input_path = io_path + csv_input_name # input/transactions_20xx.csv
     csv_output_name = 'output.csv'
-    csv_output_path = io_path + 'output/' + csv_output_name
-
+    csv_output_path = io_path + 'output/output.csv'
 
     # Checking first argument of python script
-    if len( sys.argv ) == 2:
+    if len( sys.argv ) == 1:
+        print( "\nNo arguments used. By default, .csv input: " + csv_input_path + "\n" )
+
+    elif len( sys.argv ) == 2:
         if ".csv" not in sus.argv[1]:
             print( global_error + "first argument is not .csv" )
             return -1
         else:
             csv_input_path = sys.argv[1]
-    
+
+    else:
+        print( global_error + " issue with arguments." )
+        exit(1)
+
+    return csv_output_path, csv_input_path
+
+
+# Main:
+def main():
+
+    getInputPath()
 
     # Column Names
     col_price = 'PRICE'
@@ -279,7 +272,7 @@ def main():
     # print( df.columns )
     # print( df.shape )
     # print( df.dtypes )
-    
+
     # TODO: NOTE, if this changes, makeRow inside filterDescriptionColumn needs to too 
     header = [ 'DATE OF ACTION',
                'DATE OF EXPIRATION',
