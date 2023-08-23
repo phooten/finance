@@ -15,7 +15,7 @@ import sys
 
 # TODO: Make a library for personal use
 # Global Variables
-global_error = "ERROR: "
+global_error = "\nERROR: \n"
 NaN = "NaN"
 global_commission = 0.65
 
@@ -222,38 +222,65 @@ def filterDescriptionColumn( pColLen, pCell, pRow ):
 
 def getInputPath():
     # Variables: CSV files
-    io_path = "../../sensitive_files/"
-    csv_input_name = 'transactions'
+    input_path = "../../sensitive_files/"
     csv_year = 2022
     csv_year_str = str( csv_year )
-    csv_extra = ".csv"
-    csv_input_name += "_" + csv_year_str + csv_extra
-    csv_input_path = io_path + csv_input_name # input/transactions_20xx.csv
-    csv_output_name = 'output.csv'
-    csv_output_path = io_path + 'output/output.csv'
+    csv_input_name = "transactions_" + csv_year_str + ".csv"
+    csv_input_path = input_path + csv_input_name
+
 
     # Checking first argument of python script
     if len( sys.argv ) == 1:
-        print( "\nNo arguments used. By default, .csv input: " + csv_input_path + "\n" )
+        msgPrint( "No arguments used. Using default path: " + csv_input_path, "sys"  )
 
     elif len( sys.argv ) == 2:
         if ".csv" not in sus.argv[1]:
-            print( global_error + "first argument is not .csv" )
-            return -1
+            msgPrint( "first argument is not .csv", "error" )
+            exit(1)
+
         else:
             csv_input_path = sys.argv[1]
 
     else:
-        print( global_error + " issue with arguments." )
+        msgPrint( "Issue with arguments." )
         exit(1)
 
-    return csv_output_path, csv_input_path
+    msgPrint( "Input Path: " + csv_input_path, "sys" )
+
+    return csv_input_path
+
+
+def msgPrint( msg, choice ):
+    if choice == "error":
+        print( "\n" )
+        print( "--------------------" )
+        print( "ERROR:" )
+        print( "    " + msg )
+        print( "--------------------" )
+        print( "\n" )
+
+    elif choice == "sys":
+        print( "\n" )
+        print( msg )
+        print( "\n" )
+
+    else:
+        print( "\n" )
+        print( "Issue using '" + __name__ + "'." )
+        print( "Exiting." )
+        print( "\n" )
+        exit(1)
 
 
 # Main:
 def main():
 
-    getInputPath()
+    tmp = getInputPath()
+    print("return: " + tmp )
+    csv_output_name = 'output.csv'
+    csv_output_path =  'output/output.csv'
+
+    exit(1)
 
     # Column Names
     col_price = 'PRICE'
