@@ -11,7 +11,6 @@ import csv
 import os
 import pandas as pd
 import sys
-import inspect
 
 
 # TODO: Make a library for personal use
@@ -20,8 +19,6 @@ global_error = "\nERROR: \n"
 NaN = "NaN"
 global_commission = 0.65
 DEBUG = True
-
-
 
 # This needs to corrolate with 
 def makeRow( pExpDate=NaN, pType=NaN, pAction=NaN, pTicker=NaN, pStrike=NaN, pAmount=NaN, pPrice=NaN, pCommission=NaN ): #, pDividend=NaN ):
@@ -223,64 +220,65 @@ def filterDescriptionColumn( pColLen, pCell, pRow ):
     return f_row
 
 
-def checkInputCsv( input_path ):
-
-    # Checks the correct extension
-    extension = input_path[ len(input_path)-4: ]
-    if ".csv" != extension:
-        msgPrint( "File isn't .csv: '" + input_path + "'", "error", "TODO")
-        return False
-
-
-    # Check the file exists
-    if not os.path.isfile( input_path ):
-        msgPrint( "File doesn't exist: '" + input_path + "'", "error", "TODO" )
-        return False
+def getInputPath():
+    # Variables: CSV files
+    input_path = "../../sensitive_files/"
+    csv_year = 2022
+    csv_year_str = str( csv_year )
+    csv_input_name = "transactions_" + csv_year_str + ".csv"
+    csv_input_path = input_path + csv_input_name
 
 
-    # Check the file isn't empty
-    if not os.path.exists( input_path ):
-        msgPrint( "File is empty: '" + input_path + "'", "error", "TODO" )
-        return False
+    # Checking first argument of python script
+    if len( sys.argv ) == 1:
+        msgPrint( "No arguments used. Using default path: " + csv_input_path, "sys"  )
 
-    # Check the correct headers are there
-    # TODO: Finish this function
+    elif len( sys.argv ) == 2:
+        if ".csv" not in sus.argv[1]:
+            msgPrint( "first argument is not .csv", "error" )
+            exit(1)
 
-    return True;
+        else:
+            csv_input_path = sys.argv[1]
+
+    else:
+        msgPrint( "Issue with arguments." )
+        exit(1)
+
+    msgPrint( "Input Path: " + csv_input_path, "sys" )
+
+    return csv_input_path
 
 
-def msgPrint( msg, choice, func_name ):
+def msgPrint( msg, choice ):
     if choice == "error":
         print( "\n" )
         print( "--------------------" )
         print( "ERROR:" )
-        print( func_name + ": " + msg )
+        print( "    " + msg )
         print( "--------------------" )
+        print( "\n" )
 
     elif choice == "sys":
         print( "\n" )
-        print( func_name + ": " + msg )
+        print( msg )
+        print( "\n" )
 
     else:
         print( "\n" )
         print( "Issue using '" + __name__ + "'." )
         print( "Exiting." )
+        print( "\n" )
         exit(1)
 
 
 # Main:
 def main():
 
-    # Intial checks for the csv file
-    csv_input_path = '../../sensitive_files/transactions_2022.csv'
-    passed = checkInputCsv( csv_input_path )
-    if not passed:
-        msgPrint( "Exiting script.", sys, "TODO" )
-        exit(1)
-
-    exit(1)
-    # TODO: Before continuing, finish the 'checkInputCsv' function.
-    #       Then finish unit testing
+    # Gets the transaction input path
+    csv_input_path = getInputPath()
+    if DEBUG:
+        print(__name__ + ": csv_input_path: " + csv_input_path )
     csv_output_name = 'output.csv'
     csv_output_path =  'output/output.csv'
 
@@ -358,8 +356,6 @@ def main():
     except:
         print( "No files in this path: ", csv_output_path )
     new_csv.to_csv( csv_output_path, index=False )
-
-
 
 
 if __name__ == "__main__":
