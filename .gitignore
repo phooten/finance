@@ -1,11 +1,24 @@
 # Environment
 .env
 
+
+# Ignore vim files:
+*~
+*.swp
+*.swo
+
+
 # Personal
 sensitive_files/*
 util/token.json
 .DS_Store
 
+
 # Paystubs
 input/paystubs/*
+
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
 
