@@ -223,32 +223,79 @@ def filterDescriptionColumn( pColLen, pCell, pRow ):
     return f_row
 
 
-def checkInputCsv( input_path ):
+def initialCsvFileCheck( csv_path ):
 
-    # Checks the correct extension
-    extension = input_path[ len(input_path)-4: ]
+    # Checks the correct extension, which should only ever be .csv
+    extension = csv_path[ len(csv_path)-4: ]
     if ".csv" != extension:
-        msgPrint( "File isn't .csv: '" + input_path + "'", "error", "TODO")
+        msgPrint( "File isn't .csv: '" + csv_path + "'", "error", "TODO")
         return False
 
 
     # Check the file exists
-    if not os.path.isfile( input_path ):
-        msgPrint( "File doesn't exist: '" + input_path + "'", "error", "TODO" )
+    if not os.path.isfile( csv_path ):
+        msgPrint( "File doesn't exist: '" + csv_path + "'", "error", "TODO" )
         return False
 
 
     # Check the file isn't empty
-    if not os.path.exists( input_path ):
-        msgPrint( "File is empty: '" + input_path + "'", "error", "TODO" )
+    if not os.path.exists( csv_path ):
+        msgPrint( "File is empty: '" + csv_path + "'", "error", "TODO" )
         return False
 
-    # Check the correct headers are there
-    # TODO: Finish this function
-
-    return True;
+    return True
 
 
+def contentsCsvFileCheck( csv_path ):
+
+    # TD Ameritrade Column Names
+    td_headers = [  'DATE',
+                    'TRANSACTION ID',
+                    'DESCRIPTION',
+                    'QUANTITY',
+                    'SYMBOL',
+                    'PRICE',
+                    'COMMISSION',
+                    'AMOUNT',
+                    'REG FEE',
+                    'SHORT-TERM RDM FEE',
+                    'FUND REDEMPTION FEE',
+                    ' DEFERRED SALES CHARGE' ]
+
+
+    # Gets characteristics of CSV 
+    df = pd.read_csv( csv_path, sep=',' )
+    row_count, col_count = df.shape
+    column_names = list(df.columns)
+
+
+    # Checks the amount of columns in given Csv
+    if col_count != len( td_headers ):
+        msgPrint( "File has [" + str(col_count) + "] headers but expects [" + str( len( td_headers ) ) + "].", "error", "TODO" )
+        return False
+
+
+    # Checks the names of the headers in Csv
+    for name in column_names:
+        if name not in td_headers:
+            msgPrint( "Header [" + name + "] is not in td_headers:\n" + str(td_headers), "error", "TODO" )
+            return False
+
+    # print( df.columns )
+    # print( df.shape )
+    # print( df.dtypes )
+
+    return True
+
+
+'''
+Name:   msgPrint
+Args:   msg:        [ string ] descriptive message to print out to user
+        choice:     [ string ] type of message being sent
+        func_name:  [ funct. ] function to get the function name
+Return: void
+Description:    Prints out messages to the user
+'''
 def msgPrint( msg, choice, func_name ):
     if choice == "error":
         print( "\n" )
@@ -268,40 +315,28 @@ def msgPrint( msg, choice, func_name ):
         exit(1)
 
 
-# Main:
 def main():
 
     # Intial checks for the csv file
     csv_input_path = '../../sensitive_files/transactions_2022.csv'
-    passed = checkInputCsv( csv_input_path )
+    passed = initialCsvFileCheck( csv_input_path )
     if not passed:
         msgPrint( "Exiting script.", sys, "TODO" )
         exit(1)
 
-    exit(1)
-    # TODO: Before continuing, finish the 'checkInputCsv' function.
+    # TODO: Before continuing, finish the 'initialCsvFileCheck' function.
     #       Then finish unit testing
     csv_output_name = 'output.csv'
     csv_output_path =  'output/output.csv'
 
 
-    # TD Ameritrade Column Names
-    col_price = 'PRICE'
-    col_desc = 'DESCRIPTION'
-    col_date = 'DATE'
-    col_qaun = 'QUANTITY'
-    col_tick = 'SYMBOL'
-    col_num = 'NUMBER'
-    col_div = 'DIVIDEND'
-    col_id = 'TRANSACTION ID'
+    # TODO: Before doing anything else:
+    #       1. Decide on a proper python function header
+    #       2. Make sure unit tests are structed correctly
+    #       3. Finish Unit test for this funciton
+    contentsCsvFileCheck( csv_input_path )
+    exit( 1 )
 
-
-    # Gets characteristics of CSV 
-    df = pd.read_csv( csv_input_path, sep=',' )
-    len_row, len_col = df.shape
-    # print( df.columns )
-    # print( df.shape )
-    # print( df.dtypes )
 
     # Header names of new CSV file
     # TODO: NOTE, if this changes, makeRow inside filterDescriptionColumn needs to too 
@@ -322,6 +357,7 @@ def main():
     extra_columns = len( header ) - base_coumns
     new_csv = pd.DataFrame( columns=header )
 
+    exit( 1 )
 
     # Filters information from the 'descripton' column in every row
     df[ col_num ] = 0
