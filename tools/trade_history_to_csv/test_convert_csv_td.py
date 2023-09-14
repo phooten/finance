@@ -9,7 +9,7 @@ class TestInputCsvName( unittest.TestCase ):
         self.assertEqual( convert_csv_td.initialCsvFileCheck("unittest/transactions_2022csv"), False )
         self.assertEqual( convert_csv_td.initialCsvFileCheck("unittest/transactions_2022.csvs"), False )
         self.assertEqual( convert_csv_td.initialCsvFileCheck("unittest/transactions.csv_2022"), False )
-        self.assertEqual( convert_csv_td.initialCsvFileCheck("unittest/transactions_2022.csv"), True )
+        self.assertEqual( convert_csv_td.initialCsvFileCheck("unittest/correct_transactions.csv"), True )
 
         # This should be true, but issue comes up in the next test case because it doesn't exist
         #self.assertEqual( convert_csv_td.initialCsvFileCheck("transactions_2022.csv")
@@ -18,7 +18,7 @@ class TestInputCsvName( unittest.TestCase ):
         # File doesn't exist
         self.assertEqual( convert_csv_td.initialCsvFileCheck("unittest/does_not_exist.csv" ), False )
         self.assertEqual( convert_csv_td.initialCsvFileCheck("unittest/blank.csv"), False )
-        self.assertEqual( convert_csv_td.initialCsvFileCheck("unittest/transactions_2022.csv"), True )
+        self.assertEqual( convert_csv_td.initialCsvFileCheck("unittest/correct_transactions.csv"), True )
 
 # TODO: Figure out how to structure unit code
 class TestCsvContents( unittest.TestCase ):
