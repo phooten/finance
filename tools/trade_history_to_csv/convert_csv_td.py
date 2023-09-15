@@ -239,7 +239,7 @@ def initialCsvFileCheck( csv_path ):
 
 
     # Check the file isn't empty
-    if not os.path.exists( csv_path ):
+    if os.stat( csv_path ).st_size == 0:
         msgPrint( "File is empty: '" + csv_path + "'", "error", "TODO" )
         return False
 
@@ -275,7 +275,7 @@ def contentsCsvFileCheck( csv_path ):
     column_names = list(df.columns)
 
     # Checks the amount of rows in the given csv
-    row_minimum = 3
+    row_minimum = 2             # Header doesn't count as a row
     if row_count < row_minimum:
         msgPrint( "File has [" + str(row_count) + "] rows. Need to have at least [" + str(row_minimum) + "].", "error", "TODO" )
         return False
@@ -297,6 +297,15 @@ def contentsCsvFileCheck( csv_path ):
 
     return True
 
+def transferCsvContents( input_csv, output_csv ):
+    """
+    Description:    
+    Arguments:      
+    Returns:        
+
+    """
+
+    return True
 
 def msgPrint( msg, choice, func_name ):
     """
@@ -330,25 +339,29 @@ def msgPrint( msg, choice, func_name ):
 def main():
 
     # Intial checks for the csv file
-    csv_input_path = '../../sensitive_files/transactions_2022.csv'
+    csv_input_path = 'unittest/blank.csv'
+#    csv_input_path = '../../sensitive_files/transactions_2022.csv'
     passed = initialCsvFileCheck( csv_input_path )
     if not passed:
         msgPrint( "Exiting script.", sys, "TODO" )
         exit(1)
 
-    # TODO: Before continuing, finish the 'initialCsvFileCheck' function.
-    #       Then finish unit testing
-    csv_output_name = 'output.csv'
-    csv_output_path =  'output/output.csv'
 
 
     # TODO: Before doing anything else:
-    #       1. Decide on a proper python function header
     #       2. Make sure unit tests are structed correctly
-    #       3. Finish Unit test for this funciton
-    contentsCsvFileCheck( csv_input_path )
-    exit( 1 )
+    passed = contentsCsvFileCheck( csv_input_path )
+    if not passed:
+        msgPrint( "Exiting script.", sys, "TODO" )
+        exit(1)
 
+    csv_output_path =  'output/output.csv'
+    passed = transferCsvContents( csv_input_path, csv_output_path )
+    if not passed:
+        msgPrint( "Exiting script.", sys, "TODO" )
+        exit(1)
+
+    exit(1)
 
     # Header names of new CSV file
     # TODO: NOTE, if this changes, makeRow inside filterDescriptionColumn needs to too 
