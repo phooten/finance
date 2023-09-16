@@ -24,6 +24,7 @@ class TestCsvContents( unittest.TestCase ):
     def test_contents_of_csv_check( self ):
         # Row checks
         self.assertEqual( helper_functions.contentsCsvFileCheck("test/csv_cases/rows_none.csv"), False )
+        self.assertEqual( helper_functions.contentsCsvFileCheck("test/csv_cases/rows_no_eof.csv"), False )
         self.assertEqual( helper_functions.contentsCsvFileCheck("test/csv_cases/rows_one.csv"), True )
         # TODO: case for too many rows
 

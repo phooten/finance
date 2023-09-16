@@ -68,13 +68,21 @@ def contentsCsvFileCheck( csv_path ):
         msg.error( "File has [" + str(col_count) + "] headers but expects [" + str( len( csv_filter.td_headers ) ) + "].", "TODO" )
         return False
 
-    # Checks the names of the headers in Csv
+    # Checks the names of the headers in csv
     for name in column_names:
         if name not in csv_filter.td_headers:
             msg.error( "Header [" + name + "] is not in td_headers:\n" + str(csv_filter.td_headers), "TODO" )
             return False
 
+    # All csv's seen end in the same message
+    last_cell = df.loc[row_count - 1][ csv_filter.td_headers[0] ] # Gets the last cell of the first column
+    expected_eof = "***END OF FILE***"
+    if last_cell != expected_eof:
+        msg.error( "Last row of '" + csv_path + "' is expected to be '" + expected_eof + "' but is '" + last_cell + "'", "TODO")
+        return False
+
     return True
+
 
 def transferCsvContents( input_csv, output_csv ):
     """
@@ -92,24 +100,12 @@ def transferCsvContents( input_csv, output_csv ):
     # Creates base for new datafram
     new_csv = pd.DataFrame( columns=csv_filter.output_headers )
 
-    # TODO: before doing anything else:
-    #       - move this check to the proper location:
-    #       - clean this up
-    #       - write unit test for it
-    # NOTE: Last row is expected to be *EOF*
-    last_cell = df.loc[row_count - 1][ csv_filter.td_headers[0] ] # Gets the last cell of the first column
-    should_be = "***END OF FILE***"
-    if str(last_cell) != should_be:
-        msg.error( "Last row is not \"" + should_be+ "\": '" + str(last_cell) + "'", "TODO")
-        return False
-
-
-
     # Filters information row by row of input csv
-    for row in range( row_count - 2 ):
+    col_desc = csv_filter.td_headers[ 2 ]
+    for row in range( row_count ):
         # TODO: after doing the above todo, start filtering out by row
         print( str(row) )
-
+        output_row = csv_filter.filterDescriptionColumn( col_desc, df.loc[ row ] )
 
     # Outputs the dataframe into a csv
     new_csv.to_csv( output_csv, index=False )
