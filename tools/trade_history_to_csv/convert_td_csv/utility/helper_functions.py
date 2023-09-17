@@ -101,11 +101,8 @@ def transferCsvContents( input_csv, output_csv ):
     new_csv = pd.DataFrame( columns=csv_filter.output_headers )
 
     # Filters information row by row of input csv
-    col_desc = csv_filter.td_headers[ 2 ]
-    for row in range( row_count ):
-        # TODO: after doing the above todo, start filtering out by row
-        print( str(row) )
-        output_row = csv_filter.filterDescriptionColumn( col_desc, df.loc[ row ] )
+    for row_curr in range( row_count ):
+        output_row = csv_filter.filterDescriptionColumn( df.loc[ row_curr ] )
 
     # Outputs the dataframe into a csv
     new_csv.to_csv( output_csv, index=False )

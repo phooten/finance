@@ -8,36 +8,39 @@ from messages import class_messages
 msg = class_messages.messages()
 
 class csvFilter:
-    # TD Ameritrade Column Names
-    td_headers = [  'DATE',
-                    'TRANSACTION ID',
-                    'DESCRIPTION',
-                    'QUANTITY',
-                    'SYMBOL',
-                    'PRICE',
-                    'COMMISSION',
-                    'AMOUNT',
-                    'REG FEE',
-                    'SHORT-TERM RDM FEE',
-                    'FUND REDEMPTION FEE',
-                    ' DEFERRED SALES CHARGE' ]
+   def __init__(self, x, y):
 
-    # Headers for the new output csv                  EXAMPLE FORMAT    IF APPLICABLE       DESCRITPION
-    output_headers = [  'DATE OF ACTION',           # DD-MM-YYYY
-                        'DATE OF EXPIRATION',       # DD-MM-YYYY        ( Options / NA )
-                        'TYPE',                     # Option / Stock / Other
-                        'ACTION',                   # Buy / Sell / Assignment / Expiration / Other
-                        'TICKER',                   # ZZZZ
-                        'STRIKE PRICE',             # XX.XX             ( Options / NA )
-                        'AMOUNT',                   # ##                                    Number of ( Shares / Options / NA )
-                        'COST',
-                        'TOTAL COMMISION',          # Commision ( 0.65 cents * Num of Trades )
-                        'DIVIDEND',                 # ( True / False / NA ) ( Stocks )
-                        'ORIGINAL ROW',
-                        'ASSIGNMENT'                # ( True / False / NA ) ( Options )
-                        ]
+        # TD Ameritrade Column Names
+        self.td_headers = [
+                'DATE',
+                'TRANSACTION ID',
+                'DESCRIPTION',
+                'QUANTITY',
+                'SYMBOL',
+                'PRICE',
+                'COMMISSION',
+                'AMOUNT',
+                'REG FEE',
+                'SHORT-TERM RDM FEE',
+                'FUND REDEMPTION FEE',
+                ' DEFERRED SALES CHARGE' ]
 
-    output_row = []
+        # Headers for the new output csv
+        self.output_headers = [
+                'DATE OF ACTION',
+                'DATE OF EXPIRATION',
+                'TYPE',
+                'ACTION',
+                'TICKER',
+                'STRIKE PRICE',
+                'AMOUNT',
+                'COST',
+                'TOTAL COMMISION',
+                'DIVIDEND',
+                'ORIGINAL ROW',
+                'ASSIGNMENT' ]
+
+        self.output_row = []
 
 
     # public
@@ -65,16 +68,20 @@ class csvFilter:
 
         return row
 
-    def filterDescriptionColumn( self, pColDescription, pRow ):
+    def filterDescriptionColumn( self, pRow ):
         """
         Description:    
         Arguments:      
         Returns:        
         """
-        # TODO: FINISH This function
-        # print( "description: " + pColDescription + "    row: " + str( pRow ) )
 
-        return output_row
+        col_desc = self.td_headers[ 2 ]
+        print( "Target Cell: '" + str( pRow[ col_desc ] ) + "'" )
+
+        filterForOptions()
+
+
+        return self.output_row
 
 
     def dateFormatConversion( self, pDate ):
@@ -118,7 +125,8 @@ class csvFilter:
         elif month == 'Dec':
             date = '12'
         else:
-            print( global_error + "date_list[0] not expected: " + month)
+            msg.error( "date_list[0] not expected: " + month)
+            msg.quit_script()
 
         # Formats days with leading 0
         if len(day) < 2:
@@ -130,3 +138,20 @@ class csvFilter:
 
         return date
 
+
+    def filterForOptions():
+        """
+        Description:    Filters the following from the description:
+                            *   Puts:   Buy / Sell / Assigned / Expired
+                            *   Calls:  Buy / Sell / Assigned / Expired
+        Arguments:      
+        Returns:        
+        """
+
+        return
+
+    def filterForStocks():
+        return
+
+    def filterForOther():
+        return
