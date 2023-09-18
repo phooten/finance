@@ -48,7 +48,7 @@ def contentsCsvFileCheck( csv_path ):
     """
     Description:    Checks the input CSV for basic contents to make sure it can be parsed. Includes header contents,
                     counts for columns and count for rows.
-    Arguments:      String - Path to a a CSV to be parsed
+    Arguments:      csv_path [ string ] - Path to a a CSV to be parsed
     Returns:        Boolean - True for success, False for failure
     """
 
@@ -64,18 +64,18 @@ def contentsCsvFileCheck( csv_path ):
         return False
 
     # Checks the amount of columns in given csv
-    if col_count != len( csv_filter.td_headers ):
-        msg.error( "File has [" + str(col_count) + "] headers but expects [" + str( len( csv_filter.td_headers ) ) + "].", "TODO" )
+    if col_count != len( csv_filter.mTdHeaders ):
+        msg.error( "File has [" + str(col_count) + "] headers but expects [" + str( len( csv_filter.mTdHeaders ) ) + "].", "TODO" )
         return False
 
     # Checks the names of the headers in csv
     for name in column_names:
-        if name not in csv_filter.td_headers:
-            msg.error( "Header [" + name + "] is not in td_headers:\n" + str(csv_filter.td_headers), "TODO" )
+        if name not in csv_filter.mTdHeaders:
+            msg.error( "Header [" + name + "] is not in mTdHeaders:\n" + str(csv_filter.mTdHeaders), "TODO" )
             return False
 
     # All csv's seen end in the same message
-    last_cell = df.loc[row_count - 1][ csv_filter.td_headers[0] ] # Gets the last cell of the first column
+    last_cell = df.loc[row_count - 1][ csv_filter.mTdHeaders[0] ] # Gets the last cell of the first column
     expected_eof = "***END OF FILE***"
     if last_cell != expected_eof:
         msg.error( "Last row of '" + csv_path + "' is expected to be '" + expected_eof + "' but is '" + last_cell + "'", "TODO")
@@ -98,7 +98,7 @@ def transferCsvContents( input_csv, output_csv ):
     column_names = list(df.columns)
 
     # Creates base for new datafram
-    new_csv = pd.DataFrame( columns=csv_filter.output_headers )
+    new_csv = pd.DataFrame( columns=csv_filter.mOutputHeaders )
 
     # Filters information row by row of input csv
     for row_curr in range( row_count ):

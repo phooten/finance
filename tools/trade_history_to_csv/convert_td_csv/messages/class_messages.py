@@ -38,6 +38,6 @@ class messages:
 
         return
 
-    def quit_script():
+    def quit_script( self ):
         print( "Exiting script.")
         exit(1)

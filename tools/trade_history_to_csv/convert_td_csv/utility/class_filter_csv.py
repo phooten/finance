@@ -8,10 +8,14 @@ from messages import class_messages
 msg = class_messages.messages()
 
 class csvFilter:
-   def __init__(self, x, y):
+
+
+    def __init__( self ):
+
+        self.mNa = "NA"
 
         # TD Ameritrade Column Names
-        self.td_headers = [
+        self.mTdHeaders = [
                 'DATE',
                 'TRANSACTION ID',
                 'DESCRIPTION',
@@ -26,47 +30,65 @@ class csvFilter:
                 ' DEFERRED SALES CHARGE' ]
 
         # Headers for the new output csv
-        self.output_headers = [
-                'DATE OF ACTION',
-                'DATE OF EXPIRATION',
-                'TYPE',
-                'ACTION',
-                'TICKER',
-                'STRIKE PRICE',
-                'AMOUNT',
-                'COST',
-                'TOTAL COMMISION',
-                'DIVIDEND',
-                'ORIGINAL ROW',
-                'ASSIGNMENT' ]
+        self.mOutputHeaders = [
+                 'DATE OF ACTION',
+                 'TICKER',
+                 'TYPE',     # Call, Put, Stock, Other
+                 'ACTION',   # Buy, Sell, Assigned, Exercised, Dividend
+                 'QUANTITY',
+                 'COST',
+                 'COMMISSION',
+                 # Option specific
+                 'DATE OF EXPIRATION',
+                 'STRIKE PRICE' ]
 
-        self.output_row = []
+        self.mInputRow = []
+        self.mOutputRow = []
+        for curr in self.mOutputHeaders:
+            self.mOutputRow.append( self.mNa )
 
+        # Sets each value to default, then is put into the output row
+        self.mActionDate = self.mNa
+        self.mTicker = self.mNa
+        self.mType = self.mNa
+        self.mAction = self.mNa
+        self.mQuantity = self.mNa
+        self.mCost = self.mNa
+        self.mCommission = self.mNa
+        # Option specific
+        self.mExpDate = self.mNa
+        self.mStrike = self.mNa
 
-    # public
-    def makeRow( self, pExpDate="NAN", pType="NAN", pAction="NAN", pTicker="NAN", pStrike="NAN", pAmount="NAN", pPrice="NAN", pCommission="NAN" ): #, pDividend="NAN" ):
+        # Sets output row to default values
+        self.setOutputRow()
+
+        # Checks the row was set correctly
+        if len( self.mOutputRow ) is not len( self.mOutputHeaders ):
+            msg.error( "DEVELOPER: Issue using csvFilter::__init__(). OutputRow cell count is not equal to OutputHeaders cell count", "TODO")
+            msg.quit_script()
+
+        return
+
+    def setOutputRow( self ):
         """
-        Description:    
-        Arguments:      
-        Returns:        
+        Description:    Sets the output row to cetain class value
+        Arguments:      None.
+        Returns:        Bool - True for Success, False for Failure
         """
 
         # Makes List
-        output_row.append( pExpDate )
-        output_row.append( pType )
-        output_row.append( pAction )
-        output_row.append( pTicker )
-        output_row.append( pStrike )
-        output_row.append( pAmount )
-        output_row.append( pPrice )
-        output_row.append( pCommission )
-        # row.append( pDividend )
+        self.mOutputRow[ 0 ] = self.mActionDate
+        self.mOutputRow[ 1 ] = self.mTicker
+        self.mOutputRow[ 2 ] = self.mType
+        self.mOutputRow[ 3 ] = self.mAction
+        self.mOutputRow[ 4 ] = self.mQuantity
+        self.mOutputRow[ 5 ] = self.mCost
+        self.mOutputRow[ 6 ] = self.mCommission
+        # Option Specific
+        self.mOutputRow[ 7 ] = self.mExpDate
+        self.mOutputRow[ 8 ] = self.mStrike
 
-        if len( output_row ) is not len( output_headers ):
-            msg.error( "DEVELOPER: Issue using csvFilter::makeRow()", "TODO")
-            msg.quit_script()
-
-        return row
+        return True
 
     def filterDescriptionColumn( self, pRow ):
         """
@@ -75,20 +97,49 @@ class csvFilter:
         Returns:        
         """
 
-        col_desc = self.td_headers[ 2 ]
+        # Sets input row for the object to use
+        self.mInputRow = pRow
+
+        # Setting Dates
+        passed = self.setDateOfAction()
+        if not passed:
+            msg.error( __name__ + ": Couldn't set 'Date of Action.'", "TODO" )
+            return False
+
+        # Filters out description cell
+        col_desc = self.mTdHeaders[ 2 ]
         print( "Target Cell: '" + str( pRow[ col_desc ] ) + "'" )
 
-        filterForOptions()
 
+        return self.mOutputRow
 
-        return self.output_row
-
-
-    def dateFormatConversion( self, pDate ):
+    def setDateOfAction( self, date="no_input" ):
         """
-        Description:    
-        Arguments:      
-        Returns:        
+        Description:    Finds the date of action in the input row, then sets the member
+        Arguments:      date [ string ]:    Optional. Only used if user wants to override this date.
+        Returns:        bool:   True for success, False for failure
+        """
+
+        # User can override this value
+        if date == "no_input":
+            mActionDate = date
+            return True
+
+        # Gets the row date and converts it to the correct format
+        passed, self.mActionDate = self.formatData( mInputRow[ 0 ] )
+        if not passed:
+            msg.error( __name__ + ": Couldn't set 'Date of Action.'", "TODO" )
+            return False
+
+        return True
+
+
+    def formatDate( self, pDate ):
+        """
+        Description:    Takes an input date and formats it to an expected form
+        Arguments:      pDate [ string ]:   Date to be formatted
+        Returns:        bool:   True for success, False for failure
+                        string: The input date but in the correct format
         """
 
         # Variables
@@ -101,32 +152,32 @@ class csvFilter:
         # TODO: switch statement isn't supported in python?
         # Assign number for month
         if month == 'Jan':
-            date = '01'
+            new_date = '01'
         elif month == 'Feb':
-            date = '02'
+            new_date = '02'
         elif month == 'Mar':
-            date = '03'
+            new_date = '03'
         elif month == 'Apr':
-            date = '04'
+            new_date = '04'
         elif month == 'May':
-            date = '05'
+            new_date = '05'
         elif month == 'Jun':
-            date = '06'
+            new_date = '06'
         elif month == 'Jul':
-            date = '07'
+            new_date = '07'
         elif month == 'Aug':
-            date = '08'
+            new_date = '08'
         elif month == 'Sep':
-            date = '09'
+            new_date = '09'
         elif month == 'Oct':
-            date = '10'
+            new_date = '10'
         elif month == 'Nov':
-            date = '11'
-        elif month == 'Dec':
-            date = '12'
+            new_date = '11'
+        elif new_month == 'Dec':
+            new_date = '12'
         else:
             msg.error( "date_list[0] not expected: " + month)
-            msg.quit_script()
+            return False, new_date
 
         # Formats days with leading 0
         if len(day) < 2:
@@ -134,9 +185,9 @@ class csvFilter:
             day = str(day).zfill(2)
 
         # Finalize date format
-        date += '/' + day + '/' + year
+        new_date += '/' + day + '/' + year
 
-        return date
+        return True, new_date
 
 
     def filterForOptions():
