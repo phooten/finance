@@ -1,6 +1,6 @@
 
 # Modules
-#   NA
+import re
 
 # Project Modules
 from messages import class_messages
@@ -106,10 +106,24 @@ class csvFilter:
             msg.error( __name__ + ": Couldn't set 'Date of Action.'", "TODO" )
             return False
 
+        # TODO: Write unit test code of all this before anything else
+        #   -   Set the experation date
+
         # Filters out description cell
         col_desc = self.mTdHeaders[ 2 ]
         print( "Target Cell: '" + str( pRow[ col_desc ] ) + "'" )
 
+
+        # Sets the output row
+        self.setOutputRow()
+        if not passed:
+            msg.error( __name__ + ": Couldn't set 'Output Row.'", "TODO" )
+            return False
+
+        # Checks the output row
+        for curr in range( len( self.mOutputRow ) ):
+            if self.mOutputRow[ curr ] == self.mNa:
+                msg.system( "NOTE: '" + self.mOutputHeaders[ curr ] + "' isn't set. Current value is: " + self.mOutputRow[ curr ], "TODO" )
 
         return self.mOutputRow
 
@@ -121,12 +135,12 @@ class csvFilter:
         """
 
         # User can override this value
-        if date == "no_input":
-            mActionDate = date
+        if date != "no_input":
+            self.mActionDate = date
             return True
 
         # Gets the row date and converts it to the correct format
-        passed, self.mActionDate = self.formatData( mInputRow[ 0 ] )
+        passed, self.mActionDate = self.formatDate( self.mInputRow[ 0 ] )
         if not passed:
             msg.error( __name__ + ": Couldn't set 'Date of Action.'", "TODO" )
             return False
@@ -142,8 +156,11 @@ class csvFilter:
                         string: The input date but in the correct format
         """
 
-        # Variables
+        # Checks format is ##/##/##
         date_list = pDate.split()
+        if len( date_list ) == 1 and re.match( r"[0-9][0-9]/[0-9][0-9]/[0-9][0-9]", pDate ):
+            return True, pDate
+
         month = date_list[0]
         day = date_list[1]
         year = date_list[2]
@@ -151,6 +168,7 @@ class csvFilter:
         # TODO: Don't like the hard coding
         # TODO: switch statement isn't supported in python?
         # Assign number for month
+        new_date = 'TMP'
         if month == 'Jan':
             new_date = '01'
         elif month == 'Feb':
@@ -173,10 +191,10 @@ class csvFilter:
             new_date = '10'
         elif month == 'Nov':
             new_date = '11'
-        elif new_month == 'Dec':
+        elif month == 'Dec':
             new_date = '12'
         else:
-            msg.error( "date_list[0] not expected: " + month)
+            msg.error( "date_list[0] not expected: " + month, "TODO" )
             return False, new_date
 
         # Formats days with leading 0

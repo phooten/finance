@@ -26,7 +26,7 @@ def main():
 
 
     # Intial checks for the csv file
-    csv_input_path = '../../../sensitive_files/transactions_2022.csv'
+    csv_input_path = '../../../sensitive_files/test_transactions_2022.csv'
     passed = helper_functions.initialCsvFileCheck( csv_input_path )
     if not passed:
         msg.quit_script()
@@ -37,7 +37,7 @@ def main():
         msg.quit_script()
 
     # Transfers input csv data into an output csv
-    csv_output_path =  '../../../sensitive_files/output.csv'
+    csv_output_path =  '../../../sensitive_files/test_output.csv'
     passed = helper_functions.transferCsvContents( csv_input_path, csv_output_path )
     if not passed:
         msg.quit_script()
