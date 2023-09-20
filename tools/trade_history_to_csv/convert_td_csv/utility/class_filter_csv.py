@@ -157,9 +157,15 @@ class csvFilter:
         """
 
         # Checks format is ##/##/##
-        date_list = pDate.split()
-        if len( date_list ) == 1 and re.match( r"[0-9][0-9]/[0-9][0-9]/[0-9][0-9]", pDate ):
+        # Regex: '[0-9]' is any digit. '$' signifies end of the line. '^' signifies start of the line.
+        if re.match( r"^[0-9][0-9]/[0-9][0-9]/[0-9][0-9][0-9][0-9]$", pDate ):
             return True, pDate
+
+        # If not in '##/##/####' but has two '/', fail the check
+        date_list = pDate.split()
+        if len( date_list ) != 3:
+            msg.error( "Format of input date should be '##/##/####' or 'Abc DD YYYY'", "TODO" )
+            return False, pDate
 
         month = date_list[0]
         day = date_list[1]
