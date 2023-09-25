@@ -12,7 +12,22 @@ class csvFilter:
 
     def __init__( self ):
 
+        self.mPlaceHolder = "PLACE-HOLDER"
         self.mNa = "NA"
+
+        self.mMonths = [
+                ( 'Jan', 1 ),
+                ( 'Feb', 2 ),
+                ( 'Mar', 3 ),
+                ( 'Apr', 4 ),
+                ( 'May', 5 ),
+                ( 'Jun', 6 ),
+                ( 'Jul', 7 ),
+                ( 'Aug', 8 ),
+                ( 'Sep', 9 ),
+                ( 'Oct', 10 ),
+                ( 'Nov', 11 ),
+                ( 'Dec', 12 ) ]
 
         # TD Ameritrade Column Names
         self.mTdHeaders = [
@@ -42,22 +57,25 @@ class csvFilter:
                  'DATE OF EXPIRATION',
                  'STRIKE PRICE' ]
 
-        self.mInputRow = []
+        self.mOptionTypes = [ "Call", "Put" ]
+        self.mStockTypes = [ "", "" ]
+
+        self._mInputRow = []
         self.mOutputRow = []
         for curr in self.mOutputHeaders:
-            self.mOutputRow.append( self.mNa )
+            self.mOutputRow.append( self.mPlaceHolder )
 
         # Sets each value to default, then is put into the output row
-        self._mActionDate = self.mNa
-        self._mTicker = self.mNa
-        self._mType = self.mNa
-        self._mAction = self.mNa
-        self._mQuantity = self.mNa
-        self._mCost = self.mNa
-        self._mCommission = self.mNa
+        self._mActionDate = self.mPlaceHolder
+        self._mTicker = self.mPlaceHolder
+        self._mType = self.mPlaceHolder
+        self._mAction = self.mPlaceHolder
+        self._mQuantity = self.mPlaceHolder
+        self._mCost = self.mPlaceHolder
+        self._mCommission = self.mPlaceHolder
         # Option specific
-        self._mExpDate = self.mNa
-        self._mStrike = self.mNa
+        self._mExpDate = self.mPlaceHolder
+        self._mStrike = self.mPlaceHolder
 
         # Sets output row to default values
         self.setOutputRow()
@@ -91,7 +109,7 @@ class csvFilter:
 
         return True
 
-    def filterDescriptionColumn( self, pRow ):
+    def filterTdAmeritradeDetails( self, pRow ):
         """
         Description:    
         Arguments:      
@@ -101,20 +119,43 @@ class csvFilter:
         # Sets input row for the object to use
         self.setInputRow( pRow )
 
-        # Setting Dates
+        # Sets the Quantity of the transaction
+        passed = self.findQuantity()
+        if not passed:
+            msg.error( __name__ + ": Couldn't set 'Quantity.'", "TODO" )
+            return False
+
+        # Sets the date of the Transaction
         passed = self.findDateOfAction()
         if not passed:
             msg.error( __name__ + ": Couldn't set 'Date of Action.'", "TODO" )
             return False
 
-        passed = self.setDateOfExpiration()
+        # Sets the type of transaction
+        passed = self.findType()
         if not passed:
-            msg.error( __name__ + ": Couldn't set 'Date of Expiration.'", "TODO" )
+            msg.error( __name__ + ": Couldn't set 'Type'", "TODO" )
             return False
 
-        # Filters out description cell
-        col_desc = self.mTdHeaders[ 2 ]
-        print( "Target Cell: '" + str( pRow[ col_desc ] ) + "'" )
+        # Makes sure the type is set. After this point, filters depend on this.
+        if self.getType() == self.mPlaceHolder:
+            msg.error( __name__ + ": Cell type needs to be set before proceeding past this point.", "TODO" )
+            return False
+
+        # Sets the Action of the transaction
+        passed = self.findAction()
+        if not passed:
+            msg.error( __name__ + ": Couldn't set 'Action'", "TODO" )
+            return False
+
+        # Only finds Expiration date if an option
+        if self.getType() in self.mOptionTypes:
+            passed = self.findDateOfExpiration()
+            if not passed:
+                msg.error( __name__ + ": Couldn't set 'Date of Expiration.'", "TODO" )
+                return False
+        else:
+            self.setExpDate( self.mNa )
 
         # Sets the output row
         self.setOutputRow()
@@ -123,13 +164,126 @@ class csvFilter:
             return False
 
         # Checks the output row
-        for curr in range( len( self.mOutputRow ) ):
-            if self.mOutputRow[ curr ] == self.mNa:
-                msg.system( "NOTE: '" + self.mOutputHeaders[ curr ] + "' isn't set. Current value is: " + self.mOutputRow[ curr ], "TODO" )
+        # for curr in range( len( self.mOutputRow ) ):
+        #     if self.mOutputRow[ curr ] == self.mPlaceHolder:
+        #         msg.system( "NOTE: '" + self.mOutputHeaders[ curr ] + "' isn't set. Current value is: " + self.mOutputRow[ curr ], "TODO" )
 
         return self.mOutputRow
 
 
+    def findType( self ):
+        # TODO: Write Unit test for this function
+        """
+        Description:    
+        Arguments:      
+        Returns:        bool:   True for success, False for failure
+        """
+
+        passed, description_cell = self.getDescriptionCell()
+        if not passed:
+            msg.Error( "Couldn't find a description cell in the input.", "TODO" )
+            return False
+
+        for curr in self.mOptionTypes:
+            if curr in description_cell:
+                self.setType( curr )
+                return True
+
+        # TODO: Figure out how this is associated with call / put, and don't hard code it
+        if "OPTION" in description_cell:
+            self.setType( "Option" )
+            return True
+
+
+        other_types = [ "FREE BALANCE INTEREST ADJUSTMENT",
+                        "CLIENT REQUESTED ELECTRONIC FUNDING RECEIPT",
+                        "MARGIN INTEREST ADJUSTMENT",
+                        "MANDATORY - EXCHANGE"
+                        ]
+        for curr in other_types:
+            if curr in description_cell:
+                self.setType( "Other" )
+                return True
+
+        self.setType( "Stock" )
+        return True
+
+
+    def findAction( self ):
+        # TODO: Write Unit test for this function
+        """
+        Description:    
+        Arguments:      
+        Returns:        bool:   True for success, False for failure
+        """
+
+        passed, description_cell = self.getDescriptionCell()
+        if not passed:
+            msg.Error( "Couldn't find a description cell in the input.", "TODO" )
+            return False
+
+        # Capitalization matters
+        action_types = [
+                    "ASSIGNMENT",
+                    "EXPIRATION",
+                    "Bought",
+                    "Sold" ]
+        for curr in action_types:
+            if curr in description_cell:
+                self.setAction( curr.lower().capitalize() )
+                return True
+
+        # TODO: Don't hard code this. Fix this in the findType() too.
+        if "CLIENT REQUESTED ELECTRONIC FUNDING RECEIPT" in description_cell:
+            self.setAction( "Fund Transfer" )
+            return True
+        elif "MARGIN INTEREST ADJUSTMENT" in description_cell:
+            self.setAction( "Interest Adjustment: Margin" )
+            return True
+        elif "FREE BALANCE INTEREST ADJUSTMENT" in description_cell:
+            self.setAction( "Interest Adjustment: Free Balance" )
+            return True
+        
+
+        # TODO: Don't hard code this 'other' portion. Fix it in the type too.
+        if self.getType() == "Other":
+            self.setAction( self.mNa )
+            return True
+
+        msg.error( "Couldn't find action '" + str( action_types ) + "' in description_cell '" + description_cell + "'.", "TODO" )
+        return False
+
+
+    def findQuantity( self ):
+        # TODO: Write unit test for this function
+        """
+        Description:    
+        Arguments:      
+        Returns:        bool:   True for success, False for failure
+        """
+
+        # Gets the row date and converts it to the correct format
+        # TODO: Get rid of the hard coded value
+        quantity = self._mInputRow[ 3 ]
+        if quantity == "":
+            self.setQuantity( self.mNa )
+            return True
+
+        try:
+            quantity = int( quantity )
+        except ValueError:
+            msg.error( __name__ + ": Input cell for 'Quantity' is not a number and is not blank: '" + str( quantity ) + "'", "TODO" )
+            return False
+
+        if not quantity > 0:
+            msg.error( __name__ + ": Input cell for 'Quantity' is less than 0.", "TODO" )
+            return False
+
+        self.setQuantity( quantity )
+
+        return True
+
+`
     def findDateOfAction( self ):
         """
         Description:    Finds the date of action in the input row, then sets the member. Currently acts as a wrapper to
@@ -140,28 +294,51 @@ class csvFilter:
 
         # Gets the row date and converts it to the correct format
         # TODO: Get rid of the hard coded value
-        passed, self.mActionDate = self.formatDate( self.mInputRow[ 0 ] )
+        passed, action_date = self.formatDate( self._mInputRow[ 0 ] )
         if not passed:
             msg.error( __name__ + ": Couldn't set 'Date of Action.'", "TODO" )
             return False
 
+        self.setActionDate( action_date )
         return True
 
 
     def findDateOfExpiration( self ):
+        # TODO: Write Unit test for this function
         """
         Description:    Finds the date of expiration in the input row, then sets the member.
         Arguments:      date [ string ]:    Optional. Only used if user wants to override this date.
         Returns:        bool:   True for success, False for failure
         """
 
-        passed, description_cell = self.getDesciptionCell()
+
+        passed, description_cell = self.getDescriptionCell()
         if not passed:
             msg.system( "Couldn't find a description cell in the input.", "TODO" )
             return False
 
-        # TODO: Write code to find the expiration date.
+        description_list = description_cell.split()
+        index = -1
+        for month in self.mMonths:
+            try:
+                index = description_list.index( month[0] )
+                break
+            except ValueError:
+                # TODO: Except is required, but not sure what to put
+                index = -1
 
+        # TODO: Don't hard code -1
+        if index == -1:
+            msg.error( "Expiration date not found in " + __name__ + ".", "TODO" )
+            return False
+        else:
+            exp_date = description_list[ index ] + " " + description_list[ index + 1 ] + " " + description_list[ index + 2 ]
+            passed, exp_date = self.formatDate( exp_date )
+            if not passed:
+                msg.error("Issue formatting Expiration date: '" + exp_date, "TODO" )
+                return False
+
+            self.setExpDate( exp_date )
 
         return True
 
@@ -264,17 +441,6 @@ class csvFilter:
         return True, description_cell
 
 
-    def filterForOptions( self ):
-        """
-        Description:    Filters the following from the description:
-                            *   Puts:   Buy / Sell / Assigned / Expired
-                            *   Calls:  Buy / Sell / Assigned / Expired
-        Arguments:      
-        Returns:        
-        """
-
-        return
-
     def filterForStocks( self ):
         return
 
@@ -300,7 +466,7 @@ class csvFilter:
         return self._mType
 
     def setType( self, value ):
-        self._mTicker = value
+        self._mType = value
         return
 
     def getAction( self ):
@@ -308,7 +474,7 @@ class csvFilter:
 
     def setAction( self, value ):
         self._mAction = value
-        reutrn
+        return
 
     def getQuantity( self ):
         return self._mQuantity

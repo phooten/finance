@@ -28,7 +28,7 @@ class TestClassFilterCsv( unittest.TestCase ):
         self.assertEqual( self.filter.setOutputRow(), True )
 
 
-    #def test_filterDescriptionColumn( self ):
+    #def test_filterTdAmeritradeDetails( self ):
         """
         Description:    Tests checks for this function, but not for other member functions that alreaddy have unit
                         tests. This would be redundant.
@@ -41,15 +41,17 @@ class TestClassFilterCsv( unittest.TestCase ):
         Description:    Place holder, since it currently acts as a wrapper to formatDate(). This needs to be updated if
                         the function ever changes.
         """
+        # TODO: When the inputRow gets updated from being hardcoded to 0, this will also need to change because we're also
+        #       Hardcoding the column to '0' here was well.
         # Bad Formats
-        dates = [ "001/31/2023",
-                  "1/31/20233" ] # Could keep going, but will be the same as test_formatDate()
+        dates = [ ( "001/31/2023" ),
+                  ( "1/31/20233" ) ] # Could keep going, but will be the same as test_formatDate()
         for date in dates:
-            self.filter.mInputRow = date
+            self.filter.setInputRow( date )
             self.assertEqual( self.filter.findDateOfAction(), False )
 
         # Good format
-        self.filter.mInputRow = [ "01/31/2023" ]
+        self.filter.setInputRow( [ "01/31/2023" ] )
         self.assertEqual( self.filter.findDateOfAction(), True )
 
 
