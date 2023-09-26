@@ -1,12 +1,13 @@
 
 # Modules
-#   NA
+import sys
 
 # Project Modules
 #   NA
 
 
 class messages:
+
     def error( self, msg, func_name ):
         """
         Description:    Prints out message to the user
@@ -41,3 +42,4 @@ class messages:
     def quit_script( self ):
         print( "Exiting script.")
         exit(1)
+
