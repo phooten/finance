@@ -2,6 +2,7 @@
 # Modules
 import re
 import sys
+import math
 
 # Project Modules
 from messages import class_messages
@@ -58,8 +59,15 @@ class csvFilter:
                  'DATE OF EXPIRATION',
                  'STRIKE PRICE' ]
 
-        self.mOptionTypes = [ "Call", "Put" ]
-        self.mStockTypes = [ "", "" ]
+        self.mOptionTypesActive = [ "Call",
+                                    "Put" ]
+        self.mOptionTypesPassive = [ "ASSIGNMENT",
+                                     "EXPIRATION" ]
+        self.mOtherTypes = [ "CLIENT REQUESTED ELECTRONIC FUNDING RECEIPT",
+                             "FREE BALANCE INTEREST ADJUSTMENT",
+                             "MARGIN INTEREST ADJUSTMENT",
+                             "MANDATORY - EXCHANGE" ]
+        self.mStockTypes = [ "QUALIFIED DIVIDEND" ]
 
         self._mInputRow = []
         self.mOutputRow = []
@@ -152,7 +160,7 @@ class csvFilter:
             return False
 
         # Only finds Expiration date if an option
-        if self.getType() in self.mOptionTypes:
+        if self.getType() in self.mOptionTypesActive:
             passed = self.findDateOfExpiration()
             if not passed:
                 msg.error( "Couldn't set 'Date of Expiration.'", method_name )
@@ -188,28 +196,34 @@ class csvFilter:
             msg.Error( "Couldn't find a description cell in the input.", method_name )
             return False
 
-        for curr in self.mOptionTypes:
+        # Returns type if 'put' or 'call'
+        for curr in self.mOptionTypesActive:
             if curr in description_cell:
                 self.setType( curr )
                 return True
 
-        # TODO: Figure out how this is associated with call / put, and don't hard code it
-        if "OPTION" in description_cell:
-            self.setType( "Option" )
-            return True
+        # Assigns 'Assignment' or 'Expiration' to type 'Option', which is meant to be a place holder. The TD CSV isn't
+        # clear about which call / put was associated to it the 'Assignment' / 'Expiration'. The final type will be
+        # a 'Put' or a 'Call'
+        for curr in self.mOptionTypesPassive:
+            if curr in description_cell:
+                self.setType( "Option" )
+                return True
 
+        # If the trade doesn't do with any options but still relates to trades, set it to 'Stock'
+        for curr in self.mStockTypes:
+            if curr in description_cell:
+                self.setType( "Stock" )
+                return True
 
-        other_types = [ "CLIENT REQUESTED ELECTRONIC FUNDING RECEIPT",
-                        "FREE BALANCE INTEREST ADJUSTMENT",
-                        "MARGIN INTEREST ADJUSTMENT",
-                        "MANDATORY - EXCHANGE" ]
-        for curr in other_types:
+        # Sets 'Other' as anything else that is relativley unrelated to trades
+        for curr in self.mOtherTypes:
             if curr in description_cell:
                 self.setType( "Other" )
                 return True
 
-        self.setType( "Stock" )
-        return True
+        msg.error( "Issue setting type. Wasn't 'Option', 'Stock', or 'Other'.", method_name )
+        return False
 
 
     def findAction( self ):
@@ -259,7 +273,6 @@ class csvFilter:
 
 
     def findQuantity( self ):
-        # TODO: Write unit test for this function
         """
         Description:    
         Arguments:      
@@ -268,24 +281,19 @@ class csvFilter:
         method_name = self.getMethodName()
 
         # Gets the row date and converts it to the correct format
-        # TODO: Get rid of the hard coded value
-        quantity = self._mInputRow[ 3 ]
-        if quantity == "":
+        input_row = self.getInputRow()
+        quantity = input_row[ 3 ]
+        if math.isnan( quantity ):
             self.setQuantity( self.mNa )
             return True
 
-        try:
-            quantity = int( quantity )
-        except ValueError:
-            msg.error( __name__ + ": Input cell for 'Quantity' is not a number and is not blank: '" + str( quantity ) + "'", method_name )
-            return False
-
+        # Force into an int, then check
+        quantity = int( quantity )
         if not quantity > 0:
-            msg.error( __name__ + ": Input cell for 'Quantity' is less than 0.", method_name )
+            msg.error( __name__ + ": Input cell for 'Quantity' is less than 0. See input row:\n" + str( input_row ), method_name )
             return False
 
         self.setQuantity( quantity )
-
         return True
 
 
@@ -299,8 +307,8 @@ class csvFilter:
         method_name = self.getMethodName()
 
         # Gets the row date and converts it to the correct format
-        # TODO: Get rid of the hard coded value
-        passed, action_date = self.formatDate( self._mInputRow[ 0 ] )
+        input_row = self.getInputRow()
+        passed, action_date = self.formatDate( input_row[ 0 ] )
         if not passed:
             msg.error( "Couldn't set 'Date of Action'.", method_name )
             return False
@@ -318,12 +326,13 @@ class csvFilter:
         """
         method_name = self.getMethodName()
 
-
+        # Gets the description cell
         passed, description_cell = self.getDescriptionCell()
         if not passed:
             msg.system( "Couldn't find a description cell in the input.", method_name )
             return False
 
+        # If it's in the list, return the index of the month that's found
         description_list = description_cell.split()
         index = -1
         for month in self.mMonths:
@@ -331,14 +340,17 @@ class csvFilter:
                 index = description_list.index( month[0] )
                 break
             except ValueError:
-                # TODO: Except is required, but not sure what to put
-                index = -1
+                pass
 
-        # TODO: Don't hard code -1
+        # Builds the expiration date if the index is okay
         if index == -1:
             msg.error( "Expiration date not found in '" + method_name + "'.", method_name )
             return False
         else:
+            if index + 2 >= len( description_list ):
+                msg.error( "Description cell has issues. No more agruments after the found month '" + description_list[ index ] + "'. See description list:\n" + str( description_list ), method_name )
+                return False
+
             exp_date = description_list[ index ] + " " + description_list[ index + 1 ] + " " + description_list[ index + 2 ]
             passed, exp_date = self.formatDate( exp_date )
             if not passed:
@@ -374,6 +386,26 @@ class csvFilter:
         day = date_list[1]
         year = date_list[2]
 
+        try:
+            day = int( day )
+        except ValueError:
+            msg.error( "Day has to be a number. Input day is: '" + str( day ) + "'", method_name )
+            return False, pDate
+
+        try:
+            year = int( year )
+        except ValueError:
+            msg.error( "Year has to be a number. Input year is: '" + str( year ) + "'", method_name )
+            return False, pDate
+
+        if day < 1 or day > 31:
+            msg.error( "Day has to be between 31 and 1. Input day is: '" + str( year ) + "'", method_name )
+            return False, pDate
+
+        elif year < 2000 or year > 2100:
+            msg.error( "Year has to be between 2100 and 2000. Input year is: '" + str( year ) + "'", method_name )
+            return False, pDate
+
         # TODO: Don't like the hard coding
         # TODO: switch statement isn't supported in python?
         # Assign number for month
@@ -405,7 +437,10 @@ class csvFilter:
             msg.error( "date_list[0] not expected: " + month, method_name )
             return False, pDate
 
+
         # Formats days with leading 0
+        day = str( day )
+        year = str( year )
         if len(day) < 2:
             day = int(day)
             day = str(day).zfill(2)
