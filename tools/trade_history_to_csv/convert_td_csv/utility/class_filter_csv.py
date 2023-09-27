@@ -210,11 +210,6 @@ class csvFilter:
                 self.setType( "Option" )
                 return True
 
-        # If the trade doesn't do with any options but still relates to trades, set it to 'Stock'
-        for curr in self.mStockTypes:
-            if curr in description_cell:
-                self.setType( "Stock" )
-                return True
 
         # Sets 'Other' as anything else that is relativley unrelated to trades
         for curr in self.mOtherTypes:
@@ -222,7 +217,19 @@ class csvFilter:
                 self.setType( "Other" )
                 return True
 
-        msg.error( "Issue setting type. Wasn't 'Option', 'Stock', or 'Other'.", method_name )
+        # If the trade doesn't do with any options but still relates to trades, set it to 'Stock'
+        for curr in self.mStockTypes:
+            if curr in description_cell:
+                self.setType( "Stock" )
+                return True
+
+        # Some of these will be assigned strikes. These will need to be handled elsewhere
+        # Matchs: start>(bought | sold ), any length of numbers, any length of capital letter, @, then any length of numbers(including a floatingpoint)<end
+        if re.match( r"^(Bought|Sold) [0-9]+ [A-Z]+ @ ?([0-9]*[.])?[0-9]+$", description_cell ):
+            self.setType( "Stock" )
+            return True
+
+        msg.error( "Issue setting type. Wasn't 'Option', 'Stock', or 'Other'. See description cell:\n" + str( description_cell ), method_name )
         return False
 
 
@@ -318,7 +325,6 @@ class csvFilter:
 
 
     def findDateOfExpiration( self ):
-        # TODO: Write Unit test for this function
         """
         Description:    Finds the date of expiration in the input row, then sets the member.
         Arguments:      date [ string ]:    Optional. Only used if user wants to override this date.
@@ -358,7 +364,7 @@ class csvFilter:
                 return False
 
             self.setExpDate( exp_date )
-
+        # TODO: Need a case for "assigned" and "expired"
         return True
 
 
@@ -406,8 +412,6 @@ class csvFilter:
             msg.error( "Year has to be between 2100 and 2000. Input year is: '" + str( year ) + "'", method_name )
             return False, pDate
 
-        # TODO: Don't like the hard coding
-        # TODO: switch statement isn't supported in python?
         # Assign number for month
         if month == 'Jan':
             new_date = '01'
