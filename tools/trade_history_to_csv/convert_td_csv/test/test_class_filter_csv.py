@@ -99,6 +99,7 @@ class TestClassFilterCsv( unittest.TestCase ):
 
         # Failure
         # Case: No month ( Jan, Feb, etc. ) doesn't exist
+        self.filter.setType( "Put" )
         self.filter.setInputRow( ["tmp", "tmp", "tmp" ] )
         self.assertEqual( self.filter.findDateOfExpiration(), False )
 
@@ -110,8 +111,13 @@ class TestClassFilterCsv( unittest.TestCase ):
         self.filter.setInputRow( ["tmp", "tmp", "Jan 1 202" ] )
         self.assertEqual( self.filter.findDateOfExpiration(), False )
 
-        # Case: Nominal
+        # Case: Nominal - option
         self.filter.setInputRow( ["tmp", "tmp", "Jan 1 2023" ] )
+        self.assertEqual( self.filter.findDateOfExpiration(), True )
+
+        # Case: Nominal - not an option
+        self.filter.setType( "Stock" )
+        self.filter.setInputRow( ["tmp", "tmp", "Could be anything" ] )
         self.assertEqual( self.filter.findDateOfExpiration(), True )
 
 
