@@ -37,13 +37,41 @@ class TestClassFilterCsv( unittest.TestCase ):
         # TODO: Nothing to check right now.
 
 
-    #def test_findType( self ):
+    def test_findType( self ):
         """
         Description:    
         """
 
-        # depends on fail on 'getDescrtionCell()'
-        # TODO: Nothing to check right now.
+        # Depenedant on:
+        #   getDescriptionRow / InputRow
+
+        # Case: Failure, unkown
+        nominal_other = [ "Charles just bought TdAmeritrade" ]
+        for curr in nominal_other:
+            self.filter.setInputRow( ["tmp", "tmp", curr ] )
+            self.assertEqual( self.filter.findType(), False )
+
+        # Case: Nominal for Options
+        nominal_other = [ "REMOVAL OF OPTION DUE TO EXPIRATION (0CPNG.FA20013500)",
+                            "Bought 1 PYPL May 6 2022 104.0 Call @ 0.01" ]
+        for curr in nominal_other:
+            self.filter.setInputRow( ["tmp", "tmp", curr ] )
+            self.assertEqual( self.filter.findType(), True )
+
+        # Case: Nominal for Stock
+        nominal_other = [ "Bought 100 AMD @ 95",
+                            "QUALIFIED DIVIDEND (MSFT)" ]
+        for curr in nominal_other:
+            self.filter.setInputRow( ["tmp", "tmp", curr ] )
+            self.assertEqual( self.filter.findType(), True )
+
+        # Case: Nominal for Other
+        nominal_other = [ "FREE BALANCE INTEREST ADJUSTMENT",
+                            "MARGIN INTEREST ADJUSTMENT",
+                            "CLIENT REQUESTED ELECTRONIC FUNDING RECEIPT (FUNDS NOW)" ]
+        for curr in nominal_other:
+            self.filter.setInputRow( ["tmp", "tmp", curr ] )
+            self.assertEqual( self.filter.findType(), True )
 
 
     def test_findQuantity( self ):
@@ -64,6 +92,7 @@ class TestClassFilterCsv( unittest.TestCase ):
         """
         Description:    
         """
+
         # Depenedant on:
         #   getDescriptionRow / InputRow
         #   formatDate()

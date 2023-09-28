@@ -183,7 +183,6 @@ class csvFilter:
 
 
     def findType( self ):
-        # TODO: Write Unit test for this function
         """
         Description:    
         Arguments:      
@@ -229,12 +228,11 @@ class csvFilter:
             self.setType( "Stock" )
             return True
 
-        msg.error( "Issue setting type. Wasn't 'Option', 'Stock', or 'Other'. See description cell:\n" + str( description_cell ), method_name )
+        msg.error( "Issue setting type. Wasn't '" + str( self.mOptionTypesActive ) + ", 'Option', 'Stock', or 'Other'. See description cell:\n" + str( description_cell ), method_name )
         return False
 
 
     def findAction( self ):
-        # TODO: Write Unit test for this function
         """
         Description:    
         Arguments:      
@@ -301,6 +299,27 @@ class csvFilter:
             return False
 
         self.setQuantity( quantity )
+        return True
+
+
+    def findCost( self ):
+        # TODO: Finish this function
+        """
+        Description:    
+        Arguments:      
+        Returns:        bool:   True for success, False for failure
+        """
+        method_name = self.getMethodName()
+
+        # Gets the description cell
+        passed, description_cell = self.getDescriptionCell()
+        if not passed:
+            msg.system( "Couldn't find a description cell in the input.", method_name )
+            return False
+
+        # If it's in the list, return the index of the month that's found
+        description_list = description_cell.split()
+
         return True
 
 
