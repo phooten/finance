@@ -53,8 +53,9 @@ class csvFilter:
                  'TYPE',     # Call, Put, Stock, Other
                  'ACTION',   # Buy, Sell, Assigned, Exercised, Dividend
                  'QUANTITY',
-                 'COST',
+                 'PRICE',
                  'COMMISSION',
+                 'AMOUNT',
                  # Option specific
                  'DATE OF EXPIRATION',
                  'STRIKE PRICE' ]
@@ -80,8 +81,9 @@ class csvFilter:
         self._mType = self.mPlaceHolder
         self._mAction = self.mPlaceHolder
         self._mQuantity = self.mPlaceHolder
-        self._mCost = self.mPlaceHolder
+        self._mPrice = self.mPlaceHolder
         self._mCommission = self.mPlaceHolder
+        self._mAmount = self.mPlaceHolder
         # Option specific
         self._mExpDate = self.mPlaceHolder
         self._mStrike = self.mPlaceHolder
@@ -110,11 +112,12 @@ class csvFilter:
         self.mOutputRow[ 2 ] = self.getType()
         self.mOutputRow[ 3 ] = self.getAction()
         self.mOutputRow[ 4 ] = self.getQuantity()
-        self.mOutputRow[ 5 ] = self.getCost()
+        self.mOutputRow[ 5 ] = self.getPrice()
         self.mOutputRow[ 6 ] = self.getCommission()
+        self.mOutputRow[ 7 ] = self.getAmount()
         # Option Specific
-        self.mOutputRow[ 7 ] = self.getExpDate()
-        self.mOutputRow[ 8 ] = self.getStrike()
+        self.mOutputRow[ 8 ] = self.getExpDate()
+        self.mOutputRow[ 9 ] = self.getStrike()
 
         return True
 
@@ -133,19 +136,31 @@ class csvFilter:
         # Sets the Quantity of the transaction
         passed = self.findQuantity()
         if not passed:
-            msg.error( "Couldn't set 'Quantity.'", method_name )
+            msg.error( "Couldn't find 'Quantity'.", method_name )
+            return False
+
+        # Sets the Price of the transaction ( Stock price, cost / value of option )
+        passed = self.findPrice()
+        if not passed:
+            msg.error( "Couldn't find 'Price'.", method_name )
+            return False
+
+        # Sets the Commission cost of the transaction
+        passed = self.findCommission()
+        if not passed:
+            msg.error( "Couldn't find 'Commission'.", method_name )
             return False
 
         # Sets the date of the Transaction
         passed = self.findDateOfAction()
         if not passed:
-            msg.error( "Couldn't set 'Date of Action.'", method_name )
+            msg.error( "Couldn't find 'Date of Action'.", method_name )
             return False
 
         # Sets the type of transaction
         passed = self.findType()
         if not passed:
-            msg.error( "Couldn't set 'Type'", method_name )
+            msg.error( "Couldn't find 'Type'.", method_name )
             return False
 
         # Makes sure the type is set. After this point, filters depend on this.
@@ -156,22 +171,25 @@ class csvFilter:
         # Sets the Action of the transaction
         passed = self.findAction()
         if not passed:
-            msg.error( "Couldn't set 'Action'", method_name )
+            msg.error( "Couldn't find 'Action'", method_name )
             return False
 
         # Only finds Expiration date if an option
-        if self.getType() in self.mOptionTypesActive:
-            passed = self.findDateOfExpiration()
-            if not passed:
-                msg.error( "Couldn't set 'Date of Expiration.'", method_name )
-                return False
-        else:
-            self.setExpDate( self.mNa )
+        passed = self.findDateOfExpiration()
+        if not passed:
+            msg.error( "Couldn't find 'Date of Expiration'.", method_name )
+            return False
+
+        passed = self.findTicker()
+        if not passed:
+            msg.error( "Couldn't find 'Ticker'.", method_name )
+            return False
+
 
         # Sets the output row
         self.setOutputRow()
         if not passed:
-            msg.error( "Couldn't set 'Output Row.'", method_name )
+            msg.error( "Couldn't find 'Output Row.'", method_name )
             return False
 
         # Checks the output row
@@ -302,7 +320,55 @@ class csvFilter:
         return True
 
 
-    def findCost( self ):
+    def findPrice( self ):
+        """
+        Description:    
+        Arguments:      
+        Returns:        bool:   True for success, False for failure
+        """
+        method_name = self.getMethodName()
+
+        # Gets the row date and converts it to the correct format
+        input_row = self.getInputRow()
+        price = input_row[ 5 ]
+        if math.isnan( price ):
+            self.setPrice( self.mNa )
+            return True
+
+        # Force into an int, then check
+        if not price > 0:
+            msg.error( __name__ + ": Input cell for 'Price' is less than 0. See input row:\n" + str( input_row ), method_name )
+            return False
+
+        self.setPrice( price )
+        return True
+
+
+    def findCommission( self ):
+        """
+        Description:    
+        Arguments:      
+        Returns:        bool:   True for success, False for failure
+        """
+        method_name = self.getMethodName()
+
+        # Gets the row date and converts it to the correct format
+        input_row = self.getInputRow()
+        commission = input_row[ 6 ]
+        if math.isnan( commission ):
+            self.setCommission( self.mNa )
+            return True
+
+        # Force into an int, then check
+        if not commission >= 0:
+            msg.error( __name__ + ": Input cell for 'Commision' is less than 0. See input row:\n" + str( input_row ), method_name )
+            return False
+
+        self.setCommission( commission )
+        return True
+
+
+    def findTicker( self ):
         # TODO: Finish this function
         """
         Description:    
@@ -311,16 +377,23 @@ class csvFilter:
         """
         method_name = self.getMethodName()
 
-        # Gets the description cell
+        # Gets the input row and description cell
+        input_row = self.getInputRow()
+
         passed, description_cell = self.getDescriptionCell()
         if not passed:
-            msg.system( "Couldn't find a description cell in the input.", method_name )
+            msg.Error( "Couldn't find a description cell in the input.", method_name )
             return False
 
-        # If it's in the list, return the index of the month that's found
-        description_list = description_cell.split()
+        ticker_cell = str( input_row[ 4 ] )
+        symbol_list = ticker_cell.split()
+        if symbol_list[0] != "":
+            msg.system( "found ticker: " + str( symbol_list[0] ), method_name )
+            self.setTicker( symbol_list[ 0 ] )
+            return True
 
         return True
+
 
 
     def findDateOfAction( self ):
@@ -351,6 +424,10 @@ class csvFilter:
         """
         method_name = self.getMethodName()
 
+        if self.getType() not in self.mOptionTypesActive:
+            self.setExpDate( self.mNa )
+            return True
+
         # Gets the description cell
         passed, description_cell = self.getDescriptionCell()
         if not passed:
@@ -369,7 +446,7 @@ class csvFilter:
 
         # Builds the expiration date if the index is okay
         if index == -1:
-            msg.error( "Expiration date not found in '" + method_name + "'.", method_name )
+            msg.error( "Expiration date not found in '" + str( description_list ) + "'.", method_name )
             return False
         else:
             if index + 2 >= len( description_list ):
@@ -561,18 +638,25 @@ class csvFilter:
         self._mQuantity = value
         return
 
-    def getCost( self ):
-        return self._mCost
+    def getPrice( self ):
+        return self._mPrice
 
-    def setCost( self, value ):
-        self._mCost = value
+    def setPrice( self, value ):
+        self._mPrice = value
         return
 
     def getCommission( self ):
         return self._mCommission
 
-    def setCommision( self, value ):
+    def setCommission( self, value ):
         self._mCommission = value
+        return
+
+    def getAmount( self ):
+        return self._mAmount
+
+    def setAmount( self, value ):
+        self._mAmount= value
         return
 
     def getExpDate( self ):
