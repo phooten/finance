@@ -14,8 +14,8 @@ class csvFilter:
 
     def __init__( self ):
 
-        self.mPlaceHolder = "PLACE-HOLDER"
-        self.mNa = "NA"
+        self.mPlaceHolder = "*** ERROR ***"
+        self.mNa = "-"
 
         self.mMonths = [
                 ( 'Jan', 1 ),
@@ -76,17 +76,17 @@ class csvFilter:
             self.mOutputRow.append( self.mPlaceHolder )
 
         # Sets each value to default, then is put into the output row
-        self._mActionDate = self.mPlaceHolder
-        self._mTicker = self.mPlaceHolder
-        self._mType = self.mPlaceHolder
-        self._mAction = self.mPlaceHolder
-        self._mQuantity = self.mPlaceHolder
-        self._mPrice = self.mPlaceHolder
-        self._mCommission = self.mPlaceHolder
-        self._mAmount = self.mPlaceHolder
+        self.setActionDate( self.mPlaceHolder )
+        self.setTicker( self.mPlaceHolder )
+        self.setType( self.mPlaceHolder )
+        self.setAction( self.mPlaceHolder )
+        self.setQuantity( self.mPlaceHolder )
+        self.setPrice( self.mPlaceHolder )
+        self.setCommission( self.mPlaceHolder )
+        self.setAmount( self.mPlaceHolder )
         # Option specific
-        self._mExpDate = self.mPlaceHolder
-        self._mStrike = self.mPlaceHolder
+        self.setExpDate( self.mPlaceHolder )
+        self.setStrike( self.mPlaceHolder )
 
         # Sets output row to default values
         self.setOutputRow()
@@ -151,6 +151,11 @@ class csvFilter:
             msg.error( "Couldn't find 'Commission'.", method_name )
             return False
 
+        passed = self.findAmount()
+        if not passed:
+            msg.error( "Couldn't find 'Amount'.", method_name )
+            return False
+
         # Sets the date of the Transaction
         passed = self.findDateOfAction()
         if not passed:
@@ -166,6 +171,11 @@ class csvFilter:
         # Makes sure the type is set. After this point, filters depend on this.
         if self.getType() == self.mPlaceHolder:
             msg.error( "Cell type needs to be set before proceeding past this point.", method_name )
+            return False
+
+        passed = self.findStike()
+        if not passed:
+            msg.error( "Couldn't find 'Amount'.", method_name )
             return False
 
         # Sets the Action of the transaction
@@ -210,7 +220,7 @@ class csvFilter:
 
         passed, description_cell = self.getDescriptionCell()
         if not passed:
-            msg.Error( "Couldn't find a description cell in the input.", method_name )
+            msg.error( "Couldn't find a description cell in the input.", method_name )
             return False
 
         # Returns type if 'put' or 'call'
@@ -260,7 +270,7 @@ class csvFilter:
 
         passed, description_cell = self.getDescriptionCell()
         if not passed:
-            msg.Error( "Couldn't find a description cell in the input.", method_name )
+            msg.error( "Couldn't find a description cell in the input.", method_name )
             return False
 
         # Capitalization matters
@@ -368,6 +378,51 @@ class csvFilter:
         return True
 
 
+    def findStike( self ):
+        # TODO: Finish this function
+        """
+        Description:    
+        Arguments:      
+        Returns:        bool:   True for success, False for failure
+        """
+        method_name = self.getMethodName()
+
+        if self.getType() not in self.mOptionTypesActive:
+            self.setTicker( self.mNa )
+            return True
+
+        # Gets the row date and converts it to the correct format
+        input_row = self.getInputRow()
+        strike_cell = str( input_row[ 4 ] )
+        strike = strike_cell.split()
+        strike = strike[ 4 ]
+
+        # TODO: Seems to be setting a strike, then continuing to set value until the a ne call / put comes along
+        # TODO: Top right value is still a place holder. Doesn't seem to change
+        self.setStrike( strike )
+        return True
+
+
+    def findAmount( self ):
+        # TODO: Finish this function
+        """
+        Description:    
+        Arguments:      
+        Returns:        bool:   True for success, False for failure
+        """
+        method_name = self.getMethodName()
+
+        # Gets the row date and converts it to the correct format
+        input_row = self.getInputRow()
+        amount = input_row[ 7 ]
+        if math.isnan( amount ) or amount == 0:
+            self.setAmount( self.mNa )
+            return True
+
+        self.setAmount( amount )
+        return True
+
+
     def findTicker( self ):
         # TODO: Finish this function
         """
@@ -377,21 +432,57 @@ class csvFilter:
         """
         method_name = self.getMethodName()
 
-        # Gets the input row and description cell
-        input_row = self.getInputRow()
+        # If it's not an option or stock, set to 'NA'
+        ticker_type = [ "Option", "Stock" ]
+        for curr in self.mOptionTypesActive:
+            ticker_type.append( str( curr ) )
 
-        passed, description_cell = self.getDescriptionCell()
-        if not passed:
-            msg.Error( "Couldn't find a description cell in the input.", method_name )
-            return False
-
-        ticker_cell = str( input_row[ 4 ] )
-        symbol_list = ticker_cell.split()
-        if symbol_list[0] != "":
-            msg.system( "found ticker: " + str( symbol_list[0] ), method_name )
-            self.setTicker( symbol_list[ 0 ] )
+        if self.getType() not in ticker_type:
+            self.setTicker( self.mNa )
             return True
 
+        # Gets the input row and description cell
+        input_row = self.getInputRow()
+        passed, description_cell = self.getDescriptionCell()
+        if not passed:
+            msg.error( "Couldn't find a description cell in the input.", method_name )
+            return False
+
+        # Uses the first item in the list to get the ticker
+        ticker_cell = str( input_row[ 4 ] )
+        symbol_list = ticker_cell.split()
+        first_symbol = str( symbol_list[ 0 ] )
+        if self.getType() not in self.mOptionTypesPassive and\
+            self.getType() not in "Options":
+            self.setTicker( first_symbol )
+            return True
+
+
+        # Special for Assignment / Expiration.
+        #       Entry:  (0MVIS.AAAAAAAAAA)
+        #       Regex:  .*(0<WE WANT THIS>\..*)
+
+        # Replaces the text before the ticker
+        ticker_cell = description_cell
+        ticker = ticker_cell
+        ticker = re.sub( '^.*\(0', '', ticker_cell )
+        if ticker == ticker_cell:
+            msg.error( "Couldn't replace the text before the ticker with regex.\n"\
+                        "ticker_cell:      '" + str( ticker_cell ) + "'\n"\
+                        "description_cell: '" + description_cell + "'", method_name )
+            return False
+
+        # Replaces the text after the ticker
+        ticker_cell = ticker
+        ticker = re.sub('\..*\)$', '', ticker_cell )
+        if ticker == ticker_cell:
+            msg.error( "Couldn't replace the text after the ticker with regex.\n"\
+                        "ticker_cell:      '" + str( ticker_cell ) + "'\n"\
+                        "description_cell: '" + description_cell + "'", method_name )
+            return False
+
+        # Sets the remaining text
+        self.setTicker( ticker )
         return True
 
 
