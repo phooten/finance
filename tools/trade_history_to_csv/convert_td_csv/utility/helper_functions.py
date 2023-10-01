@@ -114,12 +114,12 @@ def transferCsvContents( input_csv, output_csv ):
 
     # Filters information row by row of input csv
     for row_curr in range( row_count - 1 ):
-        output_row = csv_filter.filterTdAmeritradeDetails( df.loc[ row_curr ] )
+        output_row = csv_filter.filterTdAmeritradeDetails( list( df.loc[ row_curr ] ) )
         new_csv.loc[ row_curr ] = output_row
 
     # Outputs the dataframe into a csv
-    new_csv.to_csv( output_csv, index=False )
-    new_csv.to_csv( str(output_csv + ".tmp" ) )     # TODO: Compare this to "index = False"
+    new_csv.to_csv( output_csv, index=True )
+    #new_csv.to_csv( str(output_csv + ".tmp" ) )     # TODO: Compare this to "index = False"
 
     return
 

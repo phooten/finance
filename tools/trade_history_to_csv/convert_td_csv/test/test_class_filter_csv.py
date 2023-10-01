@@ -77,14 +77,16 @@ class TestClassFilterCsv( unittest.TestCase ):
     def test_findQuantity( self ):
         """
         Description:    
+        Note:           From observation the cell returned will always be a float, so we should test it as such. If we
+                        use an int, it won't have the attribute '.is_int()' so we'd have to use a 'try' / 'except'
         """
         # Failure
-        # Case: Quantity is less than 0
-        self.filter.setInputRow( ["tmp", "tmp", "tmp", -1 ] )
+        # Case: Quantity is less than 0.0
+        self.filter.setInputRow( ["tmp", "tmp", "tmp", -1.0 ] )
         self.assertEqual( self.filter.findQuantity(), False )
 
         # Case: Nominal
-        self.filter.setInputRow( ["tmp", "tmp", "tmp", 10 ] )
+        self.filter.setInputRow( ["tmp", "tmp", "tmp", 10.0 ] )
         self.assertEqual( self.filter.findQuantity(), True)
 
 
@@ -128,9 +130,9 @@ class TestClassFilterCsv( unittest.TestCase ):
         """
         # Failure
         # Case: Incorrect inputs
-        dates = [ ( "001/31/2023" ),
-                  ( "01/031/2023" ),
-                  ( "1/31/20233" ) ] # Could keep going, but will be the same as test_formatDate()
+        dates = [ [ "001/31/2023" ] ,
+                  [ "01/031/2023" ] ,
+                  [ "1/31/20233"  ] ] # Could keep going, but will be the same as test_formatDate()
         for date in dates:
             self.filter.setInputRow( date )
             self.assertEqual( self.filter.findDateOfAction(), False )

@@ -64,10 +64,19 @@ class csvFilter:
                                     "Put" ]
         self.mOptionTypesPassive = [ "ASSIGNMENT",
                                      "EXPIRATION" ]
-        self.mOtherTypes = [ "CLIENT REQUESTED ELECTRONIC FUNDING RECEIPT",
+        # TODO: Connect strings to enums...? Somehow change the hardcoded numbers to associate with strings
+        self.mOtherTypes = [ "CASH ALTERNATIVES INTEREST",
+                             "CASH ALTERNATIVES PURCHASE",
+                             "CASH ALTERNATIVES REDEMPTION",
+                             "CASH MOVEMENT OF INCOMING ACCOUNT TRANSFER",
+                             "CLIENT REQUESTED ELECTRONIC FUNDING DISBURSEMENT",
+                             "CLIENT REQUESTED ELECTRONIC FUNDING RECEIPT",
                              "FREE BALANCE INTEREST ADJUSTMENT",
+                             "MANDATORY - EXCHANGE",
                              "MARGIN INTEREST ADJUSTMENT",
-                             "MANDATORY - EXCHANGE" ]
+                             "MISCELLANEOUS JOURNAL ENTRY",
+                             "OFF-CYCLE INTEREST",
+                             "TRANSFER OF SECURITY OR OPTION IN" ]
         self.mStockTypes = [ "QUALIFIED DIVIDEND" ]
 
         self._mInputRow = []
@@ -130,14 +139,9 @@ class csvFilter:
         """
         method_name = self.getMethodName()
 
-        # Sets input row for the object to use
+        # Sets input row for the object to use. pRow is
         self.setInputRow( pRow )
 
-        # Sets the Quantity of the transaction
-        passed = self.findQuantity()
-        if not passed:
-            msg.error( "Couldn't find 'Quantity'.", method_name )
-            return False
 
         # Sets the Price of the transaction ( Stock price, cost / value of option )
         passed = self.findPrice()
@@ -171,6 +175,12 @@ class csvFilter:
         # Makes sure the type is set. After this point, filters depend on this.
         if self.getType() == self.mPlaceHolder:
             msg.error( "Cell type needs to be set before proceeding past this point.", method_name )
+            return False
+
+        # Sets the Quantity of the transaction
+        passed = self.findQuantity()
+        if not passed:
+            msg.error( "Couldn't find 'Quantity'.", method_name )
             return False
 
         passed = self.findStike()
@@ -285,23 +295,55 @@ class csvFilter:
                 return True
 
         # TODO: Don't hard code this. Fix this in the findType() too.
-        if "CLIENT REQUESTED ELECTRONIC FUNDING RECEIPT" in description_cell:
-            self.setAction( "Fund Transfer" )
+        if self.mOtherTypes[ 0 ] in description_cell:   # CASH ALTERNATIVES INTEREST
+            self.setAction( "Cash Alternatives Interestt" )
             return True
-        elif "MARGIN INTEREST ADJUSTMENT" in description_cell:
-            self.setAction( "Interest Adjustment: Margin" )
+        elif self.mOtherTypes[ 1 ] in description_cell:   # CASH ALTERNATIVES PURCHASE
+            self.setAction( "Cash Alternatives Purchase" )
             return True
-        elif "FREE BALANCE INTEREST ADJUSTMENT" in description_cell:
+        elif self.mOtherTypes[ 2 ] in description_cell:  # CASH ALTERNATIVES REDEMPTION
+            self.setAction( "Cash Alternatives Redemption" )
+            return True
+        elif self.mOtherTypes[ 3 ] in description_cell:  # CASH MOVE OF INCOMING TRANSFER
+            self.setAction( "Cash Move of Incoming Transfer" )
+            return True
+        elif self.mOtherTypes[ 4 ] in description_cell: # CLIENT REQUESTED ELECTRONIC FUNDING DISBURSEMENT
+            self.setAction( "Funding Disbursement" )
+            return True
+        elif self.mOtherTypes[ 5 ] in description_cell: # CLIENT REQUESTED ELECTRONIC FUNDING RECEIPT
+            self.setAction( "Funding Transfer" )
+            return True
+        elif self.mOtherTypes[ 6 ] in description_cell: # FREE BALANCE INTEREST ADJUSTMENT
             self.setAction( "Interest Adjustment: Free Balance" )
             return True
-        
+        elif self.mOtherTypes[ 7 ] in description_cell: # MANDATORY EXCHANGE
+            self.setAction( "Mandatory - Exchange" )
+            return True
+        elif self.mOtherTypes[ 8 ] in description_cell: # MARGIN INTEREST ADJUSTMENT
+            self.setAction( "Interest Adjustment: Margin" )
+            return True
+        elif self.mOtherTypes[ 9 ] in description_cell: # MISCELLANEOUS JOURNAL ENTRY
+            self.setAction( "Miscellaneous Journal Entry" )
+            return True
+        elif self.mOtherTypes[ 10 ] in description_cell: # OFF-CYCLE INTEREST
+            self.setAction( "Off-cycle Interest" )
+            return True
+        elif self.mOtherTypes[ 11 ] in description_cell: # TRANSFER OF SECURITY OR OPTION IN
+            self.setAction( "Transfer of Security / Option" )
+            return True
 
         # TODO: Don't hard code this 'other' portion. Fix it in the type too.
         if self.getType() == "Other":
             self.setAction( self.mNa )
             return True
 
-        msg.error( "Couldn't find action '" + str( action_types ) + "' in description_cell '" + description_cell + "'.", method_name )
+        # Sets dividend
+        for curr in self.mStockTypes:
+            if curr in description_cell:
+                self.setAction( "Dividend" )
+                return True
+
+        msg.error( "Couldn't find any of the following actions in the description cell '" + description_cell + "'\n" + str( action_types ) + "\n" + str( self.mOtherTypes ) + "\n" + str( self.mStockTypes ), method_name )
         return False
 
 
@@ -315,13 +357,17 @@ class csvFilter:
 
         # Gets the row date and converts it to the correct format
         input_row = self.getInputRow()
-        quantity = input_row[ 3 ]
+        quantity = input_row[3]
         if math.isnan( quantity ):
             self.setQuantity( self.mNa )
             return True
 
-        # Force into an int, then check
-        quantity = int( quantity )
+        # Force into an float or int, then check
+        if not quantity.is_integer():
+            quantity = float( quantity )
+        else:
+            quantity = int( quantity )
+
         if not quantity > 0:
             msg.error( __name__ + ": Input cell for 'Quantity' is less than 0. See input row:\n" + str( input_row ), method_name )
             return False
@@ -374,6 +420,10 @@ class csvFilter:
             msg.error( __name__ + ": Input cell for 'Commision' is less than 0. See input row:\n" + str( input_row ), method_name )
             return False
 
+        # makeing Integers look nice
+        if commission.is_integer():
+            commission = int( commission )
+
         self.setCommission( commission )
         return True
 
@@ -388,7 +438,7 @@ class csvFilter:
         method_name = self.getMethodName()
 
         if self.getType() not in self.mOptionTypesActive:
-            self.setTicker( self.mNa )
+            self.setStrike( self.mNa )
             return True
 
         # Gets the row date and converts it to the correct format
@@ -432,15 +482,6 @@ class csvFilter:
         """
         method_name = self.getMethodName()
 
-        # If it's not an option or stock, set to 'NA'
-        ticker_type = [ "Option", "Stock" ]
-        for curr in self.mOptionTypesActive:
-            ticker_type.append( str( curr ) )
-
-        if self.getType() not in ticker_type:
-            self.setTicker( self.mNa )
-            return True
-
         # Gets the input row and description cell
         input_row = self.getInputRow()
         passed, description_cell = self.getDescriptionCell()
@@ -452,6 +493,21 @@ class csvFilter:
         ticker_cell = str( input_row[ 4 ] )
         symbol_list = ticker_cell.split()
         first_symbol = str( symbol_list[ 0 ] )
+
+        # If it's not an option / stock AND not in symbol column, set to 'NA'
+        ticker_type = [ "Option", "Stock" ]
+        for curr in self.mOptionTypesActive:
+            ticker_type.append( str( curr ) )
+
+        if self.getType() not in ticker_type:
+            # When the cell is blank, the string appears as "nan"
+            if first_symbol != "nan":
+                self.setTicker( first_symbol )
+                return True
+            else:
+                self.setTicker( self.mNa )
+                return True
+
         if self.getType() not in self.mOptionTypesPassive and\
             self.getType() not in "Options":
             self.setTicker( first_symbol )
