@@ -1,30 +1,68 @@
-# How to run:
+# About
+    This repository is meant to track different financial programs and scripts. As long as the tools are relativley
+    small, they are all tracked in here. Sensitive files have been exlcluded, but there are some test files that can be
+    seen to use for practice or comparison.
+
+## Tools: Complete
+    None.
+
+## Tools: In-progress
+    convert_td_csv: tool to take a downloaded TD Ameritrade history csv and convert it into a helpful format to make it
+                    easier to track trades of stocks and options.
+
+                    STATUS: Working state. Needs coding structure adjustments and TODO comments closed out.
+
+
+    convert_paycheck:   Takes a paycheck pdf and converts it into an easily read format to append to an excel file.
+
+                        STATUS: Non-working state.
+
+
+    scan_option_value:  scans a selected list of stocks that will return a list based on a given set of risk vs. rewards
+                        settings.
+                        Status: working state, but rudimentary.
+## Tools: Future Ideas
+    stock_overview: QT Centered UI that allows user to sort through an excel file for statistics like how much money has
+                    been gained or lost on a single company, how many options were sold / lost, average amount gained
+                    from options in a week, etc.
+
+    show_tools:     script to list all all tools and the progress / state of them at a quick glance
+
+
+    scan_large_change:  Scanner to show if if a stock drops more than 30-40% in a day.
+
+
+
+
+# Setup for use
     * Pre-requisits:
-        - Set up a developer account with TDA Ameritrade API
-        - 
+        - If using a script related to TD Ameritrade:
+                Set up a developer account with TDA Ameritrade API
     * Setup
         pipenv install
         pipenv shell
         pipenv run <python3> <python-file.py>
         ( if in vscode, run with debugger )
         exit
-
-# Repository Contents
-input:  files containing list of stocks used for various tools
-output: files containing output from tools that were run.
-tools:  useful for various tasks relating to trading
-util:   utility files for this repo
+        ( when ready to be done / exit pipenv )
 
 
-# REPO 'finance' TODOS:
-1. Finish the informative tools script about my current account
-2. Create a "showme" or something for how to show tools and usage.
 
 
-# Tool Improvement Ideas
-1. Show cost basis / profit vs loss for each stock. Maybe this can be used to show
-    the status of my account. 
-2. Scanner to show if if a stock drops more than 30-40% in a day.
+# Contents and Navigation
+    TODO
+
+
+
+# This repository TODOs
+    * Make a template for .env / .token.json
+        I  removed files that were being tracked by git ignore: .env, token.json
+        So this doesn't happen again, or at least will be easier to recover, I need to make a template for these files.
+    * Research ways to:
+        1. Structure projects i.e. output / input, tools, bin, etc.
+        2. 
+    * Fill out "contents / navigation" section in the readme
+
 
 
 
@@ -41,14 +79,8 @@ Really good video for how to get started: https://www.youtube.com/watch?v=8N1IxY
             ->
 
 
-# Current issue
-Messed up and removed files that were being tracked by git ignore:
-    .env
-    token.json
-Need to make a template for these so this doens't happen again, or it will at 
-least be easier to recover.
 
 
-# References:
+# References / Resources
     - tutorial: https://www.youtube.com/watch?v=8N1IxYXs4e8
     - tda developer api: https://developer.tdameritrade.com/user/me/apps
