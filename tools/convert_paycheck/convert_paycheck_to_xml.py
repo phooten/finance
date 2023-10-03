@@ -1,12 +1,12 @@
 '''
-This file is meant to automate moving my paycheck into an xml file. 
+This file is meant to automate moving my paycheck into an xml file.
     Features:
         - Downloads my paycheck
         - Converts the PDF into readable text
         - Moves that information into an XML sheet
 
     TODO: should not include anyt username / passwords in the file. instead
-          manually enter it, or have a secure automated technique. 
+          manually enter it, or have a secure automated technique.
 '''
 
 # TODO: Find a better way to set/use environmental variables
@@ -18,6 +18,7 @@ import pdfplumber
 
 # Environmental variables
 load_dotenv()
+pp = pprint.PrettyPrinter(width=41, compact=True)
 
 class ExcelHeader:
     header_ula = [  "Period Beginning",
@@ -54,8 +55,13 @@ class ExcelHeader:
                     "EMP Term Life" ]
 
 
-# Prints out text in pretty format, then quits if explicitly selected. 
+# Prints out text in pretty format, then quits if explicitly selected.
 def Pretty( text, stop=False):
+    """
+    Description:
+    Arguments:
+    Returns:
+    """
     # Useful to see what the paycheck_text was
     pp = pprint.PrettyPrinter( width=41, compact=True )
     pp.pprint( text )
@@ -65,36 +71,53 @@ def Pretty( text, stop=False):
 
 
 
-def DownloadPaycheck():
-    # ULA ADP site
-    paycheck_site=''
-    username=''
-    pasword=''
-
-    return paycheck
-
-
 
 def ConvertPdfToText():
-
-    # TODO: Fix this and the option-value-scan script. They are ahard coded values and 
-    #       Need to be replaced with environmental variables. 
+    """
+    Description:
+    Arguments:
+    Returns:
+    """
+    # TODO: Fix this and the option-value-scan script. They are ahard coded values and
+    #       Need to be replaced with environmental variables.
     REPO_PATH="/Users/phoot/code/finance/"
-    PDF_PATH = str(REPO_PATH) + "input/paystubs/test_statement.pdf"
-    with pdfplumber.open(PDF_PATH) as pdf:
-        text = ""
-        for page in pdf.pages:
-            extracted_text = page.extract_text()
-            text += f"Page {page.page_number + 1}:\n\n{extracted_text}\n\n"
+    PDF_PATH = str(REPO_PATH) + "sensitive_files/paystubs/test_statement.pdf"
+    x0 = 0.00   # Distance of left side of character from left side of page.
+    x1 = 0.54   # Distance of right side of character from left side of page.
+    y0 = 0.00   # Distance of bottom of character from bottom of page.
+    y1 = 1.00   # Distance of top of character from bottom of page.
 
-    Pretty(text, True)
+    all_content = []
+    with pdfplumber.open( PDF_PATH ) as pdf:
+        for i, page in enumerate( pdf.pages ):
+            width = page.width
+            height = page.height
 
-    return text
+            # Crop pages
+            left_bbox = ( x0 * float( width ), y0 * float( height ), x1 * float( width ), y1 * float( height ) )
+            page_crop = page.crop( bbox = left_bbox )
+            left_text = page_crop.extract_text()
+
+            left_bbox = ( 0.5 * float( width ), y0 * float( height ), 1 * float( width ), y1 * float( height ) )
+            page_crop = page.crop( bbox = left_bbox )
+            right_text = page_crop.extract_text()
+            page_context = '\n'.join( [ left_text, right_text ] )
+            all_content.append( page_context )
+            #if i < 2:  # help you see the merged first two pages
+            #    print(page_context)
+
+    return all_content
 
 
 
-def FormatUlaTextBlock( text_block ):
+def RefineText( text_block ):
+    """
+    Description:
+    Arguments:
+    Returns:
+    """
 
+    # These are hardcoded values we care about in the paycheck
     keys = [ "Period Beginning",
              "Period Ending",
              "Total Hours Worked",
@@ -129,58 +152,29 @@ def FormatUlaTextBlock( text_block ):
              "EMP Term Life",
              "If you have any questions regarding your" ]
 
-    text = text_block.split('\n')
+    # Adds an element for every single key
     filtered_text = []
+    found = False
+    for curr in text_block:
+        for key in keys:
+            if key in curr:
+                found = True
+                filtered_text.append( curr )
+                keys.remove( key )
+                continue
 
-    # Checks for key words in text
-    for line in text:
-        for word in keys:
-            if word in line:
-                filtered_text.append( line )
+
+    if len( keys ) != 0:
+        print( "Not every key was found. See keys: '" + str( keys ) + "'\n")
+        print( "Also see text:\n")
+        for curr in text_block:
+            print( curr )
+        exit(1)
 
     # Useful to see what the filtered text contains
-    #pp = pprint.PrettyPrinter(width=41, compact=True)
-    #pp.pprint( filtered_text )
+    pp.pprint( filtered_text )
 
-    # Removes duplicate entries
-    unique_text = []
-    [unique_text.append(line) for line in filtered_text if line not in unique_text]
-
-    # TODO: Need to filter out 2 numbers after the key is found
-    # Removes key from line
-    #for curr in range(len(unique_text)):
-    #    for key in keys:
-    #        unique_text[curr] = unique_text[curr].replace(key, '')
-            #unique_text.insert(curr-1, str(key) + ":")
-            #unique_text[curr] = unique_text[curr].replace(key, str(key) + ":\n\t")
-
-    # Prints out text block
-    #for line in unique_text:
-    #    print( line )
-
-    # Key words to scan through paycheck
-    extracted_info = dict()
-
-    # Extracts the payperiod ( start / end ), hours, payrate
-    #   - Begining
-    #   - End
-    #   - Total Hours
-    #   - Payrate
-    for key in pay_stub_obj.key_list_other:
-        #print("Looking for '" + str(key) + "'")
-        for line in text_block:
-            if key in line:
-                extracted_info[str(key)] = line
-
-    # Extracts
-    for key in pay_stub_obj.key_list_earnings:
-        print("Looking for '" + str(key) + "'")
-        for line in text_block:
-            if key in line:
-                extracted_info[str(key)] = line
-                print( line )
-
-    return unique_text
+    return filtered_text
 
 
 
@@ -189,7 +183,7 @@ def main():
     paycheck_text = ConvertPdfToText()
 
     # Formats text block based on ULA formating
-    paycheck_text = FormatUlaTextBlock( paycheck_text )
+    paycheck_text = RefineText( paycheck_text )
 
     # Useful to see what the paycheck_text was
     #pp = pprint.PrettyPrinter(width=41, compact=True)
