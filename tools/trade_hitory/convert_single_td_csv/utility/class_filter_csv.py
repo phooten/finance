@@ -73,11 +73,14 @@ class csvFilter:
                              "CLIENT REQUESTED ELECTRONIC FUNDING RECEIPT",
                              "FREE BALANCE INTEREST ADJUSTMENT",
                              "MANDATORY - EXCHANGE",
+                             "MANDATORY REORGANIZATION FEE",
+                             "MANDATORY REVERSE SPLIT",
                              "MARGIN INTEREST ADJUSTMENT",
                              "MISCELLANEOUS JOURNAL ENTRY",
                              "OFF-CYCLE INTEREST",
                              "TRANSFER OF SECURITY OR OPTION IN" ]
-        self.mStockTypes = [ "QUALIFIED DIVIDEND" ]
+        self.mStockTypes = [ "QUALIFIED DIVIDEND",
+                             "ORDINARY DIVIDEND" ]
 
         self._mInputRow = []
         self.mOutputRow = []
@@ -319,16 +322,22 @@ class csvFilter:
         elif self.mOtherTypes[ 7 ] in description_cell: # MANDATORY EXCHANGE
             self.setAction( "Mandatory - Exchange" )
             return True
-        elif self.mOtherTypes[ 8 ] in description_cell: # MARGIN INTEREST ADJUSTMENT
+        elif self.mOtherTypes[ 8 ] in description_cell: # MANDATORY REORGANIZATION FEE
+            self.setAction( "Mandatory Reorganization Fee" )
+            return True
+        elif self.mOtherTypes[ 9 ] in description_cell: # MANDATORY REVERSE SPLIT
+            self.setAction( "Mandatory Reverse Split" )
+            return True
+        elif self.mOtherTypes[ 10 ] in description_cell: # MARGIN INTEREST ADJUSTMENT
             self.setAction( "Interest Adjustment: Margin" )
             return True
-        elif self.mOtherTypes[ 9 ] in description_cell: # MISCELLANEOUS JOURNAL ENTRY
+        elif self.mOtherTypes[ 11 ] in description_cell: # MISCELLANEOUS JOURNAL ENTRY
             self.setAction( "Miscellaneous Journal Entry" )
             return True
-        elif self.mOtherTypes[ 10 ] in description_cell: # OFF-CYCLE INTEREST
+        elif self.mOtherTypes[ 12 ] in description_cell: # OFF-CYCLE INTEREST
             self.setAction( "Off-cycle Interest" )
             return True
-        elif self.mOtherTypes[ 11 ] in description_cell: # TRANSFER OF SECURITY OR OPTION IN
+        elif self.mOtherTypes[ 13 ] in description_cell: # TRANSFER OF SECURITY OR OPTION IN
             self.setAction( "Transfer of Security / Option" )
             return True
 

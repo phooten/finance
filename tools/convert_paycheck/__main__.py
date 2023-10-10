@@ -1,12 +1,5 @@
 '''
-This file is meant to automate moving my paycheck into an xml file.
-    Features:
-        - Downloads my paycheck
-        - Converts the PDF into readable text
-        - Moves that information into an XML sheet
-
-    TODO: should not include anyt username / passwords in the file. instead
-          manually enter it, or have a secure automated technique.
+    TODO: Insert header information here
 '''
 
 # TODO: Find a better way to set/use environmental variables

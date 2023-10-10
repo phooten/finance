@@ -26,10 +26,11 @@ def main():
 
     # TODO: Change this for an argument
     #       For now, dev hard codes which file to use
-    dev_selected = 1
+    dev_selected = 3
     csv_input_names = [ 'test_transactions_2022.csv',
                         'transactions_2021.csv',
-                        'transactions_2022.csv' ]
+                        'transactions_2022.csv',
+                        'transactions_2023.csv' ]
     csv_input_name = csv_input_names[ dev_selected ]
 
     # Intial checks for the csv file
