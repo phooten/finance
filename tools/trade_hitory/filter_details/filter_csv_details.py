@@ -8,8 +8,11 @@ import shutil
 
 def makeOneGlobalCsv():
 
+    # Makes a list of all converted files
+    # TODO: Don't hard code this
     transaction_path = "/Users/phoot/code/finance/sensitive_files/"
-    #transaction_path = "../../../sensitive_files"
+    global_transactions_file = transaction_path + "/global_transactions.csv"
+    global_transactions_file_backup = global_transactions_file + ".bak"
     all_sensitive_files = [ file for file in listdir(  transaction_path )if isfile( join( transaction_path, file ) ) ]
     #print( __name__ + ": all files: " + str( onlyfiles ) )
 
@@ -21,16 +24,21 @@ def makeOneGlobalCsv():
             converted_files.append( file )
             #print( __name__ + ": Found file: " + file )
 
-    # Remove back up if it exists
-    # Mv global to a back up if it exists
-    # Create new global
+    # Makes a backup of the global file if it exists, and removes the back up if it exists
+    file = Path( global_transactions_file )
+    if file.is_file():
+        os.rename( global_transactions_file, global_transactions_file_backup )
 
+    file = Path( global_transactions_file_backup )
+    if file.is_file():
+        os.remove( global_transactions_file_bakcup )
+
+    # Appends all the found converted files to the global csv
     count = 0
     for file in converted_files:
         base_file = ""
-        print( "here" )
         if count == 0:
-            shutil.copyfile( transaction_path + str( file ), transaction_path + "/global_transactions.csv" )
+            shutil.copyfile( transaction_path + str( file ), global_transaction_path )
             with open( transaction_path + file, 'r' ) as base:
                 base_file = base.read()
                 print( str( base_file ) )

@@ -1,0 +1,259 @@
+## This file contains all the build statements describing the
+# compilation DAG.
+
+# =============================================================================
+# Write statements declared in CMakeLists.txt:
+# 
+# Which is the root file.
+# =============================================================================
+
+# =============================================================================
+# Project: finance_gui
+# Configurations: Debug
+# =============================================================================
+
+#############################################
+# Minimal version of Ninja required by this file
+
+ninja_required_version = 1.8
+
+
+#############################################
+# Set configuration variable for custom commands.
+
+CONFIGURATION = Debug
+# =============================================================================
+# Include auxiliary files.
+
+
+#############################################
+# Include rules file.
+
+include CMakeFiles/rules.ninja
+
+# =============================================================================
+
+#############################################
+# Logical path to working directory; prefix for absolute paths.
+
+cmake_ninja_workdir = /Users/phoot/code/finance/build-untitled-Qt_6_4_1_for_macOS-Debug/
+# =============================================================================
+# Object build statements for EXECUTABLE target untitled
+
+
+#############################################
+# Order-only phony target for untitled
+
+build cmake_object_order_depends_target_untitled: phony || untitled_autogen untitled_autogen/mocs_compilation.cpp untitled_autogen/timestamp untitled_autogen_timestamp_deps
+
+build CMakeFiles/untitled.dir/untitled_autogen/mocs_compilation.cpp.o: CXX_COMPILER__untitled_Debug /Users/phoot/code/finance/build-untitled-Qt_6_4_1_for_macOS-Debug/untitled_autogen/mocs_compilation.cpp || cmake_object_order_depends_target_untitled
+  DEFINES = -DQT_CORE_LIB -DQT_GUI_LIB -DQT_WIDGETS_LIB
+  DEP_FILE = CMakeFiles/untitled.dir/untitled_autogen/mocs_compilation.cpp.o.d
+  FLAGS = -DQT_QML_DEBUG -g -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.3.sdk -std=gnu++17
+  INCLUDES = -I/Users/phoot/code/finance/build-untitled-Qt_6_4_1_for_macOS-Debug -I/Users/phoot/code/finance/untitled -I/Users/phoot/code/finance/build-untitled-Qt_6_4_1_for_macOS-Debug/untitled_autogen/include -isystem /Users/phoot/Qt/6.4.1/macos/lib/QtCore.framework/Headers -iframework /Users/phoot/Qt/6.4.1/macos/lib -isystem /Users/phoot/Qt/6.4.1/macos/mkspecs/macx-clang -isystem /Users/phoot/Qt/6.4.1/macos/include -isystem /Users/phoot/Qt/6.4.1/macos/lib/QtWidgets.framework/Headers -isystem /Users/phoot/Qt/6.4.1/macos/lib/QtGui.framework/Headers
+  OBJECT_DIR = CMakeFiles/untitled.dir
+  OBJECT_FILE_DIR = CMakeFiles/untitled.dir/untitled_autogen
+
+build CMakeFiles/untitled.dir/main.cpp.o: CXX_COMPILER__untitled_Debug /Users/phoot/code/finance/untitled/main.cpp || cmake_object_order_depends_target_untitled
+  DEFINES = -DQT_CORE_LIB -DQT_GUI_LIB -DQT_WIDGETS_LIB
+  DEP_FILE = CMakeFiles/untitled.dir/main.cpp.o.d
+  FLAGS = -DQT_QML_DEBUG -g -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.3.sdk -std=gnu++17
+  INCLUDES = -I/Users/phoot/code/finance/build-untitled-Qt_6_4_1_for_macOS-Debug -I/Users/phoot/code/finance/untitled -I/Users/phoot/code/finance/build-untitled-Qt_6_4_1_for_macOS-Debug/untitled_autogen/include -isystem /Users/phoot/Qt/6.4.1/macos/lib/QtCore.framework/Headers -iframework /Users/phoot/Qt/6.4.1/macos/lib -isystem /Users/phoot/Qt/6.4.1/macos/mkspecs/macx-clang -isystem /Users/phoot/Qt/6.4.1/macos/include -isystem /Users/phoot/Qt/6.4.1/macos/lib/QtWidgets.framework/Headers -isystem /Users/phoot/Qt/6.4.1/macos/lib/QtGui.framework/Headers
+  OBJECT_DIR = CMakeFiles/untitled.dir
+  OBJECT_FILE_DIR = CMakeFiles/untitled.dir
+
+build CMakeFiles/untitled.dir/mainwindow.cpp.o: CXX_COMPILER__untitled_Debug /Users/phoot/code/finance/untitled/mainwindow.cpp || cmake_object_order_depends_target_untitled
+  DEFINES = -DQT_CORE_LIB -DQT_GUI_LIB -DQT_WIDGETS_LIB
+  DEP_FILE = CMakeFiles/untitled.dir/mainwindow.cpp.o.d
+  FLAGS = -DQT_QML_DEBUG -g -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.3.sdk -std=gnu++17
+  INCLUDES = -I/Users/phoot/code/finance/build-untitled-Qt_6_4_1_for_macOS-Debug -I/Users/phoot/code/finance/untitled -I/Users/phoot/code/finance/build-untitled-Qt_6_4_1_for_macOS-Debug/untitled_autogen/include -isystem /Users/phoot/Qt/6.4.1/macos/lib/QtCore.framework/Headers -iframework /Users/phoot/Qt/6.4.1/macos/lib -isystem /Users/phoot/Qt/6.4.1/macos/mkspecs/macx-clang -isystem /Users/phoot/Qt/6.4.1/macos/include -isystem /Users/phoot/Qt/6.4.1/macos/lib/QtWidgets.framework/Headers -isystem /Users/phoot/Qt/6.4.1/macos/lib/QtGui.framework/Headers
+  OBJECT_DIR = CMakeFiles/untitled.dir
+  OBJECT_FILE_DIR = CMakeFiles/untitled.dir
+
+
+# =============================================================================
+# Link build statements for EXECUTABLE target untitled
+
+
+#############################################
+# Link the executable untitled.app/Contents/MacOS/untitled
+
+build untitled.app/Contents/MacOS/untitled: CXX_EXECUTABLE_LINKER__untitled_Debug CMakeFiles/untitled.dir/untitled_autogen/mocs_compilation.cpp.o CMakeFiles/untitled.dir/main.cpp.o CMakeFiles/untitled.dir/mainwindow.cpp.o | /Users/phoot/Qt/6.4.1/macos/lib/QtWidgets.framework/Versions/A/QtWidgets /Users/phoot/Qt/6.4.1/macos/lib/QtGui.framework/Versions/A/QtGui /Users/phoot/Qt/6.4.1/macos/lib/QtCore.framework/Versions/A/QtCore || untitled_autogen untitled_autogen_timestamp_deps
+  FLAGS = -DQT_QML_DEBUG -g -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.3.sdk
+  LINK_LIBRARIES = -Wl,-rpath,/Users/phoot/Qt/6.4.1/macos/lib  /Users/phoot/Qt/6.4.1/macos/lib/QtWidgets.framework/Versions/A/QtWidgets  /Users/phoot/Qt/6.4.1/macos/lib/QtGui.framework/Versions/A/QtGui  /Users/phoot/Qt/6.4.1/macos/lib/QtCore.framework/Versions/A/QtCore  -framework IOKit  -framework DiskArbitration  -Xlinker -framework -Xlinker OpenGL  -Xlinker -framework -Xlinker AGL  -framework AppKit  -framework ImageIO  -framework Metal
+  LINK_PATH = -F/Users/phoot/Qt/6.4.1/macos/lib
+  OBJECT_DIR = CMakeFiles/untitled.dir
+  POST_BUILD = :
+  PRE_LINK = :
+  TARGET_FILE = untitled.app/Contents/MacOS/untitled
+  TARGET_PDB = untitled.dbg
+
+
+#############################################
+# Utility command for edit_cache
+
+build CMakeFiles/edit_cache.util: CUSTOM_COMMAND
+  COMMAND = cd /Users/phoot/code/finance/build-untitled-Qt_6_4_1_for_macOS-Debug && /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/bin/ccmake -S/Users/phoot/code/finance/untitled -B/Users/phoot/code/finance/build-untitled-Qt_6_4_1_for_macOS-Debug
+  DESC = Running CMake cache editor...
+  pool = console
+  restat = 1
+
+build edit_cache: phony CMakeFiles/edit_cache.util
+
+
+#############################################
+# Utility command for rebuild_cache
+
+build CMakeFiles/rebuild_cache.util: CUSTOM_COMMAND
+  COMMAND = cd /Users/phoot/code/finance/build-untitled-Qt_6_4_1_for_macOS-Debug && /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/bin/cmake --regenerate-during-build -S/Users/phoot/code/finance/untitled -B/Users/phoot/code/finance/build-untitled-Qt_6_4_1_for_macOS-Debug
+  DESC = Running CMake to regenerate build system...
+  pool = console
+  restat = 1
+
+build rebuild_cache: phony CMakeFiles/rebuild_cache.util
+
+
+#############################################
+# Utility command for list_install_components
+
+build list_install_components: phony
+
+
+#############################################
+# Utility command for install
+
+build CMakeFiles/install.util: CUSTOM_COMMAND all
+  COMMAND = cd /Users/phoot/code/finance/build-untitled-Qt_6_4_1_for_macOS-Debug && /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/bin/cmake -P cmake_install.cmake
+  DESC = Install the project...
+  pool = console
+  restat = 1
+
+build install: phony CMakeFiles/install.util
+
+
+#############################################
+# Utility command for install/local
+
+build CMakeFiles/install/local.util: CUSTOM_COMMAND all
+  COMMAND = cd /Users/phoot/code/finance/build-untitled-Qt_6_4_1_for_macOS-Debug && /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+  DESC = Installing only the local directory...
+  pool = console
+  restat = 1
+
+build install/local: phony CMakeFiles/install/local.util
+
+
+#############################################
+# Utility command for install/strip
+
+build CMakeFiles/install/strip.util: CUSTOM_COMMAND all
+  COMMAND = cd /Users/phoot/code/finance/build-untitled-Qt_6_4_1_for_macOS-Debug && /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+  DESC = Installing the project stripped...
+  pool = console
+  restat = 1
+
+build install/strip: phony CMakeFiles/install/strip.util
+
+
+#############################################
+# Utility command for untitled_autogen_timestamp_deps
+
+build untitled_autogen_timestamp_deps: phony CMakeFiles/untitled_autogen_timestamp_deps
+
+
+#############################################
+# Utility command for untitled_autogen
+
+build untitled_autogen: phony CMakeFiles/untitled_autogen untitled_autogen/include/ui_mainwindow.h untitled_autogen/timestamp untitled_autogen/mocs_compilation.cpp untitled_autogen_timestamp_deps
+
+
+#############################################
+# Custom command for untitled_autogen/timestamp
+
+build untitled_autogen/timestamp untitled_autogen/mocs_compilation.cpp | ${cmake_ninja_workdir}untitled_autogen/timestamp ${cmake_ninja_workdir}untitled_autogen/mocs_compilation.cpp: CUSTOM_COMMAND /Users/phoot/Qt/6.4.1/macos/./libexec/moc /Users/phoot/Qt/6.4.1/macos/./libexec/uic || untitled_autogen_timestamp_deps
+  COMMAND = cd /Users/phoot/code/finance/build-untitled-Qt_6_4_1_for_macOS-Debug && /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/bin/cmake -E cmake_autogen /Users/phoot/code/finance/build-untitled-Qt_6_4_1_for_macOS-Debug/CMakeFiles/untitled_autogen.dir/AutogenInfo.json Debug && /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/bin/cmake -E touch /Users/phoot/code/finance/build-untitled-Qt_6_4_1_for_macOS-Debug/untitled_autogen/timestamp && /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/bin/cmake -E cmake_transform_depfile Ninja gccdepfile /Users/phoot/code/finance/untitled /Users/phoot/code/finance/untitled /Users/phoot/code/finance/build-untitled-Qt_6_4_1_for_macOS-Debug /Users/phoot/code/finance/build-untitled-Qt_6_4_1_for_macOS-Debug /Users/phoot/code/finance/build-untitled-Qt_6_4_1_for_macOS-Debug/untitled_autogen/deps /Users/phoot/code/finance/build-untitled-Qt_6_4_1_for_macOS-Debug/CMakeFiles/d/80c0332b5126c6785c8b028f1bd44d7289100ebda280d01e2397521d8c198f63.d
+  DESC = Automatic MOC and UIC for target untitled
+  depfile = /Users/phoot/code/finance/build-untitled-Qt_6_4_1_for_macOS-Debug/CMakeFiles/d/80c0332b5126c6785c8b028f1bd44d7289100ebda280d01e2397521d8c198f63.d
+  restat = 1
+
+
+#############################################
+# Phony custom command for CMakeFiles/untitled_autogen_timestamp_deps
+
+build CMakeFiles/untitled_autogen_timestamp_deps | ${cmake_ninja_workdir}CMakeFiles/untitled_autogen_timestamp_deps: phony /Users/phoot/Qt/6.4.1/macos/lib/QtWidgets.framework/Versions/A/QtWidgets /Users/phoot/Qt/6.4.1/macos/./libexec/uic /Users/phoot/Qt/6.4.1/macos/./libexec/moc /Users/phoot/Qt/6.4.1/macos/lib/QtCore.framework/Versions/A/QtCore
+
+
+#############################################
+# Phony custom command for CMakeFiles/untitled_autogen
+
+build CMakeFiles/untitled_autogen untitled_autogen/include/ui_mainwindow.h | ${cmake_ninja_workdir}CMakeFiles/untitled_autogen ${cmake_ninja_workdir}untitled_autogen/include/ui_mainwindow.h: phony untitled_autogen/timestamp || untitled_autogen_timestamp_deps
+
+# =============================================================================
+# Target aliases.
+
+build untitled: phony untitled.app/Contents/MacOS/untitled
+
+# =============================================================================
+# Folder targets.
+
+# =============================================================================
+
+#############################################
+# Folder: /Users/phoot/code/finance/build-untitled-Qt_6_4_1_for_macOS-Debug
+
+build all: phony untitled.app/Contents/MacOS/untitled
+
+# =============================================================================
+# Built-in targets
+
+
+#############################################
+# Phony target to force glob verification run.
+
+build /Users/phoot/code/finance/build-untitled-Qt_6_4_1_for_macOS-Debug/CMakeFiles/VerifyGlobs.cmake_force: phony
+
+
+#############################################
+# Re-run CMake to check if globbed directories changed.
+
+build /Users/phoot/code/finance/build-untitled-Qt_6_4_1_for_macOS-Debug/CMakeFiles/cmake.verify_globs: VERIFY_GLOBS | /Users/phoot/code/finance/build-untitled-Qt_6_4_1_for_macOS-Debug/CMakeFiles/VerifyGlobs.cmake_force
+  pool = console
+  restat = 1
+
+
+#############################################
+# Re-run CMake if any of its inputs changed.
+
+build build.ninja: RERUN_CMAKE /Users/phoot/code/finance/build-untitled-Qt_6_4_1_for_macOS-Debug/CMakeFiles/cmake.verify_globs | /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6/FindWrapAtomic.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6/FindWrapOpenGL.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6/Qt6Config.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6/Qt6ConfigExtras.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6/Qt6ConfigVersion.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6/Qt6ConfigVersionImpl.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6/Qt6Dependencies.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6/Qt6Targets.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6/Qt6VersionlessTargets.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6/QtFeature.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6/QtFeatureCommon.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6/QtPublicAppleHelpers.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6/QtPublicCMakeHelpers.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6/QtPublicCMakeVersionHelpers.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6/QtPublicDependencyHelpers.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6/QtPublicFinalizerHelpers.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6/QtPublicFindPackageHelpers.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6/QtPublicPluginHelpers.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6/QtPublicTargetHelpers.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6/QtPublicTestHelpers.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6/QtPublicToolHelpers.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6/QtPublicWalkLibsHelpers.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6/macos/MacOSXBundleInfo.plist.in /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Core/Qt6CoreAdditionalTargetInfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Core/Qt6CoreConfig.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Core/Qt6CoreConfigExtras.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Core/Qt6CoreConfigVersion.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Core/Qt6CoreConfigVersionImpl.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Core/Qt6CoreDependencies.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Core/Qt6CoreMacros.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Core/Qt6CoreTargets-relwithdebinfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Core/Qt6CoreTargets.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Core/Qt6CoreVersionlessTargets.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6CoreTools/Qt6CoreToolsAdditionalTargetInfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6CoreTools/Qt6CoreToolsConfig.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6CoreTools/Qt6CoreToolsConfigVersion.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6CoreTools/Qt6CoreToolsConfigVersionImpl.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6CoreTools/Qt6CoreToolsDependencies.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6CoreTools/Qt6CoreToolsTargets-relwithdebinfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6CoreTools/Qt6CoreToolsTargets.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6CoreTools/Qt6CoreToolsVersionlessTargets.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6DBus/Qt6DBusAdditionalTargetInfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6DBus/Qt6DBusConfig.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6DBus/Qt6DBusConfigVersion.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6DBus/Qt6DBusConfigVersionImpl.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6DBus/Qt6DBusDependencies.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6DBus/Qt6DBusMacros.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6DBus/Qt6DBusTargets-relwithdebinfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6DBus/Qt6DBusTargets.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6DBus/Qt6DBusVersionlessTargets.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6DBusTools/Qt6DBusToolsAdditionalTargetInfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6DBusTools/Qt6DBusToolsConfig.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6DBusTools/Qt6DBusToolsConfigVersion.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6DBusTools/Qt6DBusToolsConfigVersionImpl.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6DBusTools/Qt6DBusToolsDependencies.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6DBusTools/Qt6DBusToolsTargets-relwithdebinfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6DBusTools/Qt6DBusToolsTargets.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6DBusTools/Qt6DBusToolsVersionlessTargets.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6GuiAdditionalTargetInfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6GuiConfig.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6GuiConfigVersion.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6GuiConfigVersionImpl.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6GuiDependencies.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6GuiPlugins.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6GuiTargets-relwithdebinfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6GuiTargets.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6GuiVersionlessTargets.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QCocoaIntegrationPluginAdditionalTargetInfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QCocoaIntegrationPluginConfig.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QCocoaIntegrationPluginTargets-relwithdebinfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QCocoaIntegrationPluginTargets.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QGifPluginAdditionalTargetInfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QGifPluginConfig.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QGifPluginTargets-relwithdebinfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QGifPluginTargets.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QICOPluginAdditionalTargetInfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QICOPluginConfig.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QICOPluginTargets-relwithdebinfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QICOPluginTargets.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QJpegPluginAdditionalTargetInfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QJpegPluginConfig.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QJpegPluginTargets-relwithdebinfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QJpegPluginTargets.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QMinimalIntegrationPluginAdditionalTargetInfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QMinimalIntegrationPluginConfig.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QMinimalIntegrationPluginTargets-relwithdebinfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QMinimalIntegrationPluginTargets.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QOffscreenIntegrationPluginAdditionalTargetInfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QOffscreenIntegrationPluginConfig.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QOffscreenIntegrationPluginTargets-relwithdebinfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QOffscreenIntegrationPluginTargets.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QSvgIconPluginAdditionalTargetInfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QSvgIconPluginConfig.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QSvgIconPluginTargets-relwithdebinfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QSvgIconPluginTargets.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QSvgPluginAdditionalTargetInfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QSvgPluginConfig.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QSvgPluginTargets-relwithdebinfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QSvgPluginTargets.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QTuioTouchPluginAdditionalTargetInfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QTuioTouchPluginConfig.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QTuioTouchPluginTargets-relwithdebinfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QTuioTouchPluginTargets.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6GuiTools/Qt6GuiToolsAdditionalTargetInfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6GuiTools/Qt6GuiToolsConfig.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6GuiTools/Qt6GuiToolsConfigVersion.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6GuiTools/Qt6GuiToolsConfigVersionImpl.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6GuiTools/Qt6GuiToolsDependencies.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6GuiTools/Qt6GuiToolsTargets-relwithdebinfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6GuiTools/Qt6GuiToolsTargets.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6GuiTools/Qt6GuiToolsVersionlessTargets.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6LinguistTools/Qt6LinguistToolsAdditionalTargetInfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6LinguistTools/Qt6LinguistToolsConfig.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6LinguistTools/Qt6LinguistToolsConfigVersion.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6LinguistTools/Qt6LinguistToolsConfigVersionImpl.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6LinguistTools/Qt6LinguistToolsDependencies.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6LinguistTools/Qt6LinguistToolsMacros.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6LinguistTools/Qt6LinguistToolsTargets-relwithdebinfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6LinguistTools/Qt6LinguistToolsTargets.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6LinguistTools/Qt6LinguistToolsVersionlessTargets.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Widgets/Qt6QMacStylePluginAdditionalTargetInfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Widgets/Qt6QMacStylePluginConfig.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Widgets/Qt6QMacStylePluginTargets-relwithdebinfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Widgets/Qt6QMacStylePluginTargets.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Widgets/Qt6WidgetsAdditionalTargetInfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Widgets/Qt6WidgetsConfig.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Widgets/Qt6WidgetsConfigVersion.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Widgets/Qt6WidgetsConfigVersionImpl.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Widgets/Qt6WidgetsDependencies.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Widgets/Qt6WidgetsMacros.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Widgets/Qt6WidgetsPlugins.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Widgets/Qt6WidgetsTargets-relwithdebinfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Widgets/Qt6WidgetsTargets.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Widgets/Qt6WidgetsVersionlessTargets.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6WidgetsTools/Qt6WidgetsToolsAdditionalTargetInfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6WidgetsTools/Qt6WidgetsToolsConfig.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6WidgetsTools/Qt6WidgetsToolsConfigVersion.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6WidgetsTools/Qt6WidgetsToolsConfigVersionImpl.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6WidgetsTools/Qt6WidgetsToolsDependencies.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6WidgetsTools/Qt6WidgetsToolsTargets-relwithdebinfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6WidgetsTools/Qt6WidgetsToolsTargets.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6WidgetsTools/Qt6WidgetsToolsVersionlessTargets.cmake /Users/phoot/Qt/Qt$ Creator.app/Contents/Resources/package-manager/auto-setup.cmake /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.24/Modules/CMakeCXXInformation.cmake /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.24/Modules/CMakeCheckCompilerFlagCommonPatterns.cmake /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.24/Modules/CMakeCommonLanguageInclude.cmake /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.24/Modules/CMakeFindDependencyMacro.cmake /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.24/Modules/CMakeGenericSystem.cmake /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.24/Modules/CMakeInitializeConfigs.cmake /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.24/Modules/CMakeLanguageInformation.cmake /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.24/Modules/CMakeParseArguments.cmake /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.24/Modules/CMakeSystemSpecificInformation.cmake /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.24/Modules/CMakeSystemSpecificInitialize.cmake /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.24/Modules/CheckCXXCompilerFlag.cmake /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.24/Modules/CheckCXXSourceCompiles.cmake /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.24/Modules/CheckIncludeFileCXX.cmake /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.24/Modules/CheckLibraryExists.cmake /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.24/Modules/Compiler/AppleClang-CXX.cmake /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.24/Modules/Compiler/CMakeCommonCompilerMacros.cmake /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.24/Modules/Compiler/Clang.cmake /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.24/Modules/Compiler/GNU.cmake /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.24/Modules/FindOpenGL.cmake /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.24/Modules/FindPackageHandleStandardArgs.cmake /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.24/Modules/FindPackageMessage.cmake /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.24/Modules/FindThreads.cmake /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.24/Modules/GNUInstallDirs.cmake /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.24/Modules/Internal/CheckCompilerFlag.cmake /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.24/Modules/Internal/CheckFlagCommonConfig.cmake /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.24/Modules/Internal/CheckSourceCompiles.cmake /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.24/Modules/MacroAddFileDependencies.cmake /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.24/Modules/Platform/Apple-AppleClang-CXX.cmake /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.24/Modules/Platform/Apple-Clang-CXX.cmake /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.24/Modules/Platform/Apple-Clang.cmake /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.24/Modules/Platform/Darwin-Initialize.cmake /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.24/Modules/Platform/Darwin.cmake /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.24/Modules/Platform/UnixPaths.cmake /Users/phoot/code/finance/build-untitled-Qt_6_4_1_for_macOS-Debug/CMakeFiles/VerifyGlobs.cmake /Users/phoot/code/finance/untitled/CMakeLists.txt CMakeCache.txt CMakeFiles/3.24.2/CMakeCXXCompiler.cmake CMakeFiles/3.24.2/CMakeSystem.cmake
+  pool = console
+
+
+#############################################
+# A missing CMake input file is not an error.
+
+build /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6/FindWrapAtomic.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6/FindWrapOpenGL.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6/Qt6Config.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6/Qt6ConfigExtras.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6/Qt6ConfigVersion.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6/Qt6ConfigVersionImpl.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6/Qt6Dependencies.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6/Qt6Targets.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6/Qt6VersionlessTargets.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6/QtFeature.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6/QtFeatureCommon.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6/QtPublicAppleHelpers.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6/QtPublicCMakeHelpers.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6/QtPublicCMakeVersionHelpers.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6/QtPublicDependencyHelpers.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6/QtPublicFinalizerHelpers.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6/QtPublicFindPackageHelpers.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6/QtPublicPluginHelpers.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6/QtPublicTargetHelpers.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6/QtPublicTestHelpers.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6/QtPublicToolHelpers.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6/QtPublicWalkLibsHelpers.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6/macos/MacOSXBundleInfo.plist.in /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Core/Qt6CoreAdditionalTargetInfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Core/Qt6CoreConfig.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Core/Qt6CoreConfigExtras.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Core/Qt6CoreConfigVersion.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Core/Qt6CoreConfigVersionImpl.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Core/Qt6CoreDependencies.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Core/Qt6CoreMacros.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Core/Qt6CoreTargets-relwithdebinfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Core/Qt6CoreTargets.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Core/Qt6CoreVersionlessTargets.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6CoreTools/Qt6CoreToolsAdditionalTargetInfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6CoreTools/Qt6CoreToolsConfig.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6CoreTools/Qt6CoreToolsConfigVersion.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6CoreTools/Qt6CoreToolsConfigVersionImpl.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6CoreTools/Qt6CoreToolsDependencies.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6CoreTools/Qt6CoreToolsTargets-relwithdebinfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6CoreTools/Qt6CoreToolsTargets.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6CoreTools/Qt6CoreToolsVersionlessTargets.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6DBus/Qt6DBusAdditionalTargetInfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6DBus/Qt6DBusConfig.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6DBus/Qt6DBusConfigVersion.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6DBus/Qt6DBusConfigVersionImpl.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6DBus/Qt6DBusDependencies.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6DBus/Qt6DBusMacros.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6DBus/Qt6DBusTargets-relwithdebinfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6DBus/Qt6DBusTargets.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6DBus/Qt6DBusVersionlessTargets.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6DBusTools/Qt6DBusToolsAdditionalTargetInfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6DBusTools/Qt6DBusToolsConfig.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6DBusTools/Qt6DBusToolsConfigVersion.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6DBusTools/Qt6DBusToolsConfigVersionImpl.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6DBusTools/Qt6DBusToolsDependencies.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6DBusTools/Qt6DBusToolsTargets-relwithdebinfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6DBusTools/Qt6DBusToolsTargets.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6DBusTools/Qt6DBusToolsVersionlessTargets.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6GuiAdditionalTargetInfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6GuiConfig.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6GuiConfigVersion.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6GuiConfigVersionImpl.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6GuiDependencies.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6GuiPlugins.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6GuiTargets-relwithdebinfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6GuiTargets.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6GuiVersionlessTargets.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QCocoaIntegrationPluginAdditionalTargetInfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QCocoaIntegrationPluginConfig.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QCocoaIntegrationPluginTargets-relwithdebinfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QCocoaIntegrationPluginTargets.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QGifPluginAdditionalTargetInfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QGifPluginConfig.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QGifPluginTargets-relwithdebinfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QGifPluginTargets.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QICOPluginAdditionalTargetInfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QICOPluginConfig.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QICOPluginTargets-relwithdebinfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QICOPluginTargets.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QJpegPluginAdditionalTargetInfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QJpegPluginConfig.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QJpegPluginTargets-relwithdebinfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QJpegPluginTargets.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QMinimalIntegrationPluginAdditionalTargetInfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QMinimalIntegrationPluginConfig.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QMinimalIntegrationPluginTargets-relwithdebinfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QMinimalIntegrationPluginTargets.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QOffscreenIntegrationPluginAdditionalTargetInfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QOffscreenIntegrationPluginConfig.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QOffscreenIntegrationPluginTargets-relwithdebinfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QOffscreenIntegrationPluginTargets.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QSvgIconPluginAdditionalTargetInfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QSvgIconPluginConfig.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QSvgIconPluginTargets-relwithdebinfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QSvgIconPluginTargets.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QSvgPluginAdditionalTargetInfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QSvgPluginConfig.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QSvgPluginTargets-relwithdebinfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QSvgPluginTargets.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QTuioTouchPluginAdditionalTargetInfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QTuioTouchPluginConfig.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QTuioTouchPluginTargets-relwithdebinfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Gui/Qt6QTuioTouchPluginTargets.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6GuiTools/Qt6GuiToolsAdditionalTargetInfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6GuiTools/Qt6GuiToolsConfig.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6GuiTools/Qt6GuiToolsConfigVersion.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6GuiTools/Qt6GuiToolsConfigVersionImpl.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6GuiTools/Qt6GuiToolsDependencies.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6GuiTools/Qt6GuiToolsTargets-relwithdebinfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6GuiTools/Qt6GuiToolsTargets.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6GuiTools/Qt6GuiToolsVersionlessTargets.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6LinguistTools/Qt6LinguistToolsAdditionalTargetInfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6LinguistTools/Qt6LinguistToolsConfig.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6LinguistTools/Qt6LinguistToolsConfigVersion.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6LinguistTools/Qt6LinguistToolsConfigVersionImpl.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6LinguistTools/Qt6LinguistToolsDependencies.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6LinguistTools/Qt6LinguistToolsMacros.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6LinguistTools/Qt6LinguistToolsTargets-relwithdebinfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6LinguistTools/Qt6LinguistToolsTargets.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6LinguistTools/Qt6LinguistToolsVersionlessTargets.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Widgets/Qt6QMacStylePluginAdditionalTargetInfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Widgets/Qt6QMacStylePluginConfig.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Widgets/Qt6QMacStylePluginTargets-relwithdebinfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Widgets/Qt6QMacStylePluginTargets.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Widgets/Qt6WidgetsAdditionalTargetInfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Widgets/Qt6WidgetsConfig.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Widgets/Qt6WidgetsConfigVersion.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Widgets/Qt6WidgetsConfigVersionImpl.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Widgets/Qt6WidgetsDependencies.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Widgets/Qt6WidgetsMacros.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Widgets/Qt6WidgetsPlugins.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Widgets/Qt6WidgetsTargets-relwithdebinfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Widgets/Qt6WidgetsTargets.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6Widgets/Qt6WidgetsVersionlessTargets.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6WidgetsTools/Qt6WidgetsToolsAdditionalTargetInfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6WidgetsTools/Qt6WidgetsToolsConfig.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6WidgetsTools/Qt6WidgetsToolsConfigVersion.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6WidgetsTools/Qt6WidgetsToolsConfigVersionImpl.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6WidgetsTools/Qt6WidgetsToolsDependencies.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6WidgetsTools/Qt6WidgetsToolsTargets-relwithdebinfo.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6WidgetsTools/Qt6WidgetsToolsTargets.cmake /Users/phoot/Qt/6.4.1/macos/lib/cmake/Qt6WidgetsTools/Qt6WidgetsToolsVersionlessTargets.cmake /Users/phoot/Qt/Qt$ Creator.app/Contents/Resources/package-manager/auto-setup.cmake /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.24/Modules/CMakeCXXInformation.cmake /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.24/Modules/CMakeCheckCompilerFlagCommonPatterns.cmake /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.24/Modules/CMakeCommonLanguageInclude.cmake /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.24/Modules/CMakeFindDependencyMacro.cmake /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.24/Modules/CMakeGenericSystem.cmake /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.24/Modules/CMakeInitializeConfigs.cmake /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.24/Modules/CMakeLanguageInformation.cmake /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.24/Modules/CMakeParseArguments.cmake /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.24/Modules/CMakeSystemSpecificInformation.cmake /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.24/Modules/CMakeSystemSpecificInitialize.cmake /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.24/Modules/CheckCXXCompilerFlag.cmake /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.24/Modules/CheckCXXSourceCompiles.cmake /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.24/Modules/CheckIncludeFileCXX.cmake /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.24/Modules/CheckLibraryExists.cmake /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.24/Modules/Compiler/AppleClang-CXX.cmake /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.24/Modules/Compiler/CMakeCommonCompilerMacros.cmake /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.24/Modules/Compiler/Clang.cmake /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.24/Modules/Compiler/GNU.cmake /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.24/Modules/FindOpenGL.cmake /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.24/Modules/FindPackageHandleStandardArgs.cmake /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.24/Modules/FindPackageMessage.cmake /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.24/Modules/FindThreads.cmake /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.24/Modules/GNUInstallDirs.cmake /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.24/Modules/Internal/CheckCompilerFlag.cmake /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.24/Modules/Internal/CheckFlagCommonConfig.cmake /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.24/Modules/Internal/CheckSourceCompiles.cmake /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.24/Modules/MacroAddFileDependencies.cmake /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.24/Modules/Platform/Apple-AppleClang-CXX.cmake /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.24/Modules/Platform/Apple-Clang-CXX.cmake /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.24/Modules/Platform/Apple-Clang.cmake /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.24/Modules/Platform/Darwin-Initialize.cmake /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.24/Modules/Platform/Darwin.cmake /Users/phoot/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.24/Modules/Platform/UnixPaths.cmake /Users/phoot/code/finance/build-untitled-Qt_6_4_1_for_macOS-Debug/CMakeFiles/VerifyGlobs.cmake /Users/phoot/code/finance/untitled/CMakeLists.txt CMakeCache.txt CMakeFiles/3.24.2/CMakeCXXCompiler.cmake CMakeFiles/3.24.2/CMakeSystem.cmake: phony
+
+
+#############################################
+# Clean additional files.
+
+build CMakeFiles/clean.additional: CLEAN_ADDITIONAL
+  CONFIG = Debug
+
+
+#############################################
+# Clean all the built files.
+
+build clean: CLEAN CMakeFiles/clean.additional
+
+
+#############################################
+# Print all primary targets available.
+
+build help: HELP
+
+
+#############################################
+# Make the all target the default.
+
+default all
