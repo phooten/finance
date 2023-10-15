@@ -1,5 +1,6 @@
 # TODO: make header
 
+import os
 from os import listdir
 from os.path import isfile, join
 import re
@@ -11,7 +12,7 @@ def makeOneGlobalCsv():
     # Makes a list of all converted files
     # TODO: Don't hard code this
     transaction_path = "/Users/phoot/code/finance/sensitive_files/"
-    global_transactions_file = transaction_path + "/global_transactions.csv"
+    global_transactions_file = transaction_path + "global_transactions.csv"
     global_transactions_file_backup = global_transactions_file + ".bak"
     all_sensitive_files = [ file for file in listdir(  transaction_path )if isfile( join( transaction_path, file ) ) ]
     #print( __name__ + ": all files: " + str( onlyfiles ) )
@@ -25,48 +26,48 @@ def makeOneGlobalCsv():
             #print( __name__ + ": Found file: " + file )
 
     # Makes a backup of the global file if it exists, and removes the back up if it exists
-    file = Path( global_transactions_file )
-    if file.is_file():
-        os.rename( global_transactions_file, global_transactions_file_backup )
+    if os.path.exists( global_transactions_file_backup ):
+        print( __name__ + ": Old backup file removed under the name '" + global_transactions_file_backup + "'" )
+        os.remove( global_transactions_file_backup )
 
-    file = Path( global_transactions_file_backup )
-    if file.is_file():
-        os.remove( global_transactions_file_bakcup )
+    if os.path.exists( global_transactions_file ):
+        print( __name__ + ": Old file renamed to '" + global_transactions_file + "'" )
+        os.rename( global_transactions_file, global_transactions_file_backup )
 
     # Appends all the found converted files to the global csv
     count = 0
+    base_file = ""
+    gf = open( global_transactions_file , "w" )
     for file in converted_files:
-        base_file = ""
-        if count == 0:
-            shutil.copyfile( transaction_path + str( file ), global_transaction_path )
-            with open( transaction_path + file, 'r' ) as base:
-                base_file = base.read()
-                print( str( base_file ) )
-            count += 1
+        with open( transaction_path + str( file ), "r" ) as tf:
+            print( __name__ + ": looking through file '" + file + "'" )
+            gf.write( tf.read() )
+            tf.close()
+   # for file in converted_files:
+   #     if count == 0:
+   #         shutil.copyfile( transaction_path + str( file ), global_transactions_file )
+   #         count += 1
 
-        else:
-            with open( transaction_path + file, 'r' ) as file_open:
-                file_open.write( str( base_file ) )
+   #     else:
+   #         with open( global_transactions_file, 'a' ) as global_file:
+   #             with open( transaction_path + file, 'r' ) as file_open:
+   #                 global_file.write( file_open  )
+   #                 file_open.close()
 
-   # with open('original.csv', 'r') as f1:
-   #     original = f1.read()
-   # 
-   # with open('all.csv', 'a') as f2:
-   #     f2.write('\n')
-   #     f2.write(original)
+    gf.close()
 
-    
-    global_csv_name = "Fixme"
-    return global_csv_name
 
-def main():
-    name = makeOneGlobalCsv()
-
-    print( __name__ + ": " + name )
+    print( __name__ + ": New file created under the name '" + global_transactions_file + "'" )
 
     return
-# functions # Filter out stocks
+
+def main():
+    makeOneGlobalCsv()
+
+    #print( __name__ + ": " + name )
+    return
 
 
 if __name__ == "__main__":
     main()
+
