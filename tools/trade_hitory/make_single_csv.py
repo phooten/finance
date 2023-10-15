@@ -13,7 +13,7 @@ def makeOneGlobalCsv():
     # TODO: Don't hard code this
     transaction_path = "/Users/phoot/code/finance/sensitive_files/"
     global_transactions_file = transaction_path + "global_transactions.csv"
-    global_transactions_file_backup = global_transactions_file + ".bak"
+    global_transactions_file_backup = global_transactions_file + "_BACKUP.csv"
     all_sensitive_files = [ file for file in listdir(  transaction_path )if isfile( join( transaction_path, file ) ) ]
     #print( __name__ + ": all files: " + str( onlyfiles ) )
 
@@ -43,28 +43,30 @@ def makeOneGlobalCsv():
             print( __name__ + ": looking through file '" + file + "'" )
             gf.write( tf.read() )
             tf.close()
-   # for file in converted_files:
-   #     if count == 0:
-   #         shutil.copyfile( transaction_path + str( file ), global_transactions_file )
-   #         count += 1
-
-   #     else:
-   #         with open( global_transactions_file, 'a' ) as global_file:
-   #             with open( transaction_path + file, 'r' ) as file_open:
-   #                 global_file.write( file_open  )
-   #                 file_open.close()
 
     gf.close()
 
 
     print( __name__ + ": New file created under the name '" + global_transactions_file + "'" )
 
+    return global_transactions_file
+
+def refineFile( raw_file ):
+    """
+    Description:    Removes headers that appear more than once and re-numbers the first column into a total order
+    Arguments:      Raw file of the global file that was appended together
+    Returns:        Void
+    """
+
+    with 
+
     return
 
 def main():
-    makeOneGlobalCsv()
+    file = makeOneGlobalCsv()
 
-    #print( __name__ + ": " + name )
+    refineFile( file )
+
     return
 
 
