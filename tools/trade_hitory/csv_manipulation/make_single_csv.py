@@ -1,11 +1,13 @@
 # TODO: make header
 
 import os
+from messages import class_messages
 from os import listdir
 from os.path import isfile, join
 import re
 import shutil
 
+msg = class_messages.messages()
 
 def makeOneGlobalCsv():
 
@@ -20,18 +22,17 @@ def makeOneGlobalCsv():
     converted_files = []
     pattern = re.compile( "^converted_transactions_20[0-9][0-9]\.csv$" )
     for file in all_sensitive_files:
-        #print( __name__ + ": file => " + file )
         if pattern.match( str( file ) ):
             converted_files.append( file )
-            #print( __name__ + ": Found file: " + file )
+            msg.system( "Found file to append'" + file + "'", __name__ )
 
     # Makes a backup of the global file if it exists, and removes the back up if it exists
     if os.path.exists( global_transactions_file_backup ):
-        print( __name__ + ": Old backup file removed under the name '" + global_transactions_file_backup + "'" )
+        msg.system( "Old backup file removed under the name '" + global_transactions_file_backup + "'", __name__ )
         os.remove( global_transactions_file_backup )
 
     if os.path.exists( global_transactions_file ):
-        print( __name__ + ": Old file renamed to '" + global_transactions_file + "'" )
+        msg.system( "Old file renamed to '" + global_transactions_file + "'", __name__ )
         os.rename( global_transactions_file, global_transactions_file_backup )
 
     # Appends all the found converted files to the global csv
@@ -40,16 +41,43 @@ def makeOneGlobalCsv():
     gf = open( global_transactions_file , "w" )
     for file in converted_files:
         with open( transaction_path + str( file ), "r" ) as tf:
-            print( __name__ + ": looking through file '" + file + "'" )
+            msg.system( "looking through file '" + file + "'", __name__ )
             gf.write( tf.read() )
             tf.close()
 
     gf.close()
 
 
-    print( __name__ + ": New file created under the name '" + global_transactions_file + "'" )
+    msg.system( "New file created under the name '" + global_transactions_file + "'", __name__ )
 
     return global_transactions_file
+
+
+def convertAllAvailableCsvFiles():
+    """
+    Description:    
+    Arguments:      
+    Returns:        
+    """
+
+    # TODO This needs to not be hard coded
+    #regex_pattern = "^transactions_20[0-9][0-9]\.csv$"
+    #pattern = re.compile( regex_pattern )
+    #if not pattern.match( args.input_file ):
+    #    msg.error( "\nIncorrect file format: '" + args.input_file + "'\n"\
+    #               "See regex pattern:     '" + regex_pattern + "'\n",
+    #                __name__ )
+    #    return False, args.input_file
+    #file = ""
+
+    # Find all the transaction files
+
+    # If converted file already, note that to operator
+
+    # If not, convert file and notify operator
+
+    return
+
 
 def refineFile( raw_file ):
     """
@@ -58,11 +86,13 @@ def refineFile( raw_file ):
     Returns:        Void
     """
 
-    with 
+    #with 
 
     return
 
 def main():
+    
+
     file = makeOneGlobalCsv()
 
     refineFile( file )

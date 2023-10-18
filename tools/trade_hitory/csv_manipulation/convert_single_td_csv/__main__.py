@@ -7,9 +7,11 @@
 
 
 # Modules
+import argparse
 import csv
 import os
 import pandas as pd
+import re
 import sys
 import inspect
 
@@ -23,7 +25,7 @@ from utility import helper_functions
 msg = class_messages.messages()
 
 def main():
-
+    
     # TODO: Change this for an argument
     #       For now, dev hard codes which file to use
     dev_selected = 3
@@ -33,8 +35,13 @@ def main():
                         'transactions_2023.csv' ]
     csv_input_name = csv_input_names[ dev_selected ]
 
+    # Gets file to convert
+    sensitive_path = '/Users/phoot/code/finance/sensitive_files/'
+    passed, csv_input_name = getInputFile()
+    if passed == False:
+        msg.quit_script()
+
     # Intial checks for the csv file
-    sensitive_path = '../../../sensitive_files/'
     csv_input_path =  sensitive_path + csv_input_name
     passed = helper_functions.initialCsvFileCheck( csv_input_path )
     if not passed:
@@ -66,6 +73,36 @@ def main():
     except:
         print( "No files in this path: ", csv_output_path )
     new_csv.to_csv( csv_output_path, index=False )
+
+    return
+
+
+def getInputFile():
+    """
+    Description:    
+    Arguments:      
+    Returns:        
+    """
+    parser = argparse.ArgumentParser( description='Process some integers.' )
+    parser.add_argument( '-f',
+                         '--file',
+                         metavar='File',
+                         dest='input_file',
+                         required=True )
+
+    args = parser.parse_args()
+
+    # TODO: Don't hard code this. use environmental variables
+    regex_pattern = "^transactions_20[0-9][0-9]\.csv$"
+    pattern = re.compile( regex_pattern )
+    if not pattern.match( args.input_file ):
+        msg.error( "\nIncorrect file format: '" + args.input_file + "'\n"\
+                   "See regex pattern:     '" + regex_pattern + "'\n",
+                    __name__ )
+        return False, args.input_file
+
+    return True, args.input_file
+
 
 
 if __name__ == "__main__":

@@ -4,6 +4,7 @@
 import csv
 import os
 import pandas as pd
+import re
 import sys
 import inspect
 
@@ -44,6 +45,25 @@ def initialCsvFileCheck( csv_path ):
     if os.stat( csv_path ).st_size == 0:
         msg.error( "File is empty: '" + csv_path + "'", location )
         return False
+
+    # Checks if the file has already been converted
+    # TODO: Don't hard code this, use environmental variables
+    csv_name = csv_path.split('/')[-1]
+    converted_file = "converted_" + csv_name
+    converted_path = re.sub( csv_name, converted_file, csv_path )
+    if os.path.exists( converted_path ):
+        msg.warning( "\nInput file '" + csv_path + "' already converted.\n"\
+                     "See '" + converted_file + "'",
+                     __name__ )
+        answer = ""
+        while( answer != "y" and answer != "n" ):
+            answer = input("\nWould you like to overwrite it? (y/n): " )
+            if answer == "n":
+                msg.system( "Quiting the script based on user input.", __name__ )
+                msg.quit_script()
+
+            elif answer != "y":
+                msg.warning( "Needs to be 'y' for yes or 'n' for no.", __name__ )
 
     return True
 
