@@ -24,7 +24,7 @@ def makeOneGlobalCsv():
     for file in all_sensitive_files:
         if pattern.match( str( file ) ):
             converted_files.append( file )
-            msg.system( "Found file to append'" + file + "'", __name__ )
+            msg.system( "Found file to append '" + file + "'", __name__ )
 
     # Makes a backup of the global file if it exists, and removes the back up if it exists
     if os.path.exists( global_transactions_file_backup ):
@@ -60,10 +60,23 @@ def convertAllAvailableCsvFiles():
     Returns:        
     """
 
+    mypath = "/Users/phoot/code/finance/sensitive_files"
+    onlyfiles = [ f for f in listdir( mypath ) if isfile( join( mypath, f ) ) ]
+
     # TODO This needs to not be hard coded
-    #regex_pattern = "^transactions_20[0-9][0-9]\.csv$"
-    #pattern = re.compile( regex_pattern )
-    #if not pattern.match( args.input_file ):
+    regex_pattern_transactions = "^transactions_20[0-9][0-9]\.csv$"
+    regex_pattern_transactions_converted = "^converted_transactions_20[0-9][0-9]\.csv$"
+
+    pattern_transactions = re.compile( regex_pattern_transactions )
+    pattern_transactions_converted = re.compile( regex_pattern_transactions_converted )
+
+    # TODO: warn if already converted
+    # TODO: Don't hard code single file conversion
+    for file in onlyfiles:
+        if pattern_transactions.match( file ):
+            print( "found a file to convert '" + file + "'" )
+
+
     #    msg.error( "\nIncorrect file format: '" + args.input_file + "'\n"\
     #               "See regex pattern:     '" + regex_pattern + "'\n",
     #                __name__ )
@@ -91,7 +104,7 @@ def refineFile( raw_file ):
     return
 
 def main():
-    
+    convertAllAvailableCsvFiles()
 
     file = makeOneGlobalCsv()
 
