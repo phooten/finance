@@ -10,7 +10,7 @@
 import argparse
 import csv
 import os
-import pandas as pd
+# import pandas as pd
 import re
 import sys
 import inspect

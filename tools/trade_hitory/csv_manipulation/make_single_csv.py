@@ -4,6 +4,7 @@ import os
 from messages import class_messages
 from os import listdir
 from os.path import isfile, join
+import pandas as pd
 import re
 import shutil
 
@@ -63,15 +64,15 @@ def convertAllAvailableCsvFiles():
     mypath = "/Users/phoot/code/finance/sensitive_files"
     sensitive_files = [ f for f in listdir( mypath ) if isfile( join( mypath, f ) ) ]
 
-    # TODO This needs to not be hard coded
+    # TODO: This needs to not be hard coded
     regex_pattern_transactions = "^transactions_20[0-9][0-9]\.csv$"
     pattern_transactions = re.compile( regex_pattern_transactions )
     files_to_convert = []
 
-    # TODO: warn if already converted
     # TODO: Don't hard code single file conversion
     for file in sensitive_files:
         if pattern_transactions.match( file ):
+            convert_file = True
             msg.system( "Found a file to convert '" + file + "'", __name__ )
 
             # Checks the file isn't already converted
@@ -81,17 +82,18 @@ def convertAllAvailableCsvFiles():
                 if file_conv == converted_file:
                     msg.warning( "File has already been converted '" + file + "'. Waiting for user input.", __name__ )
 
-                    # Asks user if they want to continue
+                    # Asks user if they want to overwrite conversion file
                     user_input = ""
-                    while user_input != "y":
+                    while user_input != "y" and user_input != "n":
                         user_input = input( "Would you like to overwrite 'conversion_" + file + "' ? (y/n): " )
                         if user_input == "n":
-                            msg.warning( "User chose 'n' so script won't continue.", __name__ )
-                            return False
+                            msg.warning( "User chose 'n' so file won't be overwritten.", __name__ )
+                            convert_file = False
                     msg.system( "User chose 'y' so '" + file + "' will be converted and overwite file. Script continuing.", __name__ )
 
             # Adds file to list and will convert later
-            files_to_convert.append( file )
+            if convert_file:
+                files_to_convert.append( file )
 
 
     for file in files_to_convert:
@@ -115,22 +117,40 @@ def refineFile( raw_file ):
     """
 
     count = 0
-    with open( raw_file ) as fileObject:
-        for row in fileObject:
-            if count < 10:
-                print( row )
+    df = pd.read_csv( raw_file, sep=',' )
+    row_count, col_count = df.shape
+    df_header_list = list(df.columns.values) 
+    df_header_list = df_header_list[ 1: ]
 
-            if count == 0:
-                #TODO: need to remove the header in the middle of the file and renumber the first column
-                header = row
-                print( row )
-                print( header )
+    for row_index in range( row_count ):
+        df_row_list = df.loc[ row_index ].values
+        df_row_list = df_row_list[ 1: ]
+        if set( df_row_list ) == set( df_header_list ):
+            msg.system( "Found header row at index '" + str( row_index ) + "'. Removing.", __name__ )
+            df = df.drop( index=row_index )
 
-            else:
-                if row == header:
-                    msg.error( "Found another header at count '" + str( count ) + "'.", __name__ )
+    df = df.loc[:, ~df.columns.str.contains('^Unnamed')]
+    df.to_csv( raw_file, index=True )
 
-            count += 1
+        #if df.loc[ row ] == df.loc[ 0 ]:
+        #    print( df.loc[ row ] )
+
+#    with open( raw_file ) as fileObject:
+#        for row in fileObject:
+#            if count < 10:
+#                print( row )
+#
+#            if count == 0:
+#                #TODO: need to remove the header in the middle of the file and renumber the first column
+#                header = row
+#                print( row )
+#                print( header )
+#
+#            else:
+#                if row == header:
+#                    msg.error( "Found another header at count '" + str( count ) + "'.", __name__ )
+#
+#            count += 1
 
     return True
 
@@ -141,11 +161,11 @@ def main():
         msg.error( "converAllAvailableCsvFiles() failed.", __name__ )
         msg.quit_script()
 
+
     passed, file = makeOneGlobalCsv()
     if not passed:
         msg.error( "makeOneGlobalCsv() failed.", __name__ )
         msg.quit_script()
-        
 
     passed = refineFile( file )
     if not passed:
