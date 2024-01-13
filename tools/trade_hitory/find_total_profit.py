@@ -18,6 +18,8 @@
 #           Not in use.
 
 
+import pandas as pd
+
 # Input Object
 class UserInput():
     """
@@ -27,8 +29,9 @@ class UserInput():
     @param mType - 
     """
     def __init__( self ):
-        self.mDateRange = ( "01/01/2000", "01/01/2100" )
+        self.mDateRange = [ "01/01/2000", "01/01/2100" ]
         self.mType = "NA"
+# End of UserInput
 
 
 """
@@ -40,14 +43,16 @@ GetUserInput
 """
 def GetUserInput( ):
     # Default input object selection
-    UserInput UserInputObj()
+    UserInputObj = UserInput()
 
+    # TODO: Make this from user input
     UserInputObj.mType = "options"
-    UserInputObj.mDateRange[ 0 ] = "01/01/2018"
-    UserInputObj.mDateRange[ 1 ] = "01/01/2024"
+    UserInputObj.mDateRange[ 0 ] = "01/01/2022"
+    UserInputObj.mDateRange[ 1 ] = "12/31/2022"
+    # UserInputObj.mDateRange[ 1 ] = "01/01/2024"
 
     return UserInputObj
-    # End of GetUserInput
+# End of GetUserInput
 
 
 """
@@ -61,8 +66,9 @@ GetMasterCsv
 def GetMasterCsv():
     # Gets file to convert
     sensitive_path = '/Users/phoot/code/finance/sensitive_files/'
-    master_file = sensitive_path + "global_transactions.csv"
+    master_csv_path = sensitive_path + "global_transactions.csv"
     return master_csv_path
+# End of GetMasterCsv
 
 
 """
@@ -76,7 +82,16 @@ FilterDate
 @returns - CSV object with only items that falls between the date selection
 """
 def FilterDate( date_selection, csv_object ):
-    return
+    start_date = date_selection[0]
+    end_date = date_selection[1]
+    print( "Start: " + start_date )
+    print( "End:   " + end_date )
+
+
+    csv_object.set_index( "DATE OF ACTION" )
+
+    return csv_object.loc[ start_date:end_date ]
+# End of FilterDate
 
 
 """
@@ -89,14 +104,23 @@ FilterType
 
 @returns - Returns CSV object with only the type that has the same type as the selection
 """
-def FilterType( type, csv_object ):
-    return
+# def FilterType( type, csv_object ):
+#     return
+# # End of Filter Type
 
 def main():
-    UserInput InputObj() = GetUserInputObj()
+    # Gets the user input of what the csv should filter
+    UserInputObj = GetUserInput()
+
+    # Turns the master trade history into a pandas data frame to work with
+    df = pd.read_csv( GetMasterCsv(), sep=',' )
+
+    # Filters based on date
+    df = FilterDate( UserInputObj.mDateRange, df)
+    print( df )
+    # Filters based on Type
 
     return
 
 if __name__ == "__main__":
     main()
-    return

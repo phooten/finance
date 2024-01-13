@@ -628,9 +628,12 @@ class csvFilter:
         """
         method_name = self.getMethodName()
 
-        # Checks format is ##/##/##
+        # Checks format is ##/##/#### and switches to YYYY/MM/DD
         # Regex: '[0-9]' is any digit. '$' signifies end of the line. '^' signifies start of the line.
         if re.match( r"^[0-9][0-9]/[0-9][0-9]/[0-9][0-9][0-9][0-9]$", pDate ):
+            # Changes the order to YYYY + / + MM + / + DD
+            tmp = pDate
+            pDate = tmp[6:] + "/" + tmp[:2] + "/" + tmp[3:5]
             return True, pDate
 
         # If not in '##/##/####' but has two '/', fail the check
@@ -665,33 +668,32 @@ class csvFilter:
 
         # Assign number for month
         if month == 'Jan':
-            new_date = '01'
+            month = '01'
         elif month == 'Feb':
-            new_date = '02'
+            month = '02'
         elif month == 'Mar':
-            new_date = '03'
+            month = '03'
         elif month == 'Apr':
-            new_date = '04'
+            month = '04'
         elif month == 'May':
-            new_date = '05'
+            month = '05'
         elif month == 'Jun':
-            new_date = '06'
+            month = '06'
         elif month == 'Jul':
-            new_date = '07'
+            month = '07'
         elif month == 'Aug':
-            new_date = '08'
+            month = '08'
         elif month == 'Sep':
-            new_date = '09'
+            month = '09'
         elif month == 'Oct':
-            new_date = '10'
+            month = '10'
         elif month == 'Nov':
-            new_date = '11'
+            month = '11'
         elif month == 'Dec':
-            new_date = '12'
+            month = '12'
         else:
             msg.error( "date_list[0] not expected: " + month, method_name )
             return False, pDate
-
 
         # Formats days with leading 0
         day = str( day )
@@ -701,7 +703,7 @@ class csvFilter:
             day = str(day).zfill(2)
 
         # Finalize date format
-        new_date += '/' + day + '/' + year
+        new_date = year + '/' + month + '/' + day
 
         return True, new_date
 
