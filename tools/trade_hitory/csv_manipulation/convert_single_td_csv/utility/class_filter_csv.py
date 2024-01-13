@@ -5,9 +5,8 @@ import sys
 import math
 
 # Project Modules
-from messages import class_messages
-
-msg = class_messages.messages()
+from HootLogger import logger
+msg = logger.messages( __name__ )
 
 class csvFilter:
 

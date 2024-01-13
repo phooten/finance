@@ -1,14 +1,16 @@
 # TODO: make header
 
 import os
-from messages import class_messages
+from HootLogger import logger
+#from messages import class_messages
 from os import listdir
 from os.path import isfile, join
 import pandas as pd
 import re
 import shutil
 
-msg = class_messages.messages()
+msg = logger.messages( __name__ )
+#msg = class_messages.messages()
 
 def makeOneGlobalCsv():
 

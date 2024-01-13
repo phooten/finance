@@ -10,10 +10,10 @@ import inspect
 
 # Project modules
 from utility import class_filter_csv
-from messages import class_messages
+from HootLogger import logger
 
 # Classes
-msg = class_messages.messages()
+msg = logger.messages( __name__ )
 csv_filter = class_filter_csv.csvFilter()
 file_name = os.path.basename( __file__ )
 
