@@ -29,6 +29,7 @@ class UserInput():
     @param mType - 
     """
     def __init__( self ):
+        self.mTickerList = [ "" ]
         self.mDateRange = [ "01/01/2000", "01/01/2100" ]
         self.mType = "NA"
 # End of UserInput
@@ -46,8 +47,15 @@ def GetUserInput( ):
     UserInputObj = UserInput()
 
     # TODO: Make this from user input
-    UserInputObj.mType = "ALL"                  # No specific types, should be everything
-    UserInputObj.mDateRange[ 0 ] = "2000/01/01" # Date range should be everything possible
+    # Choices:
+    #   All:        doesn't filter anything at all
+    #   Options:    Includes "Put", "Call"
+    #   Put:        Only "Put"
+    #   Call:       Only "Call"
+    UserInputObj.mType = "Options"                  # No specific types, should be everything
+    UserInputObj.mTickerList = [ "TSLA" ]
+    # UserInputObj.mTickerList = [ "TSLA", "AAPL" ]
+    UserInputObj.mDateRange[ 0 ] = "2000/01/01"     # Date range should be everything possible
     UserInputObj.mDateRange[ 1 ] = "3000/12/31"
 
     return UserInputObj
@@ -89,12 +97,6 @@ def FilterDate( date_selection, csv_object ):
 
     # Filters out the rows based on start / end date
     return csv_object.loc[ start_date:end_date ]
-    # csv_object[ "DATE OF ACTION" ] = pd.to_datetime( csv_object[ "DATE OF ACTION" ], format='%Y/%m/%d' )
-    # return csv_object.loc[ '2021-01-01':'2022-12-12' ]
-
-    # csv_object.set_index( "Unnamed: 0" )
-    # return csv_object.loc[ 5:24 ]
-    # return csv_object.loc[ start_date:end_date ]
 # End of FilterDate
 
 
@@ -108,9 +110,65 @@ FilterType
 
 @returns - Returns CSV object with only the type that has the same type as the selection
 """
-# def FilterType( type, csv_object ):
-#     return
-# # End of Filter Type
+def FilterType( type, csv_object ):
+    if type == "Options":
+        csv_object = csv_object.loc[ ( csv_object[ 'TYPE' ] == "Put" ) | ( csv_object[ 'TYPE' ] == "Call" ) ]
+    elif type == "All":
+        pass
+        # Do nothing, no filtering
+    else:
+        # NOTE: This might result in a blank csv if it's not found
+        try:
+            csv_object = csv_object.loc[ csv_object[ 'TYPE' ] == type ]
+        except KeyError:
+            print( "Can't find type: '" + type + "'" )
+            exit( 1 )
+
+    return csv_object
+# End of Filter Type
+
+
+"""
+FilterTicker
+
+!@brief - 
+
+@param
+@param
+
+@returns - 
+"""
+def FilterTicker( ticker_list, csv_object ):
+    filtered_df = pd.DataFrame( columns = csv_object.columns )
+    for ticker in ticker_list:
+        try:
+            print( "Ticker: " + ticker )
+            curr_df = csv_object.loc[ csv_object[ 'TICKER' ] == ticker ]
+            filtered_df = pd.concat( [ filtered_df, curr_df ] )
+
+        except KeyError:
+            print( "Can't find ticker: '" + ticker + "'" )
+            exit( 1 )
+
+    return filtered_df
+# End of FilterTicker
+
+"""
+FilterTicker
+
+!@brief - 
+
+@param
+@param
+
+@returns - 
+"""
+def SumAmount( csv_object ):
+    total_sum = csv_object[ "AMOUNT" ].astype( float ).sum( axis=0 )
+
+    return total_sum
+# End of SumAmount
+
 
 def main():
     # Gets the user input of what the csv should filter
@@ -119,10 +177,18 @@ def main():
     # Turns the master trade history into a pandas data frame to work with
     df = pd.read_csv( GetMasterCsv(), sep=',' )
 
+    # Filters based on ticker
+    df = FilterTicker( UserInputObj.mTickerList, df )
+
     # Filters based on date
-    df = FilterDate( UserInputObj.mDateRange, df)
-    print( df )
-    # Filters based on Type
+    df = FilterDate( UserInputObj.mDateRange, df )
+
+    # Filter based on type
+    df = FilterType( UserInputObj.mType, df )
+
+    # TODO: This works for options. What about Stocks?
+    # Prints out the total sum of filtered dataframe
+    print( "Total sum: $" + str( round( SumAmount( df ), 2 ) ) )
 
     return
 
