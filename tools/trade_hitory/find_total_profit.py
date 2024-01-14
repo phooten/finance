@@ -46,10 +46,9 @@ def GetUserInput( ):
     UserInputObj = UserInput()
 
     # TODO: Make this from user input
-    UserInputObj.mType = "options"
-    UserInputObj.mDateRange[ 0 ] = "01/01/2022"
-    UserInputObj.mDateRange[ 1 ] = "12/31/2022"
-    # UserInputObj.mDateRange[ 1 ] = "01/01/2024"
+    UserInputObj.mType = "ALL"                  # No specific types, should be everything
+    UserInputObj.mDateRange[ 0 ] = "2000/01/01" # Date range should be everything possible
+    UserInputObj.mDateRange[ 1 ] = "3000/12/31"
 
     return UserInputObj
 # End of GetUserInput
@@ -84,13 +83,18 @@ FilterDate
 def FilterDate( date_selection, csv_object ):
     start_date = date_selection[0]
     end_date = date_selection[1]
-    print( "Start: " + start_date )
-    print( "End:   " + end_date )
 
+    # Makes index the date of action so it can be filtered
+    csv_object.set_index( "DATE OF ACTION", inplace = True )
 
-    csv_object.set_index( "DATE OF ACTION" )
-
+    # Filters out the rows based on start / end date
     return csv_object.loc[ start_date:end_date ]
+    # csv_object[ "DATE OF ACTION" ] = pd.to_datetime( csv_object[ "DATE OF ACTION" ], format='%Y/%m/%d' )
+    # return csv_object.loc[ '2021-01-01':'2022-12-12' ]
+
+    # csv_object.set_index( "Unnamed: 0" )
+    # return csv_object.loc[ 5:24 ]
+    # return csv_object.loc[ start_date:end_date ]
 # End of FilterDate
 
 
