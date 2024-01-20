@@ -93,10 +93,12 @@ def FilterDate( date_selection, csv_object ):
     end_date = date_selection[1]
 
     # Makes index the date of action so it can be filtered
-    csv_object.set_index( "DATE OF ACTION", inplace = True )
+    #csv_object.set_index( "DATE OF ACTION", inplace = True )
 
     # Filters out the rows based on start / end date
-    return csv_object.loc[ start_date:end_date ]
+    #return csv_object.loc[ start_date:end_date ]
+    mask = ( csv_object[ 'DATE OF ACTION' ] > start_date) & ( csv_object[ 'DATE OF ACTION' ] <= end_date )
+    return csv_object.loc[ mask ]
 # End of FilterDate
 
 
@@ -163,10 +165,35 @@ FilterTicker
 
 @returns - 
 """
-def SumAmount( csv_object ):
+def SumAmountFloat( csv_object ):
     total_sum = csv_object[ "AMOUNT" ].astype( float ).sum( axis=0 )
 
     return total_sum
+# End of SumAmount
+
+
+"""
+FilterTicker
+
+!@brief - 
+
+@param
+@param
+
+@returns - 
+"""
+def SumAmountInt( csv_object ):
+    #tmp = csv_object.where( csv_object[ 'ACTION' ] == 'Bought', csv_object[ 'QUANTITY' ] )
+    tmp = csv_object.where( csv_object[ 'ACTION' ] == 'Bought' )
+    print( tmp )
+    # In "ACTION" column, if cell == Bought
+    #   add
+    # else if == Sold
+    #   subtract
+    # else
+    #   ignore / error
+
+    return tmp
 # End of SumAmount
 
 
@@ -188,7 +215,8 @@ def main():
 
     # TODO: This works for options. What about Stocks?
     # Prints out the total sum of filtered dataframe
-    print( "Total sum: $" + str( round( SumAmount( df ), 2 ) ) )
+    print( "Total Cost:  $" + str( round( SumAmountFloat( df ), 2 ) ) )
+    print( "Total Amount: " + str( SumAmountInt( df ) ) )
 
     return
 

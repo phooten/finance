@@ -30,10 +30,10 @@ def main():
     # TODO: Change this for an argument
     #       For now, dev hard codes which file to use
     dev_selected = 3
-    csv_input_names = [ 'test_transactions_2022.csv',
-                        'transactions_2021.csv',
+    csv_input_names = [ 'transactions_2021.csv',
                         'transactions_2022.csv',
-                        'transactions_2023.csv' ]
+                        'transactions_2023.csv',
+                        'transactions_2024.csv' ]
     csv_input_name = csv_input_names[ dev_selected ]
 
     # Gets file to convert

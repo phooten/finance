@@ -27,7 +27,7 @@ def makeOneGlobalCsv():
     for file in all_sensitive_files:
         if pattern.match( str( file ) ):
             converted_files.append( file )
-            msg.system( "Appending file to global csv '" + file + "'", __name__ )
+            msg.system( str( "Appending file to global csv '" + file + "'" ), __name__ )
 
     # Makes a backup of the global file if it exists, and removes the back up if it exists
     if os.path.exists( global_transactions_file_backup ):
