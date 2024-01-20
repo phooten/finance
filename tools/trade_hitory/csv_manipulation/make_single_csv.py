@@ -19,11 +19,17 @@ def makeOneGlobalCsv():
     transaction_path = "/Users/phoot/code/finance/sensitive_files/"
     global_transactions_file = transaction_path + "global_transactions.csv"
     global_transactions_file_backup = global_transactions_file + "_BACKUP.csv"
-    all_sensitive_files = [ file for file in listdir(  transaction_path )if isfile( join( transaction_path, file ) ) ]
+
+    # Gets a list of all files in the directory
+    dir_list = sorted( listdir( transaction_path ) )
+    all_sensitive_files = []
+    for file in dir_list:
+        all_sensitive_files.append( file )
+    #all_sensitive_files = [ file for file in listdir( transaction_path ) if isfile( join( transaction_path, file ) ) ]
     #print( __name__ + ": all files: " + str( sensitive_files ) )
 
     converted_files = []
-    pattern = re.compile( "^converted_transactions_20[0-9][0-9]\.csv$" )
+    pattern = re.compile( "converted_transactions_20[0-9][0-9]\.csv$" )
     for file in all_sensitive_files:
         if pattern.match( str( file ) ):
             converted_files.append( file )
