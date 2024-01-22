@@ -62,13 +62,6 @@ def main():
     msg.quit_script()
 
     # Handle the output file
-    # try:
-    #     os.remove( csv_output_path )
-    # except:
-    #     print( "No files in this path: ", csv_output_path )
-    # df.to_csv( csv_output_path )
-    
-    # new_csv.set_index( 'INDEX' )
     try:
         os.remove( csv_output_path )
     except:
