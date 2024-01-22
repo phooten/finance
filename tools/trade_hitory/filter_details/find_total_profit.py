@@ -32,6 +32,7 @@ class UserInput():
         self.mTickerList = [ ]  # Blank List
         self.mDateRange = [ "01/01/2000", "01/01/2100" ]
         self.mType = "NA"
+        self.mOffset = 0
 # End of UserInput
 
 
@@ -61,10 +62,21 @@ def GetUserInput( ):
     if UserInputObj.mType not in choices:
         print( "Issue with user selection '" + str( UserInputObj.mType ) + "'. It's not in choices: " + str( choices ) + ". Exiting script." )
         exit( 1 )
+
     #UserInputObj.mType = "Options"                  # No specific types, should be everything
 
     # TODO: Need to error check this
     UserInputObj.mTickerList.append( input( "Enter ticker: " ) )
+
+    # TODO: Need error checking
+    if UserInputObj.mType == "Stock":
+        user_input = input( "Enter any offset: " )
+        try:
+            UserInputObj.mOffset = float( user_input )
+        except:
+            print( "User input wasn't a float" )
+            UserInputObj.mOffset = 0
+
     # UserInputObj.mTickerList = [ "TSLA", "AAPL" ]
     UserInputObj.mDateRange[ 0 ] = "2000/01/01"     # Date range should be everything possible
     UserInputObj.mDateRange[ 1 ] = "3000/12/31"
@@ -242,15 +254,19 @@ def main():
     # TODO: This works for options. What about Stocks?
     # TODO: Think I want to put this into it's own function to handle tha outputs / final results
     # Prints out the total sum of filtered dataframe
-    total_cost = round( SumAmountFloat( df ), 2 )
-    print( "Total Cost:  $" + str( total_cost ) )
+    total_cost = round( SumAmountFloat( df ), 2 ) + float( UserInputObj.mOffset )
+    print( "Offset Entered: $" + str( UserInputObj.mOffset ) )
+    print( "Total Cost:     $" + str( total_cost ) )
 
     if UserInputObj.mType == "Stock":
         total_amount = SumAmountInt( df )
-        print( "Total Amount: " + str( total_amount ) )
+        print( "Total Amount:    " + str( total_amount ) )
 
-        cost_per_share = round( ( total_cost / total_amount ), 2 )
-        print( "Cost per share: " + str( cost_per_share ) )
+        if total_amount != 0:
+            cost_per_share = abs( round( ( total_cost / total_amount ), 2 ) )
+            print( "Cost per share:  $" + str( cost_per_share ) )
+        else:
+            cost_per_share = "[ No shares owned. ]"
 
 
     return
