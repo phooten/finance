@@ -29,7 +29,7 @@ class UserInput():
     @param mType - 
     """
     def __init__( self ):
-        self.mTickerList = [ "" ]
+        self.mTickerList = [ ]  # Blank List
         self.mDateRange = [ "01/01/2000", "01/01/2100" ]
         self.mType = "NA"
 # End of UserInput
@@ -52,11 +52,25 @@ def GetUserInput( ):
     #   Options:    Includes "Put", "Call"
     #   Put:        Only "Put"
     #   Call:       Only "Call"
-    UserInputObj.mType = "Options"                  # No specific types, should be everything
-    UserInputObj.mTickerList = [ "TSLA" ]
+    choices = [ "Options", "Put", "Call", "Stock"]
+    print( "Select one of the following:" )
+    for choice in choices:
+        print( "\t" + choice )
+    UserInputObj.mType = input( "Enter type to filter: " )
+    # TODO: Update this with the message logger.
+    if UserInputObj.mType not in choices:
+        print( "Issue with user selection '" + str( UserInputObj.mType ) + "'. It's not in choices: " + str( choices ) + ". Exiting script." )
+        exit( 1 )
+    #UserInputObj.mType = "Options"                  # No specific types, should be everything
+
+    # TODO: Need to error check this
+    UserInputObj.mTickerList.append( input( "Enter ticker: " ) )
     # UserInputObj.mTickerList = [ "TSLA", "AAPL" ]
     UserInputObj.mDateRange[ 0 ] = "2000/01/01"     # Date range should be everything possible
     UserInputObj.mDateRange[ 1 ] = "3000/12/31"
+
+    # Clean up terminal with extra spaces
+    print( "\n\n" )
 
     return UserInputObj
 # End of GetUserInput
@@ -115,6 +129,7 @@ FilterType
 def FilterType( type, csv_object ):
     if type == "Options":
         csv_object = csv_object.loc[ ( csv_object[ 'TYPE' ] == "Put" ) | ( csv_object[ 'TYPE' ] == "Call" ) ]
+    
     elif type == "All":
         pass
         # Do nothing, no filtering
@@ -122,6 +137,8 @@ def FilterType( type, csv_object ):
         # NOTE: This might result in a blank csv if it's not found
         try:
             csv_object = csv_object.loc[ csv_object[ 'TYPE' ] == type ]
+
+        # TODO: Need to update this with the logger
         except KeyError:
             print( "Can't find type: '" + type + "'" )
             exit( 1 )
@@ -148,6 +165,7 @@ def FilterTicker( ticker_list, csv_object ):
             curr_df = csv_object.loc[ csv_object[ 'TICKER' ] == ticker ]
             filtered_df = pd.concat( [ filtered_df, curr_df ] )
 
+        # TODO: Need to update this with the logger
         except KeyError:
             print( "Can't find ticker: '" + ticker + "'" )
             exit( 1 )
@@ -156,7 +174,7 @@ def FilterTicker( ticker_list, csv_object ):
 # End of FilterTicker
 
 """
-FilterTicker
+SumAmountFloat
 
 !@brief - 
 
@@ -166,14 +184,15 @@ FilterTicker
 @returns - 
 """
 def SumAmountFloat( csv_object ):
+    # TODO: Need to update this with the logger / add in a try / except
     total_sum = csv_object[ "AMOUNT" ].astype( float ).sum( axis=0 )
 
     return total_sum
-# End of SumAmount
+# End of SumAmountFloat
 
 
 """
-FilterTicker
+SumAmountInt
 
 !@brief - 
 
@@ -183,18 +202,25 @@ FilterTicker
 @returns - 
 """
 def SumAmountInt( csv_object ):
-    #tmp = csv_object.where( csv_object[ 'ACTION' ] == 'Bought', csv_object[ 'QUANTITY' ] )
-    tmp = csv_object.where( csv_object[ 'ACTION' ] == 'Bought' )
-    print( tmp )
-    # In "ACTION" column, if cell == Bought
-    #   add
-    # else if == Sold
-    #   subtract
-    # else
-    #   ignore / error
+    # TODO: Delete this, but really good to see all the dataframe
+    # with pd.option_context('display.max_rows', None, 'display.max_columns', None):  # more options can be specified also
+    #     print( bought_df )
 
-    return tmp
-# End of SumAmount
+    # Drops all indexes not labeled "Bought" then sums the "QUANTITY" row
+    index_df = csv_object[ csv_object['ACTION'] != "Bought" ].index
+    bought_df = csv_object.drop( index_df )
+    sum_bought = bought_df[ 'QUANTITY' ].astype( int ).sum( axis=0 )
+
+    # Drops all indexes not labeled "Sold" then sums the "QUANTITY" row
+    index_df = csv_object[ csv_object['ACTION'] != 'Sold' ].index
+    sold_df = csv_object.drop( index_df )
+    sum_sold = sold_df[ 'QUANTITY' ].astype( int ).sum( axis=0 )
+
+    # Prints out results
+    difference = int( sum_bought - sum_sold )
+
+    return difference
+# End of SumAmountInt
 
 
 def main():
@@ -214,9 +240,18 @@ def main():
     df = FilterType( UserInputObj.mType, df )
 
     # TODO: This works for options. What about Stocks?
+    # TODO: Think I want to put this into it's own function to handle tha outputs / final results
     # Prints out the total sum of filtered dataframe
-    print( "Total Cost:  $" + str( round( SumAmountFloat( df ), 2 ) ) )
-    print( "Total Amount: " + str( SumAmountInt( df ) ) )
+    total_cost = round( SumAmountFloat( df ), 2 )
+    print( "Total Cost:  $" + str( total_cost ) )
+
+    if UserInputObj.mType == "Stock":
+        total_amount = SumAmountInt( df )
+        print( "Total Amount: " + str( total_amount ) )
+
+        cost_per_share = round( ( total_cost / total_amount ), 2 )
+        print( "Cost per share: " + str( cost_per_share ) )
+
 
     return
 
