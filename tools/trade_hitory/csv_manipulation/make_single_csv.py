@@ -134,7 +134,7 @@ def refineFile( raw_file ):
         df_row_list = df.loc[ row_index ].values
         df_row_list = df_row_list[ 1: ]
         if set( df_row_list ) == set( df_header_list ):
-            msg.system( "Found header row at index '" + str( row_index ) + "'. Removing.", __name__ )
+            msg.system( "Found header row at index '" + str( row_index ) + "'. This is most likley the header of appeneded files, so this is being removed.", __name__ )
             df = df.drop( index=row_index )
 
     df = df.loc[:, ~df.columns.str.contains('^Unnamed')]
