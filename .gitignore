@@ -9,7 +9,7 @@
 
 
 # Personal
-.vscode
+.vscode/*
 sensitive_files/*
 util/token.json
 .DS_Store
