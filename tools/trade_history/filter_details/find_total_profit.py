@@ -31,7 +31,7 @@ class UserInput():
     def __init__( self ):
         self.mTickerList = [ ]  # Blank List
         self.mDateRange = [ "01/01/2000", "01/01/2100" ]
-        self.mType = "NA"
+        self.mType = [ ] # Blank List
         self.mOffset = 0
 # End of UserInput
 
@@ -57,13 +57,13 @@ def GetUserInput( ):
     print( "Select one of the following:" )
     for choice in choices:
         print( "\t" + choice )
+
+
     UserInputObj.mType = input( "Enter type to filter: " )
     # TODO: Update this with the message logger.
     if UserInputObj.mType not in choices:
         print( "Issue with user selection '" + str( UserInputObj.mType ) + "'. It's not in choices: " + str( choices ) + ". Exiting script." )
         exit( 1 )
-
-    #UserInputObj.mType = "Options"                  # No specific types, should be everything
 
     # TODO: Need to error check this
     UserInputObj.mTickerList.append( input( "Enter ticker: " ) )

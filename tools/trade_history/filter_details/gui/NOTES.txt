@@ -1,0 +1,7 @@
+Important to install pyside w/ pip: pip install pyside6-essentials
+
+(finance) phoot@Parkers-MacBook-Pro.local: ~/code/finance/tools/trade_history/filter_details/gui
+22:05:41 Line:16$ pyside6-uic form.ui -o ui_form.py
+
+
+
