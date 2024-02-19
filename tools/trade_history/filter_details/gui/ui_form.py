@@ -32,6 +32,9 @@ class Ui_Widget(object):
         self.selectedTicker = QLabel(Widget)
         self.selectedTicker.setObjectName(u"selectedTicker")
         self.selectedTicker.setGeometry(QRect(180, 250, 58, 16))
+        self.exitButton = QPushButton(Widget)
+        self.exitButton.setObjectName(u"exitButton")
+        self.exitButton.setGeometry(QRect(330, 270, 100, 32))
 
         self.retranslateUi(Widget)
 
@@ -42,5 +45,6 @@ class Ui_Widget(object):
         Widget.setWindowTitle(QCoreApplication.translate("Widget", u"Widget", None))
         self.filterButton.setText(QCoreApplication.translate("Widget", u"PushButton", None))
         self.selectedTicker.setText(QCoreApplication.translate("Widget", u"TextLabel", None))
+        self.exitButton.setText(QCoreApplication.translate("Widget", u"exit", None))
     # retranslateUi
 
