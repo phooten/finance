@@ -59,6 +59,9 @@ TODO
 * Make a template for .env / .token.json
     I  removed files that were being tracked by git ignore: .env, token.json
     So this doesn't happen again, or at least will be easier to recover, I need to make a template for these files.
+
+    .env_template has been made and info user info has been removed.
+
 * Research ways to:
     1. Structure projects i.e. output / input, tools, bin, etc.
     2. Work with envirnmental variables across the project
