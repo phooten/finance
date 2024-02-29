@@ -26,18 +26,8 @@ msg = logger.messages( __name__ )
 #msg = class_messages.messages()
 
 def main():
-    
-    # TODO: Change this for an argument
-    #       For now, dev hard codes which file to use
-    dev_selected = 3
-    csv_input_names = [ 'transactions_2021.csv',
-                        'transactions_2022.csv',
-                        'transactions_2023.csv',
-                        'transactions_2024.csv' ]
-    csv_input_name = csv_input_names[ dev_selected ]
-
     # Gets file to convert
-    sensitive_path = '/Users/phoot/code/finance/sensitive_files/'
+    sensitive_path = str( os.environ[ 'SENSITIVE_FILES_PATH' ] )
     passed, csv_input_name = getInputFile()
     if passed == False:
         msg.quit_script()
@@ -82,7 +72,8 @@ def getInputFile():
                          '--file',
                          metavar='File',
                          dest='input_file',
-                         required=True )
+                         required=True,
+                         help='Enter file name to convert. For example: "-f transactions_2021.csv"')
 
     args = parser.parse_args()
 
