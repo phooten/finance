@@ -31,19 +31,19 @@ def initialCsvFileCheck( csv_path ):
     # Checks the correct extension, which should only ever be .csv
     extension = csv_path[ len(csv_path)-4: ]
     if ".csv" != extension:
-        msg.error( "File isn't .csv: '" + csv_path + "'", location )
+        msg.error( "File isn't .csv: '" + csv_path + "'" )
         return False
 
 
     # Check the file exists
     if not os.path.isfile( csv_path ):
-        msg.error( "File doesn't exist: '" + csv_path + "'", location )
+        msg.error( "File doesn't exist: '" + csv_path + "'" )
         return False
 
 
     # Check the file isn't empty
     if os.stat( csv_path ).st_size == 0:
-        msg.error( "File is empty: '" + csv_path + "'", location )
+        msg.error( "File is empty: '" + csv_path + "'" )
         return False
 
     # Checks if the file has already been converted
@@ -53,17 +53,16 @@ def initialCsvFileCheck( csv_path ):
     converted_path = re.sub( csv_name, converted_file, csv_path )
     if os.path.exists( converted_path ):
         msg.warning( "\nInput file '" + csv_path + "' already converted.\n"\
-                     "See '" + converted_file + "'",
-                     __name__ )
+                     "See '" + converted_file + "'" )
         answer = ""
         while( answer != "y" and answer != "n" ):
             answer = input("\nWould you like to overwrite it? (y/n): " )
             if answer == "n":
-                msg.system( "Quiting the script based on user input.", __name__ )
+                msg.system( "Quiting the script based on user input." )
                 msg.quit_script()
 
             elif answer != "y":
-                msg.warning( "Needs to be 'y' for yes or 'n' for no.", __name__ )
+                msg.warning( "Needs to be 'y' for yes or 'n' for no." )
 
     return True
 
@@ -88,25 +87,25 @@ def contentsCsvFileCheck( csv_path ):
     # Checks the amount of rows in the given csv
     row_minimum = 2             # Header doesn't count as a row
     if row_count < row_minimum:
-        msg.error( "File has [" + str(row_count) + "] rows. Need to have at least [" + str(row_minimum) + "].", location )
+        msg.error( "File has [" + str(row_count) + "] rows. Need to have at least [" + str(row_minimum) + "]." )
         return False
 
     # Checks the amount of columns in given csv
     if col_count != len( csv_filter.mTdHeaders ):
-        msg.error( "File has [" + str(col_count) + "] headers but expects [" + str( len( csv_filter.mTdHeaders ) ) + "].", location )
+        msg.error( "File has [" + str(col_count) + "] headers but expects [" + str( len( csv_filter.mTdHeaders ) ) + "]." )
         return False
 
     # Checks the names of the headers in csv
     for name in column_names:
         if name not in csv_filter.mTdHeaders:
-            msg.error( "Header [" + name + "] is not in mTdHeaders:\n" + str(csv_filter.mTdHeaders), location )
+            msg.error( "Header [" + name + "] is not in mTdHeaders:\n" + str(csv_filter.mTdHeaders) )
             return False
 
     # All csv's seen end in the same message
     last_cell = df.loc[row_count - 1][ csv_filter.mTdHeaders[0] ] # Gets the last cell of the first column
     expected_eof = "***END OF FILE***"
     if last_cell != expected_eof:
-        msg.error( "Last row of '" + csv_path + "' is expected to be '" + expected_eof + "' but is '" + last_cell + "'", location )
+        msg.error( "Last row of '" + csv_path + "' is expected to be '" + expected_eof + "' but is '" + last_cell + "'" )
         return False
 
     return True

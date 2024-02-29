@@ -82,8 +82,7 @@ def getInputFile():
     pattern = re.compile( regex_pattern )
     if not pattern.match( args.input_file ):
         msg.error( "\nIncorrect file format: '" + args.input_file + "'\n"\
-                   "See regex pattern:     '" + regex_pattern + "'\n",
-                    __name__ )
+                   "See regex pattern:     '" + regex_pattern + "'\n" )
         return False, args.input_file
 
     return True, args.input_file

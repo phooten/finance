@@ -104,7 +104,7 @@ class csvFilter:
 
         # Checks the row was set correctly
         if len( self.mOutputRow ) is not len( self.mOutputHeaders ):
-            msg.error( "DEVELOPER: Issue using csvFilter::__init__(). OutputRow cell count is not equal to OutputHeaders cell count", __name__ )
+            msg.error( "DEVELOPER: Issue using csvFilter::__init__(). OutputRow cell count is not equal to OutputHeaders cell count" )
             msg.quit_script()
 
         return
@@ -148,76 +148,76 @@ class csvFilter:
         # Sets the Price of the transaction ( Stock price, cost / value of option )
         passed = self.findPrice()
         if not passed:
-            msg.error( "Couldn't find 'Price'.", method_name )
+            msg.error( "Couldn't find 'Price'." )
             return False
 
         # Sets the Commission cost of the transaction
         passed = self.findCommission()
         if not passed:
-            msg.error( "Couldn't find 'Commission'.", method_name )
+            msg.error( "Couldn't find 'Commission'." )
             return False
 
         passed = self.findAmount()
         if not passed:
-            msg.error( "Couldn't find 'Amount'.", method_name )
+            msg.error( "Couldn't find 'Amount'." )
             return False
 
         # Sets the date of the Transaction
         passed = self.findDateOfAction()
         if not passed:
-            msg.error( "Couldn't find 'Date of Action'.", method_name )
+            msg.error( "Couldn't find 'Date of Action'." )
             return False
 
         # Sets the type of transaction
         passed = self.findType()
         if not passed:
-            msg.error( "Couldn't find 'Type'.", method_name )
+            msg.error( "Couldn't find 'Type'." )
             return False
 
         # Makes sure the type is set. After this point, filters depend on this.
         if self.getType() == self.mPlaceHolder:
-            msg.error( "Cell type needs to be set before proceeding past this point.", method_name )
+            msg.error( "Cell type needs to be set before proceeding past this point." )
             return False
 
         # Sets the Quantity of the transaction
         passed = self.findQuantity()
         if not passed:
-            msg.error( "Couldn't find 'Quantity'.", method_name )
+            msg.error( "Couldn't find 'Quantity'." )
             return False
 
         passed = self.findStike()
         if not passed:
-            msg.error( "Couldn't find 'Amount'.", method_name )
+            msg.error( "Couldn't find 'Amount'." )
             return False
 
         # Sets the Action of the transaction
         passed = self.findAction()
         if not passed:
-            msg.error( "Couldn't find 'Action'", method_name )
+            msg.error( "Couldn't find 'Action'" )
             return False
 
         # Only finds Expiration date if an option
         passed = self.findDateOfExpiration()
         if not passed:
-            msg.error( "Couldn't find 'Date of Expiration'.", method_name )
+            msg.error( "Couldn't find 'Date of Expiration'." )
             return False
 
         passed = self.findTicker()
         if not passed:
-            msg.error( "Couldn't find 'Ticker'.", method_name )
+            msg.error( "Couldn't find 'Ticker'." )
             return False
 
 
         # Sets the output row
         self.setOutputRow()
         if not passed:
-            msg.error( "Couldn't find 'Output Row.'", method_name )
+            msg.error( "Couldn't find 'Output Row.'" )
             return False
 
         # Checks the output row
         # for curr in range( len( self.mOutputRow ) ):
         #     if self.mOutputRow[ curr ] == self.mPlaceHolder:
-        #         msg.system( "NOTE: '" + self.mOutputHeaders[ curr ] + "' isn't set. Current value is: " + self.mOutputRow[ curr ], method_name )
+        #         msg.system( "NOTE: '" + self.mOutputHeaders[ curr ] + "' isn't set. Current value is: " + self.mOutputRow[ curr ] )
 
         return self.mOutputRow
 
@@ -232,7 +232,7 @@ class csvFilter:
 
         passed, description_cell = self.getDescriptionCell()
         if not passed:
-            msg.error( "Couldn't find a description cell in the input.", method_name )
+            msg.error( "Couldn't find a description cell in the input." )
             return False
 
         # TODO: FIX THIS!
@@ -278,7 +278,7 @@ class csvFilter:
             self.setType( "Stock" )
             return True
 
-        msg.error( "Issue setting type. Wasn't '" + str( self.mOptionTypesActive ) + ", 'Option', 'Stock', or 'Other'. See description cell:\n" + str( description_cell ), method_name )
+        msg.error( "Issue setting type. Wasn't '" + str( self.mOptionTypesActive ) + ", 'Option', 'Stock', or 'Other'. See description cell:\n" + str( description_cell ) )
         return False
 
 
@@ -292,7 +292,7 @@ class csvFilter:
 
         passed, description_cell = self.getDescriptionCell()
         if not passed:
-            msg.error( "Couldn't find a description cell in the input.", method_name )
+            msg.error( "Couldn't find a description cell in the input." )
             return False
 
         # Capitalization matters
@@ -361,7 +361,7 @@ class csvFilter:
                 self.setAction( "Dividend" )
                 return True
 
-        msg.error( "Couldn't find any of the following actions in the description cell '" + description_cell + "'\n" + str( action_types ) + "\n" + str( self.mOtherTypes ) + "\n" + str( self.mStockTypes ), method_name )
+        msg.error( "Couldn't find any of the following actions in the description cell '" + description_cell + "'\n" + str( action_types ) + "\n" + str( self.mOtherTypes ) + "\n" + str( self.mStockTypes ) )
         return False
 
 
@@ -387,7 +387,7 @@ class csvFilter:
             quantity = int( quantity )
 
         if not quantity > 0:
-            msg.error( __name__ + ": Input cell for 'Quantity' is less than 0. See input row:\n" + str( input_row ), method_name )
+            msg.error( __name__ + ": Input cell for 'Quantity' is less than 0. See input row:\n" + str( input_row ) )
             return False
 
         self.setQuantity( quantity )
@@ -411,7 +411,7 @@ class csvFilter:
 
         # Force into an int, then check
         if not price > 0:
-            msg.error( __name__ + ": Input cell for 'Price' is less than 0. See input row:\n" + str( input_row ), method_name )
+            msg.error( __name__ + ": Input cell for 'Price' is less than 0. See input row:\n" + str( input_row ) )
             return False
 
         self.setPrice( price )
@@ -435,7 +435,7 @@ class csvFilter:
 
         # Force into an int, then check
         if not commission >= 0:
-            msg.error( __name__ + ": Input cell for 'Commision' is less than 0. See input row:\n" + str( input_row ), method_name )
+            msg.error( __name__ + ": Input cell for 'Commision' is less than 0. See input row:\n" + str( input_row ) )
             return False
 
         # makeing Integers look nice
@@ -504,7 +504,7 @@ class csvFilter:
         input_row = self.getInputRow()
         passed, description_cell = self.getDescriptionCell()
         if not passed:
-            msg.error( "Couldn't find a description cell in the input.", method_name )
+            msg.error( "Couldn't find a description cell in the input." )
             return False
 
         # Uses the first item in the list to get the ticker
@@ -548,7 +548,7 @@ class csvFilter:
             if ticker == ticker_cell:
                 msg.error( "Couldn't replace the text before the ticker with regex.\n"\
                             "ticker_cell:      '" + str( ticker_cell ) + "'\n"\
-                            "description_cell: '" + description_cell + "'", method_name )
+                            "description_cell: '" + description_cell + "'" )
                 return False
 
             # Replaces the text after the ticker
@@ -557,7 +557,7 @@ class csvFilter:
             if ticker == ticker_cell:
                 msg.error( "Couldn't replace the text after the ticker with regex.\n"\
                             "ticker_cell:      '" + str( ticker_cell ) + "'\n"\
-                            "description_cell: '" + description_cell + "'", method_name )
+                            "description_cell: '" + description_cell + "'" )
                 return False
 
         elif re.search( '^.*\(.* .*\)$', ticker_cell ):
@@ -566,7 +566,7 @@ class csvFilter:
             if ticker == ticker_cell:
                 msg.error( "Couldn't replace the text before the ticker with regex.\n"\
                             "ticker_cell:      '" + str( ticker_cell ) + "'\n"\
-                            "description_cell: '" + description_cell + "'", method_name )
+                            "description_cell: '" + description_cell + "'" )
                 return False
 
             # Replaces the text after the ticker
@@ -575,12 +575,12 @@ class csvFilter:
             if ticker == ticker_cell:
                 msg.error( "Couldn't replace the text after the ticker with regex.\n"\
                             "ticker_cell:      '" + str( ticker_cell ) + "'\n"\
-                            "description_cell: '" + description_cell + "'", method_name )
+                            "description_cell: '" + description_cell + "'" )
                 return False
         else:
             msg.error( "No regex pattern found..\n"\
                         "ticker_cell:      '" + str( ticker_cell ) + "'\n"\
-                        "description_cell: '" + description_cell + "'", method_name )
+                        "description_cell: '" + description_cell + "'" )
             return False
 
 
@@ -603,7 +603,7 @@ class csvFilter:
         input_row = self.getInputRow()
         passed, action_date = self.formatDate( input_row[ 0 ] )
         if not passed:
-            msg.error( "Couldn't set 'Date of Action'.", method_name )
+            msg.error( "Couldn't set 'Date of Action'." )
             return False
 
         self.setActionDate( action_date )
@@ -625,7 +625,7 @@ class csvFilter:
         # Gets the description cell
         passed, description_cell = self.getDescriptionCell()
         if not passed:
-            msg.system( "Couldn't find a description cell in the input.", method_name )
+            msg.system( "Couldn't find a description cell in the input." )
             return False
 
         # If it's in the list, return the index of the month that's found
@@ -640,17 +640,17 @@ class csvFilter:
 
         # Builds the expiration date if the index is okay
         if index == -1:
-            msg.error( "Expiration date not found in '" + str( description_list ) + "'.", method_name )
+            msg.error( "Expiration date not found in '" + str( description_list ) + "'." )
             return False
         else:
             if index + 2 >= len( description_list ):
-                msg.error( "Description cell has issues. No more agruments after the found month '" + description_list[ index ] + "'. See description list:\n" + str( description_list ), method_name )
+                msg.error( "Description cell has issues. No more agruments after the found month '" + description_list[ index ] + "'. See description list:\n" + str( description_list ) )
                 return False
 
             exp_date = description_list[ index ] + " " + description_list[ index + 1 ] + " " + description_list[ index + 2 ]
             passed, exp_date = self.formatDate( exp_date )
             if not passed:
-                msg.error("Issue formatting Expiration date: '" + exp_date, method_name )
+                msg.error("Issue formatting Expiration date: '" + exp_date )
                 return False
 
             self.setExpDate( exp_date )
@@ -678,7 +678,7 @@ class csvFilter:
         # If not in '##/##/####' but has two '/', fail the check
         date_list = pDate.split()
         if len( date_list ) != 3:
-            msg.error( "Format of input date should be '##/##/####' or 'ABC DD YYYY'", method_name )
+            msg.error( "Format of input date should be '##/##/####' or 'ABC DD YYYY'" )
             return False, pDate
 
         month = date_list[0]
@@ -688,21 +688,21 @@ class csvFilter:
         try:
             day = int( day )
         except ValueError:
-            msg.error( "Day has to be a number. Input day is: '" + str( day ) + "'", method_name )
+            msg.error( "Day has to be a number. Input day is: '" + str( day ) + "'" )
             return False, pDate
 
         try:
             year = int( year )
         except ValueError:
-            msg.error( "Year has to be a number. Input year is: '" + str( year ) + "'", method_name )
+            msg.error( "Year has to be a number. Input year is: '" + str( year ) + "'" )
             return False, pDate
 
         if day < 1 or day > 31:
-            msg.error( "Day has to be between 31 and 1. Input day is: '" + str( year ) + "'", method_name )
+            msg.error( "Day has to be between 31 and 1. Input day is: '" + str( year ) + "'" )
             return False, pDate
 
         elif year < 2000 or year > 2100:
-            msg.error( "Year has to be between 2100 and 2000. Input year is: '" + str( year ) + "'", method_name )
+            msg.error( "Year has to be between 2100 and 2000. Input year is: '" + str( year ) + "'" )
             return False, pDate
 
         # Assign number for month
@@ -731,7 +731,7 @@ class csvFilter:
         elif month == 'Dec':
             month = '12'
         else:
-            msg.error( "date_list[0] not expected: " + month, method_name )
+            msg.error( "date_list[0] not expected: " + month )
             return False, pDate
 
         # Formats days with leading 0
@@ -767,13 +767,13 @@ class csvFilter:
 
         # Couldn't find header
         if not found:
-            msg.error( "Couldn't find 'DESCRIPTION' in TdHeader.", method_name )
+            msg.error( "Couldn't find 'DESCRIPTION' in TdHeader." )
             return False, "ERROR"
 
         # Position returned is greater than rows from intput
         input_row = self.getInputRow()
         if position > len( input_row ) - 1:
-            msg.error( "Description cell found at position '" + str( position ) + "', but last position of input row is '" + str( len( input_row ) - 1 ) + "'.", method_name )
+            msg.error( "Description cell found at position '" + str( position ) + "', but last position of input row is '" + str( len( input_row ) - 1 ) + "'." )
             return False, "ERROR"
 
         description_cell = input_row[ position ]
