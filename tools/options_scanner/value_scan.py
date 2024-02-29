@@ -34,9 +34,9 @@ Note: Probabilities are based on DELTA.
 
 
 Typical usage example:
-    python value-scan.py -e
-    python value-scan.py -c -s <some-list-here>.txt
-    python value-scan.py -p -s <some-list-here>.txt
+    python value_scan.py -e
+    python value_scan.py -c -s <some-list-here>.txt
+    python value_scan.py -p -s <some-list-here>.txt
 
 
 References:
@@ -68,8 +68,9 @@ def GetInputStocks( stock_input_list ):
 
     # TODO: Hard coding needs to be replaced with environment variables
     # Paths / locations 
-    REPO_PATH = "/Users/phoot/code/finance"
-    THIS_PATH = str(REPO_PATH) + "/tools/options-value-scan"
+    #REPO_PATH = "/Users/phoot/code/finance"
+    REPO_PATH = os.environ['REPO_PATH']
+    THIS_PATH = str(REPO_PATH) + "/tools/options_scanner"
     THIS_NAME = os.path.basename(__file__)
     # INPUT_NAME="list-1.txt"
     INPUT_NAME=stock_input_list
@@ -289,7 +290,7 @@ def main():
 
     if args.example_cases:
         example_cases = "\n"\
-            "python /Users/phoot/code/finance/tools/options-value-scan/value-scan.py -o <put|call> -s <see_list_below>\n"
+            "python /Users/phoot/code/finance/tools/options_scanner/value_scan.py -o <put|call> -s <see_list_below>\n"
         print( example_cases )
         subprocess.call(
             ['sh', '/Users/phoot/code/finance/tools/utility/show_stock_lists.sh'])
