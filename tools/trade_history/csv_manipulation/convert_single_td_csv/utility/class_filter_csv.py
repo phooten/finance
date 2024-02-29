@@ -235,11 +235,21 @@ class csvFilter:
             msg.error( "Couldn't find a description cell in the input.", method_name )
             return False
 
+        # TODO: FIX THIS!
+        # 02-23-2024: TD has updated one of the assignment cells to now include 'call' / 'put' so the assignment needs
+        #             to be first or the put / call will be declared it's type. script will call out false if
         # Returns type if 'put' or 'call'
         for curr in self.mOptionTypesActive:
             if curr in description_cell:
-                self.setType( curr )
-                return True
+
+                passive = False
+                for item in self.mOptionTypesPassive:
+                    if item in description_cell:
+                        passive = True
+
+                if not passive:
+                    self.setType( curr )
+                    return True
 
         # Assigns 'Assignment' or 'Expiration' to type 'Option', which is meant to be a place holder. The TD CSV isn't
         # clear about which call / put was associated to it the 'Assignment' / 'Expiration'. The final type will be
@@ -522,28 +532,57 @@ class csvFilter:
             return True
 
 
-        # Special for Assignment / Expiration.
+        # Special for Assignment / Expiration. Two possible types:
         #       Entry:  (0MVIS.AAAAAAAAAA)
         #       Regex:  .*(0<WE WANT THIS>\..*)
+        #
+        #       Entry: (TSLA Feb 2 2024 205.0 Put) 
+        #       Regex:  .*(<WANT-THIS> .*)
 
         # Replaces the text before the ticker
         ticker_cell = description_cell
         ticker = ticker_cell
-        ticker = re.sub( '^.*\(0', '', ticker_cell )
-        if ticker == ticker_cell:
-            msg.error( "Couldn't replace the text before the ticker with regex.\n"\
+        if re.search( '^.*\(0.*\..*\)$', ticker_cell ):
+            # Matched with first regex
+            ticker = re.sub( '^.*\(0', '', ticker_cell )
+            if ticker == ticker_cell:
+                msg.error( "Couldn't replace the text before the ticker with regex.\n"\
+                            "ticker_cell:      '" + str( ticker_cell ) + "'\n"\
+                            "description_cell: '" + description_cell + "'", method_name )
+                return False
+
+            # Replaces the text after the ticker
+            ticker_cell = ticker
+            ticker = re.sub('\..*\)$', '', ticker_cell )
+            if ticker == ticker_cell:
+                msg.error( "Couldn't replace the text after the ticker with regex.\n"\
+                            "ticker_cell:      '" + str( ticker_cell ) + "'\n"\
+                            "description_cell: '" + description_cell + "'", method_name )
+                return False
+
+        elif re.search( '^.*\(.* .*\)$', ticker_cell ):
+            # Matched with second regex
+            ticker = re.sub( '^.*\(', '', ticker_cell )
+            if ticker == ticker_cell:
+                msg.error( "Couldn't replace the text before the ticker with regex.\n"\
+                            "ticker_cell:      '" + str( ticker_cell ) + "'\n"\
+                            "description_cell: '" + description_cell + "'", method_name )
+                return False
+
+            # Replaces the text after the ticker
+            ticker_cell = ticker
+            ticker = re.sub(' .*\)$', '', ticker_cell )
+            if ticker == ticker_cell:
+                msg.error( "Couldn't replace the text after the ticker with regex.\n"\
+                            "ticker_cell:      '" + str( ticker_cell ) + "'\n"\
+                            "description_cell: '" + description_cell + "'", method_name )
+                return False
+        else:
+            msg.error( "No regex pattern found..\n"\
                         "ticker_cell:      '" + str( ticker_cell ) + "'\n"\
                         "description_cell: '" + description_cell + "'", method_name )
             return False
 
-        # Replaces the text after the ticker
-        ticker_cell = ticker
-        ticker = re.sub('\..*\)$', '', ticker_cell )
-        if ticker == ticker_cell:
-            msg.error( "Couldn't replace the text after the ticker with regex.\n"\
-                        "ticker_cell:      '" + str( ticker_cell ) + "'\n"\
-                        "description_cell: '" + description_cell + "'", method_name )
-            return False
 
         # Sets the remaining text
         self.setTicker( ticker )

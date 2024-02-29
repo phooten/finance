@@ -66,7 +66,9 @@ def GetUserInput( ):
         exit( 1 )
 
     # TODO: Need to error check this
-    UserInputObj.mTickerList.append( input( "Enter ticker: " ) )
+    ticker = input( "Enter ticker: " )
+    if ticker != "":
+        UserInputObj.mTickerList.append( ticker )
 
     # TODO: Need error checking
     if UserInputObj.mType == "Stock":
@@ -78,8 +80,10 @@ def GetUserInput( ):
             UserInputObj.mOffset = 0
 
     # UserInputObj.mTickerList = [ "TSLA", "AAPL" ]
-    UserInputObj.mDateRange[ 0 ] = "2000/01/01"     # Date range should be everything possible
+    UserInputObj.mDateRange[ 0 ] = "2024/01/01"     # Date range should be everything possible
     UserInputObj.mDateRange[ 1 ] = "3000/12/31"
+#    UserInputObj.mDateRange[ 0 ] = "2000/01/01"     # Date range should be everything possible
+#    UserInputObj.mDateRange[ 1 ] = "3000/12/31"
 
     # Clean up terminal with extra spaces
     print( "\n\n" )
@@ -243,7 +247,8 @@ def main():
     df = pd.read_csv( GetMasterCsv(), sep=',' )
 
     # Filters based on ticker
-    df = FilterTicker( UserInputObj.mTickerList, df )
+    if len( UserInputObj.mTickerList ) != 0:
+        df = FilterTicker( UserInputObj.mTickerList, df )
 
     # Filters based on date
     df = FilterDate( UserInputObj.mDateRange, df )
@@ -254,6 +259,7 @@ def main():
     # TODO: This works for options. What about Stocks?
     # TODO: Think I want to put this into it's own function to handle tha outputs / final results
     # Prints out the total sum of filtered dataframe
+    print( df )
     total_cost = round( SumAmountFloat( df ), 2 ) + float( UserInputObj.mOffset )
     print( "Offset Entered: $" + str( UserInputObj.mOffset ) )
     print( "Total Cost:     $" + str( total_cost ) )
