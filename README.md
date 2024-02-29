@@ -7,11 +7,17 @@ seen to use for practice or comparison.
 None.
 
 ## Tools: In-progress
-convert_td_csv: tool to take a downloaded TD Ameritrade history csv and convert it into a helpful format to make it
-                easier to track trades of stocks and options.
+trade_history tool set:
+    convert_single_td_csv:
+        After downloading a csv of trade history from a platform ( currently only working with TD Ameritrade ), the script
+        converts the details into a more consistant / readable csv format
 
-                STATUS: Working state. Needs coding structure adjustments and TODO comments closed out.
+    make_single_csv.py:
+        Finds all the csv's that have been converted by "convert_single_td_csv", then condenses them into a single csv
+        file.
 
+    filter details:
+        Uses the results from make_single_csv.py to gather and filter information into a readable format.
 
 convert_paycheck:   Takes a paycheck pdf and converts it into an easily read format to append to an excel file.
 
@@ -49,19 +55,7 @@ scan_large_change:  Scanner to show if if a stock drops more than 30-40% in a da
 
 
 
-
-# Contents and Navigation
-TODO
-
-
-
 # This repository TODOs
-* Make a template for .env / .token.json
-    I  removed files that were being tracked by git ignore: .env, token.json
-    So this doesn't happen again, or at least will be easier to recover, I need to make a template for these files.
-
-    .env_template has been made and info user info has been removed.
-
 * Research ways to:
     1. Structure projects i.e. output / input, tools, bin, etc.
     2. Work with envirnmental variables across the project

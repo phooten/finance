@@ -1,3 +1,0 @@
-Pull out the message class so I don't need a linkkkkkkkkkkk.....
-
-create environmental variables so nothing is hard coded, or atleast can be changed in one place

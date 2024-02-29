@@ -1,8 +1,5 @@
-# TODO: make header
-
 import os
 from HootLogger import logger
-#from messages import class_messages
 from os import listdir
 from os.path import isfile, join
 import pandas as pd
@@ -10,14 +7,14 @@ import re
 import shutil
 
 msg = logger.messages( __name__ )
-#msg = class_messages.messages()
 
 def makeOneGlobalCsv():
 
     # Makes a list of all converted files
     # TODO: Don't hard code this
-    transaction_path = "/Users/phoot/code/finance/sensitive_files/"
-    global_transactions_file = transaction_path + "global_transactions.csv"
+    
+    transaction_path = str( os.environ[ 'SENSITIVE_FILES_PATH' ] )
+    global_transactions_file = str( os.environ[ 'GLOBAL_TRANSACTIONS' ] )
     global_transactions_file_backup = global_transactions_file + "_BACKUP.csv"
 
     # Gets a list of all files in the directory
@@ -25,8 +22,6 @@ def makeOneGlobalCsv():
     all_sensitive_files = []
     for file in dir_list:
         all_sensitive_files.append( file )
-    #all_sensitive_files = [ file for file in listdir( transaction_path ) if isfile( join( transaction_path, file ) ) ]
-    #print( __name__ + ": all files: " + str( sensitive_files ) )
 
     converted_files = []
     pattern = re.compile( "converted_transactions_20[0-9][0-9]\.csv$" )
@@ -69,7 +64,7 @@ def convertAllAvailableCsvFiles():
     Returns:        
     """
 
-    mypath = "/Users/phoot/code/finance/sensitive_files"
+    mypath = str( os.environ[ 'SENSITIVE_FILES_PATH' ] )
     sensitive_files = [ f for f in listdir( mypath ) if isfile( join( mypath, f ) ) ]
 
     # TODO: This needs to not be hard coded

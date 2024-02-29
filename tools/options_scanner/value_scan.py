@@ -69,7 +69,7 @@ def GetInputStocks( stock_input_list ):
     # TODO: Hard coding needs to be replaced with environment variables
     # Paths / locations 
     #REPO_PATH = "/Users/phoot/code/finance"
-    REPO_PATH = os.environ['REPO_PATH']
+    REPO_PATH = os.environ[ 'REPO_PATH' ]
     THIS_PATH = str(REPO_PATH) + "/tools/options_scanner"
     THIS_NAME = os.path.basename(__file__)
     # INPUT_NAME="list-1.txt"
