@@ -1,6 +1,6 @@
 # Environment
 .env
-
+Pipfile.lock
 
 # Ignore vim files:
 *~
