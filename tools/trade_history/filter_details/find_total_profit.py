@@ -19,6 +19,8 @@
 
 
 import pandas as pd
+import argparse
+import time
 
 # Input Object
 class UserInput():
@@ -32,7 +34,7 @@ class UserInput():
         self.mTickerList = [ ]  # Blank List
         self.mDateRange = [ "01/01/2000", "01/01/2100" ]
         self.mType = [ ] # Blank List
-        self.mOffset = 0
+        self.mOffset = 0.0
 # End of UserInput
 
 
@@ -43,51 +45,25 @@ GetUserInput
 
 @returns - Object that stores user selections
 """
-def GetUserInput( ):
+def GetUserInput( arguments ):
     # Default input object selection
     UserInputObj = UserInput()
 
-    # TODO: Make this from user input
-    # Choices:
-    #   All:        doesn't filter anything at all
-    #   Options:    Includes "Put", "Call"
-    #   Put:        Only "Put"
-    #   Call:       Only "Call"
-    choices = [ "Options", "Put", "Call", "Stock"]
-    print( "Select one of the following:" )
-    for choice in choices:
-        print( "\t" + choice )
+    # Setting date range
+    UserInputObj.mDateRange[ 0 ] = arguments.start_date
+    UserInputObj.mDateRange[ 1 ] = arguments.end_date
 
+    # Setting type to sort by
+    UserInputObj.mType = arguments.sort_type
 
-    UserInputObj.mType = input( "Enter type to filter: " )
-    # TODO: Update this with the message logger.
-    if UserInputObj.mType not in choices:
-        print( "Issue with user selection '" + str( UserInputObj.mType ) + "'. It's not in choices: " + str( choices ) + ". Exiting script." )
-        exit( 1 )
+    # Setting ticker list
+    ticker_list = list( arguments.ticker_list.split( " " ) )
 
-    # TODO: Need to error check this
-    ticker = input( "Enter ticker: " )
-    if ticker != "":
-        UserInputObj.mTickerList.append( ticker )
+    # Setting Offset
+    UserInputObj.mOffset = float( arguments.offset )
 
-    # TODO: Need error checking
-    if UserInputObj.mType == "Stock":
-        user_input = input( "Enter any offset: " )
-        try:
-            UserInputObj.mOffset = float( user_input )
-        except:
-            print( "User input wasn't a float" )
-            UserInputObj.mOffset = 0
-
-    # UserInputObj.mTickerList = [ "TSLA", "AAPL" ]
-    UserInputObj.mDateRange[ 0 ] = "2024/01/01"     # Date range should be everything possible
-    UserInputObj.mDateRange[ 1 ] = "3000/12/31"
-#    UserInputObj.mDateRange[ 0 ] = "2000/01/01"     # Date range should be everything possible
-#    UserInputObj.mDateRange[ 1 ] = "3000/12/31"
-
-    # Clean up terminal with extra spaces
-    print( "\n\n" )
-
+    time.sleep(60)
+    exit(1)
     return UserInputObj
 # End of GetUserInput
 
@@ -238,10 +214,62 @@ def SumAmountInt( csv_object ):
     return difference
 # End of SumAmountInt
 
+def getArguments():
+    parser = argparse.ArgumentParser( description='' )
+
+    parser.add_argument( '--start_date',
+                        metavar='Start Date',
+                        dest='start_date',
+                        default="01-01-2000",
+                        required=False,
+                        type=str,
+                        help='Start date of what the user wants to parse. Will be 2000 by default.' )
+
+    parser.add_argument( '--end_date',
+                        metavar='End Date',
+                        dest='end_date',
+                        default="12-31-3000",
+                        required=False,
+                        type=str,
+                        help='End date of what the user wants to parse. Will be 3000 by default.' )
+
+    parser.add_argument( '--offset',
+                        metavar='Offset',
+                        dest='offset',
+                        required=False,
+                        default=0.0,
+                        type=float,
+                        help='Offset in dollars that will be added to the bottom line.' )
+
+    parser.add_argument( '--ticker_list',
+                        metavar='Ticker List',
+                        dest='ticker_list',
+                        required=False,
+                        default="All",
+                        type=str,
+                        help='List of stock tickers in quotes, separated by spaces. example: "TSLA AAPL BA"' )
+
+    parser.add_argument( '--sort_type',
+                        choices=[ 'all', 'options', 'puts', 'calls', 'stock' ],
+                        metavar='Sort Type',
+                        dest='sort_type',
+                        required=False,
+                        default="Options",
+                        type=str,
+                        help='The type which will define how the CSV is filtered.' )
+
+    parser.add_argument( '-m',
+                        help='available so we can debug in vscode' )
+
+    return parser.parse_args()
+# End of getArguments
 
 def main():
+    # Gets arguments from user
+    args = getArguments()
+
     # Gets the user input of what the csv should filter
-    UserInputObj = GetUserInput()
+    UserInputObj = GetUserInput( args )
 
     # Turns the master trade history into a pandas data frame to work with
     df = pd.read_csv( GetMasterCsv(), sep=',' )

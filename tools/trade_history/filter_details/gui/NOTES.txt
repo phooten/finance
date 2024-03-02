@@ -4,4 +4,9 @@ Important to install pyside w/ pip: pip install pyside6-essentials
 22:05:41 Line:16$ pyside6-uic form.ui -o ui_form.py
 
 
+In Qt, change the interpreter path to where the virtual environment is. Without that, 
+you'll run into issues where modules aren't installed. This can be found by running
+'pipenv --venv' to get the path. Then look for 'bin/python<version>'. Once found,
+go to Qt -> run -> interpreter and update it.
+
 

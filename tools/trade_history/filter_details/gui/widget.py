@@ -2,7 +2,10 @@
 import sys
 import subprocess
 
+from PySide6 import QtCore                          # Needed for DateTypes
 from PySide6.QtWidgets import QApplication, QWidget
+
+import sys                                          # Needed to get virtualenv interpreter
 
 # Important:
 # You need to run the following command to generate the ui_form.py file for ANY updates
@@ -20,18 +23,60 @@ class Widget( QWidget ):
         self.ui.filterButton.clicked.connect( self.filterButtonPressed )
         self.ui.exitButton.clicked.connect( self.exitButtonPressed )
 
+        return
 
     def filterButtonPressed( self ):
+        # Gets the dates ranges. Current year by default
+        start_date = self.ui.dateEditStart.date().toString( QtCore.Qt.ISODate )
+        end_date = self.ui.dateEditEnd.date().toString( QtCore.Qt.ISODate )
+        print( "Start Date: " + str( start_date ) )
+        print( "End Date:   " + str( end_date ) )
+
+        # Offset
+        offset = "0.00"
+
+        # Stock List
+        ticker_list = "\"TSLA AAPL\""
+
+        # Type
+        if self.ui.radioButtonAll.isChecked():
+            sort_type = self.ui.radioButtonAll.text().lower()
+
+        elif self.ui.radioButtonOptions.isChecked():
+            sort_type = self.ui.radioButtonOptions.text().lower()
+
+        elif self.ui.radioButtonPuts.isChecked():
+            sort_type = self.ui.radioButtonPuts.text().lower()
+
+        elif self.ui.radioButtonCalls.isChecked():
+            sort_type = self.ui.radioButtonCalls.text().lower()
+
+        elif self.ui.radioButtonStocks.isChecked():
+            sort_type = self.ui.radioButtonStocks.text().lower()
+
+        else:
+            print( "Error: no radio button selected" )
+            sort_type = ""
+
         # TODO: Hardcoded for now
 #        script_path = "/Users/phoot/code/finance/tools/trade_history/filter_details/test.py"
-        script_path = "../test.py"
-        argument = 99
+        script_path = "/Users/phoot/code/finance/tools/trade_history/filter_details/find_total_profit.py"
 
-        # Run the script "$(script path) -t1 ${argument}"
-        command = "python3 " + script_path + " -t1 " + str( argument )
+        # By default, python runs /usr/bin/python in scripts. If we're using a virtual environment
+        # modules might not be installed so we have to specify the exact interpreter we're using
+        interpreter = str( sys.executable )
 
-        subprocess.call( command, shell=True)
-#        subprocess.call( "pwd", shell=True)
+        # Builds the command and runs the filter script
+        command_list = [ interpreter, script_path, \
+                            "--start_date", start_date, \
+                            "--end_date", end_date, \
+                            "--ticker_list", ticker_list, \
+                            "--sort_type", sort_type, \
+                            "--offset", offset ]
+        command = " ".join( command_list )
+
+        subprocess.call( command, shell=True )
+        return
 
 
     def exitButtonPressed( self ):
