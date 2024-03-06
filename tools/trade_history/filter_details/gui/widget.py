@@ -29,8 +29,6 @@ class Widget( QWidget ):
         # Gets the dates ranges. Current year by default
         start_date = self.ui.dateEditStart.date().toString( QtCore.Qt.ISODate )
         end_date = self.ui.dateEditEnd.date().toString( QtCore.Qt.ISODate )
-        print( "Start Date: " + str( start_date ) )
-        print( "End Date:   " + str( end_date ) )
 
         # Offset
         offset = "0.00"
@@ -74,6 +72,18 @@ class Widget( QWidget ):
                             "--sort_type", sort_type, \
                             "--offset", offset ]
         command = " ".join( command_list )
+
+
+        print( "Widget Entered Details:")
+        print( "_________________________________" )
+        print( "Start Date:  " + str( start_date ) )
+        print( "End Date:    " + str( end_date ) )
+        print( "Ticker List: " + str( ticker_list ) )
+        print( "Type:        " + str( sort_type ) )
+        print( "Offset:      " + str( offset ) )
+        print( "command: " + command )
+        print( "\n\n" )
+
 
         subprocess.call( command, shell=True )
         return

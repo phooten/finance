@@ -208,6 +208,29 @@
     <string>Type</string>
    </property>
   </widget>
+  <widget class="QLineEdit" name="lineEditTicker">
+   <property name="geometry">
+    <rect>
+     <x>90</x>
+     <y>270</y>
+     <width>113</width>
+     <height>21</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLabel" name="labelTicker">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>270</y>
+     <width>70</width>
+     <height>15</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>End Date</string>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections/>

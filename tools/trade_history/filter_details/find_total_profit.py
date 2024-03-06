@@ -17,7 +17,8 @@
 #       * Combination:
 #           Not in use.
 
-
+import os
+from datetime import datetime
 import pandas as pd
 import argparse
 import time
@@ -49,21 +50,29 @@ def GetUserInput( arguments ):
     # Default input object selection
     UserInputObj = UserInput()
 
+    # TODO: format needs to be converted into the csv date format
+    # TODO: Don't like this hardcoded
     # Setting date range
-    UserInputObj.mDateRange[ 0 ] = arguments.start_date
-    UserInputObj.mDateRange[ 1 ] = arguments.end_date
+    UserInputObj.mDateRange[ 0 ] = str( datetime.strptime( arguments.start_date, "%Y-%m-%d" ).strftime('%Y/%m/%d') )
+    UserInputObj.mDateRange[ 1 ] = str( datetime.strptime( arguments.end_date, "%Y-%m-%d" ).strftime('%Y/%m/%d') )
 
     # Setting type to sort by
     UserInputObj.mType = arguments.sort_type
 
     # Setting ticker list
-    ticker_list = list( arguments.ticker_list.split( " " ) )
-
+    UserInputObj.mTickerList = list( arguments.ticker_list.split( " " ) )
+    UserInputObj.mTickerList = "TSLA".split( " " )
     # Setting Offset
     UserInputObj.mOffset = float( arguments.offset )
 
-    time.sleep(60)
-    exit(1)
+    print( "Widget Input Details:")
+    print( "_________________________________" )
+    print( "Start Date:  " + str( UserInputObj.mDateRange[ 0 ] ) )
+    print( "End Date:    " + str( UserInputObj.mDateRange[ 1 ] ) )
+    print( "Ticker List: " + str( UserInputObj.mTickerList ) )
+    print( "Type:        " + str( UserInputObj.mType ) )
+    print( "Offset:      " + str( UserInputObj.mOffset ) )
+    print( "\n\n" )
     return UserInputObj
 # End of GetUserInput
 
@@ -78,7 +87,7 @@ GetMasterCsv
 """
 def GetMasterCsv():
     # Gets file to convert
-    sensitive_path = '/Users/phoot/code/finance/sensitive_files/'
+    sensitive_path = str( os.environ[ 'SENSITIVE_FILES_PATH' ] )
     master_csv_path = sensitive_path + "global_transactions.csv"
     return master_csv_path
 # End of GetMasterCsv
@@ -119,10 +128,13 @@ FilterType
 @returns - Returns CSV object with only the type that has the same type as the selection
 """
 def FilterType( type, csv_object ):
-    if type == "Options":
+    if type == "options":
         csv_object = csv_object.loc[ ( csv_object[ 'TYPE' ] == "Put" ) | ( csv_object[ 'TYPE' ] == "Call" ) ]
     
-    elif type == "All":
+    elif type == "stock":
+        csv_object = csv_object.loc[ ( csv_object[ 'TYPE' ] == "Stock" ) ]
+
+    elif type == "all":
         pass
         # Do nothing, no filtering
     else:
@@ -220,7 +232,7 @@ def getArguments():
     parser.add_argument( '--start_date',
                         metavar='Start Date',
                         dest='start_date',
-                        default="01-01-2000",
+                        default="2000-01-01",
                         required=False,
                         type=str,
                         help='Start date of what the user wants to parse. Will be 2000 by default.' )
@@ -228,7 +240,7 @@ def getArguments():
     parser.add_argument( '--end_date',
                         metavar='End Date',
                         dest='end_date',
-                        default="12-31-3000",
+                        default="3000-12-31",
                         required=False,
                         type=str,
                         help='End date of what the user wants to parse. Will be 3000 by default.' )
@@ -271,6 +283,7 @@ def main():
     # Gets the user input of what the csv should filter
     UserInputObj = GetUserInput( args )
 
+    # TODO: Vscode isn't finding this path while debugging...
     # Turns the master trade history into a pandas data frame to work with
     df = pd.read_csv( GetMasterCsv(), sep=',' )
 
