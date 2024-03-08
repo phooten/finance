@@ -17,11 +17,16 @@
 #       * Combination:
 #           Not in use.
 
-import os
 from datetime import datetime
-import pandas as pd
+from HootLogger import logger
+
 import argparse
+import os
 import time
+
+import pandas as pd
+
+msg = logger.messages( __name__ )
 
 # Input Object
 class UserInput():
@@ -181,10 +186,9 @@ def FilterTicker( ticker, dataframe ):
         curr_df = dataframe.loc[ dataframe[ 'TICKER' ] == ticker ]
         filtered_df = pd.concat( [ filtered_df, curr_df ] )
 
-    # TODO: Need to update this with the logger
     except KeyError:
-        print( "Can't find ticker: '" + ticker + "'" )
-        exit( 1 )
+        msg.error( "Can't find ticker: '" + ticker + "'" )
+        msg.quit_script()
 
     return filtered_df
 # End of FilterTicker
@@ -339,15 +343,16 @@ def BuildStockProfile( dataframe, ticker_list ):
                 cost_basis = abs( stock_cost ) / owned_shares
                 adjusted_cost_basis = ( abs( stock_cost ) - options_premium ) / owned_shares
             else:
-                # TODO: Use logger
-                print( "Error: Stock cost non-negative" )
-                exit( 1 )
+                # TODO: Check this. SHOP is getting here and it doesn't seem right.
+                # TODO: Hootlogger is showing this as __main__. It should be BuildStockProfile
+                msg.error( "Stock cost non-negative" )
+                # msg.quit_script()
+                cost_basis = ( -1 * stock_cost ) / owned_shares
+                adjusted_cost_basis = ( ( -1 * stock_cost ) - options_premium ) / owned_shares
 
         elif 0 > owned_shares:
-            # TODO: Use logger
-            print( "Error: can't have negative shares" )
-            exit( 1 )
-
+            msg.error( "can't have negative shares" )
+            msg.quit_script()
 
         print( "" )
         print( "==== " + str( ticker ) + " ===========================" )
@@ -379,16 +384,14 @@ def main():
 
     if "stock_report" == UserInputObj.mMacro:
         if not BuildStockProfile( df, UserInputObj.mTickerList ):
-            # TODO: Replace with logger
-            print( "Error: issue building stock profile" )
-            exit( 1 )
-
+            msg.error( "Issue building stock profile" )
+            msg.quit_script()
+            
     elif "funding" == UserInputObj.mMacro:
         if True:
-            # TODO: Replace with logger
-            print( "Error: add function to calculate funding" )
-            exit( 1 )
-
+            msg.error( "TODO: Add function to calculate funding" )
+            msg.quit_script()
+            
     elif "none" == UserInputObj.mMacro:
         # TODO: Clean this up, maybe move into a function
         # Filters based on ticker
@@ -421,8 +424,8 @@ def main():
                 cost_per_share = "[ No shares owned. ]"
     else:
         # TODO: Replace with logger
-        print( "Error: Unhandled macro choice" )
-        exit( 1 )
+        msg.error( "Unhandled macro choice" )
+        msg.quit_script()
     # End macro choice
 
 
