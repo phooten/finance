@@ -65,6 +65,26 @@ from tda import auth, client
 msg = logger.messages( __name__ )
 load_dotenv()
 
+
+# TODO: Starting a class to hold the current ticker values. Will use to only
+#       print out if the ticker contains options within the criteria
+class OptionsData:
+    def __init__( self ):
+        ticker = ""
+        dte = 0
+        price = 0.0
+        percent_change = 0.0
+
+        strike = 0.0    # strike price
+        mark = 0.0
+        bid = 0.0
+        value = 0.0
+        delta = 0.0
+        otm_prob = 0.0  # out-of-the-money probability
+        details = []    # list of strings to print out
+
+
+
 # Retrieves a list of stocks from a text file and returns it as a list
 def GetInputStocks( stock_input_list ):
 
@@ -107,20 +127,20 @@ def CreateClient():
     try:
         msg.system("Try: TOKEN_PATH = '" + str(os.getenv("TOKEN_PATH")) + "'")
         msg.system("Try: REPO_PATH = '" + str(os.getenv("REPO_PATH")) + "'")
-        c = auth.client_from_token_file( str(os.getenv("TOKEN_PATH")), 
-                                         str(os.getenv("CONSUMER_KEY")))
+        client = auth.client_from_token_file( str(os.getenv("TOKEN_PATH")), 
+                                              str(os.getenv("CONSUMER_KEY")))
 
     except:
         from selenium import webdriver
         with webdriver.Chrome() as driver:
             msg.error("Except: TOKEN_PATH = '" + str(os.getenv("TOKEN_PATH")) + "'")
             msg.error("Except: REPO_PATH = '" + str(os.getenv("REPO_PATH")) + "'")
-            c = auth.client_from_login_flow( driver, 
-                                             api_key=str(os.getenv("CONSUMER_KEY")),
-                                             redirect_url=str(os.getenv("REDIRECT_URI")),
-                                             token_path=str(os.getenv("TOKEN_PATH")) )
+            client = auth.client_from_login_flow( driver, 
+                                                  api_key=str(os.getenv("CONSUMER_KEY")),
+                                                  redirect_url=str(os.getenv("REDIRECT_URI")),
+                                                  token_path=str(os.getenv("TOKEN_PATH")) )
 
-    return c
+    return client 
 
 # TODO: Fix this header
 # Scans a list of options ( puts or calls ) based on input text file list from user
