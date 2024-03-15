@@ -18,7 +18,7 @@
 #           Not in use.
 
 from datetime import datetime
-from HootLogger import logger
+from phootlogger import logger
 
 import argparse
 import os
@@ -344,7 +344,7 @@ def BuildStockProfile( dataframe, ticker_list ):
                 adjusted_cost_basis = ( abs( stock_cost ) - options_premium ) / owned_shares
             else:
                 # TODO: Check this. SHOP is getting here and it doesn't seem right.
-                # TODO: Hootlogger is showing this as __main__. It should be BuildStockProfile
+                # TODO: phootlogger is showing this as __main__. It should be BuildStockProfile
                 msg.error( "Stock cost non-negative" )
                 # msg.quit_script()
                 cost_basis = ( -1 * stock_cost ) / owned_shares

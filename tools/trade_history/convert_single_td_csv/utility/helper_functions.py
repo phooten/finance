@@ -10,7 +10,7 @@ import inspect
 
 # Project modules
 from utility import class_filter_csv
-from HootLogger import logger
+from phootlogger import logger
 
 # Classes
 msg = logger.messages( __name__ )

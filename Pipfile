@@ -4,6 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+phootlogger = "*"
 tda-api = "*"
 # td-ameritrade-python-api = "*"
 

@@ -5,7 +5,7 @@ import sys
 import math
 
 # Project Modules
-from HootLogger import logger
+from phootlogger import logger
 msg = logger.messages( __name__ )
 
 class csvFilter:

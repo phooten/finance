@@ -18,7 +18,7 @@ import inspect
 # Project Modules
 parent_dir = os.path.dirname( os.path.realpath( __file__ ) )    # Get the parent directory
 sys.path.append( parent_dir )                                 # Add the parent directory to sys.path
-from HootLogger import logger
+from phootlogger import logger
 from utility import helper_functions
 #from utility import class_filter_csv
 
