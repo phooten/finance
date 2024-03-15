@@ -46,6 +46,7 @@ References:
 """
 
 # Imports 
+from phootlogger import logger
 import argparse
 import chromedriver_autoinstaller
 import datetime as dt
@@ -61,6 +62,7 @@ from dotenv import load_dotenv
 from tda import auth, client
 
 # Global Variables
+msg = logger.messages( __name__ )
 load_dotenv()
 
 # Retrieves a list of stocks from a text file and returns it as a list
@@ -80,10 +82,10 @@ def GetInputStocks( stock_input_list ):
     # Take in input, put it into a list
     print( "\n\n" )
     if os.path.isfile( INPUT_PATH ):
-        print( "'" + str(INPUT_PATH) + "' was selected." )
+        msg.system( "'" + str(INPUT_PATH) + "' was selected." )
     else:
-        print( "'" + str( INPUT_PATH ) + "' does not exist. Exiting." )
-        exit()
+        msg.system( "'" + str( INPUT_PATH ) + "' does not exist. Exiting." )
+        msg.quit_script()
     print("\n\n")
 
     file = open( INPUT_PATH, mode = 'r', encoding = 'utf-8-sig')
@@ -103,16 +105,16 @@ def GetInputStocks( stock_input_list ):
 # Builds and returns the client based on token and envirenmental variables. 
 def CreateClient():
     try:
-        print("Try: TOKEN_PATH = '" + str(os.getenv("TOKEN_PATH")) + "'")
-        print("Try: REPO_PATH = '" + str(os.getenv("REPO_PATH")) + "'")
+        msg.system("Try: TOKEN_PATH = '" + str(os.getenv("TOKEN_PATH")) + "'")
+        msg.system("Try: REPO_PATH = '" + str(os.getenv("REPO_PATH")) + "'")
         c = auth.client_from_token_file( str(os.getenv("TOKEN_PATH")), 
                                          str(os.getenv("CONSUMER_KEY")))
 
     except:
         from selenium import webdriver
         with webdriver.Chrome() as driver:
-            print("Except: TOKEN_PATH = '" + str(os.getenv("TOKEN_PATH")) + "'")
-            print("Except: REPO_PATH = '" + str(os.getenv("REPO_PATH")) + "'")
+            msg.error("Except: TOKEN_PATH = '" + str(os.getenv("TOKEN_PATH")) + "'")
+            msg.error("Except: REPO_PATH = '" + str(os.getenv("REPO_PATH")) + "'")
             c = auth.client_from_login_flow( driver, 
                                              api_key=str(os.getenv("CONSUMER_KEY")),
                                              redirect_url=str(os.getenv("REDIRECT_URI")),
@@ -167,11 +169,11 @@ def ScanOptions( client, stocks, quotes, option ):
             result_obj.write("Current price:\t$ {0:.2f}".format(stock_price))
             result_obj.write("Net Change:\t% {0:.2%}".format(percent_change))
         else:
-            print( "---------------------------------------------------")
-            print( "Stock:\t\t" + str(curr_stock))
-            print("Next week:\t" + str(dte))
-            print("Current price:\t$ {0:.2f}".format(stock_price))
-            print("Net Change:\t% {0:.2%}".format(percent_change))
+            msg.system( "---------------------------------------------------")
+            msg.system( "Stock:\t\t" + str(curr_stock))
+            msg.system("Next week:\t" + str(dte))
+            msg.system("Current price:\t$ {0:.2f}".format(stock_price))
+            msg.system("Net Change:\t% {0:.2%}".format(percent_change))
 
 
         # Settings:
@@ -191,8 +193,8 @@ def ScanOptions( client, stocks, quotes, option ):
             prob_num = 85   # % OTM ( numerator )
 
         else:
-            print( "Should neve get here. Error. Exiting." )
-            exit(1)
+            msg.error( "Should neve get here. Error. Exiting." )
+            msg.quit_script()
 
         value_min = val_num / 100
         otm_prob_min = ( prob_num / 100 ) - 0.02
@@ -214,7 +216,7 @@ def ScanOptions( client, stocks, quotes, option ):
             if print_to_file == True:
                 result_obj.write("No results for strike: " + str(curr_stock))
             else:
-                print("No results for strike: " + str(curr_stock))
+                msg.error("No results for strike: " + str(curr_stock))
             continue
 
         # Checks each strike in the date
@@ -251,12 +253,12 @@ def ScanOptions( client, stocks, quotes, option ):
                             "\tDelta: " + " {0:.3}".format(delta) + " [ {0:.2%} ]".format(otm_prob))
                     else:
                         # if bid_curr > bid_min:
-                        print( "[ " + str(date) + " ]\t" +\
-                            "Stike: " + str(strike) +
-                            "\tMark: " + str(mark) +\
-                            "\tBid: " + str(bid_curr) +\
-                            "\tValue: {0:.2%}".format(value) + "  [ {0:.3} ]".format(value) +\
-                            "\tDelta: " + " {0:.3}".format(delta) + " [ {0:.2%} ]".format(otm_prob))
+                        msg.system( "[ " + str(date) + " ]\t" +\
+                                    "Stike: " + str(strike) +
+                                    "\tMark: " + str(mark) +\
+                                    "\tBid: " + str(bid_curr) +\
+                                    "\tValue: {0:.2%}".format(value) + "  [ {0:.3} ]".format(value) +\
+                                    "\tDelta: " + " {0:.3}".format(delta) + " [ {0:.2%} ]".format(otm_prob))
 
 
 
@@ -291,10 +293,10 @@ def main():
     if args.example_cases:
         example_cases = "\n"\
             "python /Users/phoot/code/finance/tools/options_scanner/value_scan.py -o <put|call> -s <see_list_below>\n"
-        print( example_cases )
+        msg.system( example_cases )
         subprocess.call(
             ['sh', '/Users/phoot/code/finance/tools/utility/show_stock_lists.sh'])
-        exit(1)
+        msg.quit_script()
 
     stock_input_list = args.stock_list
     option = args.option_type
