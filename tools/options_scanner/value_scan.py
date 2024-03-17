@@ -68,20 +68,23 @@ load_dotenv()
 
 # TODO: Starting a class to hold the current ticker values. Will use to only
 #       print out if the ticker contains options within the criteria
-class OptionsData:
+class OptionsChainData:
     def __init__( self ):
-        ticker = ""
-        dte = 0
-        price = 0.0
-        percent_change = 0.0
+        self.mTicker = ""
+        self.mStockPrice = 0.0
+        self.mPercentChange = 0.0
+        self.mDte = 0
+        self.mDate = []
 
-        strike = 0.0    # strike price
-        mark = 0.0
-        bid = 0.0
-        value = 0.0
-        delta = 0.0
-        otm_prob = 0.0  # out-of-the-money probability
-        details = []    # list of strings to print out
+        self.mStrike = []    # strike price
+        self.mMark = []
+        self.mBid = []
+        self.mValue = []
+        self.mDelta = []
+        self.mOtmProbability = []  # out-of-the-money probability
+        self.mDetails = []    # list of strings to print out
+
+        self.mTotalOptions = 0
 
 
 
@@ -158,42 +161,39 @@ def CreateClient():
 def ScanOptions( client, stocks, quotes, option ):
     # TODO: print out stock only if there is a match
     # TODO: Create a spot for ALL settings. Maybe as globals?
-
-    print_to_file = False
-    if print_to_file == True:
-        result_obj = open("/Users/phoot/code/finance/option_scan_results.txt", "w")
+    qualifying_chains = []
+    # option_results = []
 
     for curr_stock in stocks:
-        dte = ( datetime.today() + timedelta(days=10) ).date()
+        
+        curr_chain = OptionsChainData()
 
-        stock_info_json = client.get_quote(curr_stock).json()[curr_stock]
+        ticker = curr_stock
+        dte = ( datetime.today() + timedelta( days=10 ) ).date()
+
+        stock_info_json = client.get_quote( ticker ).json()[ ticker ]
         # print( json.dumps(stock_info_json, indent=4))
         # break
         stock_price = float( stock_info_json['mark'] )
-        close_price = float(stock_info_json['closePrice'])
-        net_change = float(stock_info_json['netChange'])
+
+        close_price = float( stock_info_json[ 'closePrice' ] )
+        net_change =  float( stock_info_json[ 'netChange' ] )
         percent_change = net_change / close_price
-        strike_start = int(stock_price)
-        strike_interval = 1
-        strike_range = 10
+
+        strike_start = int( stock_price )
+
 
         # volatility = 
 
         # Ideas:
         #   1. Only show option if correct otm% and value. have a total count
         #   2. Flag to print out the options if I want to, or only those from 1.
-        if print_to_file == True:
-            result_obj.write("---------------------------------------------------")
-            result_obj.write("Stock:\t\t" + str(curr_stock))
-            result_obj.write("Next week:\t" + str(dte))
-            result_obj.write("Current price:\t$ {0:.2f}".format(stock_price))
-            result_obj.write("Net Change:\t% {0:.2%}".format(percent_change))
-        else:
-            msg.system( "---------------------------------------------------")
-            msg.system( "Stock:\t\t" + str(curr_stock))
-            msg.system("Next week:\t" + str(dte))
-            msg.system("Current price:\t$ {0:.2f}".format(stock_price))
-            msg.system("Net Change:\t% {0:.2%}".format(percent_change))
+
+        # msg.system( "---------------------------------------------------")
+        # msg.system( "Stock:\t\t" + str( option_obj.mTicker ) )
+        # msg.system( "Next week:\t" + str( option_obj.mDte ) )
+        # msg.system( "Current price:\t$ {0:.2f}".format( stock_price ) )
+        # msg.system( "Net Change:\t% {0:.2%}".format( option_obj.mPercentChange ) )
 
 
         # Settings:
@@ -223,7 +223,7 @@ def ScanOptions( client, stocks, quotes, option ):
         bid_diff_max = 0.30  # Biggest difference in asking size
 
 
-        op_chain = client.get_option_chain( symbol=curr_stock,
+        op_chain = client.get_option_chain( symbol=ticker,
                                             to_date=dte,
                                             # strike=strike_curr,
                                             contract_type=contract_type )
@@ -233,52 +233,110 @@ def ScanOptions( client, stocks, quotes, option ):
 
         # Checks the chain exists
         if not bool(op_chain_expmap):
-            if print_to_file == True:
-                result_obj.write("No results for strike: " + str(curr_stock))
-            else:
-                msg.error("No results for strike: " + str(curr_stock))
+            msg.error("No results for strike: " + str( ticker ))
             continue
 
         # Checks each strike in the date
         for date in op_chain_expmap:
-            for strike in op_chain_expmap[date]:
-            # print(json.dumps(op_chain_j, indent=4))
-            # break
+            for strike in op_chain_expmap[ date ]:
+                # msg.system( "Starting options chain search for " + str( option_obj.mTicker ) )
+
+                # print(json.dumps(op_chain_j, indent=4))
+                # break
 
                 # Gathers variables to filter
-                strike_map = op_chain_expmap[date][strike][0]
-                mark = float(strike_map['mark'])
-                value = mark / float(strike)
-                delta = strike_map['delta']
+                strike_map = op_chain_expmap[ date ][ strike ][ 0 ]
+                mark = float( strike_map[ 'mark' ] )
+                value = mark / float( strike )
+                delta = strike_map[ 'delta' ]
                 if option == "call":
-                    delta = float(delta) * (-1)
-                otm_prob = 1 + float(delta)
+                    delta = float( delta ) * ( -1 )
+                otm_prob = 1 + float( delta )
 
                 # bid/ask needs to be reasonably close together, or bid needs to be > 1
-                bid_curr = strike_map['bid']
-                ask_curr = strike_map['ask']
-                bid_diff = abs( int(ask_curr) - int(bid_curr) )
+                bid = strike_map[ 'bid' ]
+                ask_curr = strike_map[ 'ask' ]
+                bid_diff = abs( int( ask_curr ) - int( bid ) )
 
                 # Filters out what is wanted
-                if ( value > value_min ) and ( otm_prob > otm_prob_min ) and ( bid_curr > 0.10):
+                if ( value > value_min ) and ( otm_prob > otm_prob_min ) and ( bid > 0.10):
+                    # Bulding the option object
+                    # These will be the same across every option for a ticker
+                    curr_chain.mTicker = ticker
+                    curr_chain.mPercentChange = percent_change
+                    curr_chain.mStockPrice = stock_price
+                    curr_chain.mDte = dte
 
-                    if print_to_file == True:
-                        # if bid_diff > bid_diff_max:
-                            # print("\n** Large difference in bid / ask.\nbid: " + str(bid_curr) + "\nask:" + str(ask_curr) + "\n")
-                        result_obj.write("[ " + str(date) + " ]\t" +
-                            "Stike: " + str(strike) +
-                            "\tMark: " + str(mark) +
-                            "\tBid: " + str(bid_curr) +
-                            "\tValue: {0:.2%}".format(value) + "  [ {0:.3} ]".format(value) +
-                            "\tDelta: " + " {0:.3}".format(delta) + " [ {0:.2%} ]".format(otm_prob))
-                    else:
-                        # if bid_curr > bid_min:
-                        msg.system( "[ " + str(date) + " ]\t" +\
-                                    "Stike: " + str(strike) +
-                                    "\tMark: " + str(mark) +\
-                                    "\tBid: " + str(bid_curr) +\
-                                    "\tValue: {0:.2%}".format(value) + "  [ {0:.3} ]".format(value) +\
-                                    "\tDelta: " + " {0:.3}".format(delta) + " [ {0:.2%} ]".format(otm_prob))
+                    # These might vary from option to option
+                    curr_chain.mValue.append( value )
+                    curr_chain.mDate.append( date )
+                    curr_chain.mStrike.append( strike )
+                    curr_chain.mMark.append( mark )
+                    curr_chain.mDelta.append( delta )
+                    curr_chain.mOtmProbability.append( otm_prob )
+                    curr_chain.mBid.append( bid )
+                    curr_chain.mTotalOptions += 1
+                    msg.system( "Found option that meets criteria for " + curr_chain.mTicker + ". Total found: " + str( curr_chain.mTotalOptions ) )
+
+        qualifying_chains.append( curr_chain )
+
+                    # if bid_diff > bid_diff_max:
+                        # print("\n** Large difference in bid / ask.\nbid: " + str(bid_curr) + "\nask:" + str(ask_curr) + "\n")
+                    # if bid_curr > bid_min:
+
+
+    # Print out results
+    final_report = ""
+    for item in qualifying_chains:
+        report = ""
+        if item.mTotalOptions <= 0:
+            msg.error( "Shouldn't be adding option chains to qualifying options." )
+        else:
+            # Builds the string about the information gathered
+            report = "\n\n"
+            report += "Stock:\t\t" + str( item.mTicker ) + "\n"
+            report += "Current price:\t$ {0:.2f}".format( item.mStockPrice ) + "\n"
+            report += "Net Change:\t% {0:.2%}".format( item.mPercentChange ) + "\n"
+            report += "Next week:\t" + str( item.mDte ) + "\n"
+
+            for index in range( item.mTotalOptions ):
+                report += "[ " + str( item.mDate[ index ] ) + " ]\t" + \
+                    "Stike: " + str( item.mStrike[ index ] ) + \
+                    "\tMark: " + str( item.mMark[ index ] ) + \
+                    "\tBid: " + str( item.mBid[ index ] ) + \
+                    "\tValue: {0:.2%}".format( item.mValue[ index ] ) + "  [ {0:.3} ]".format( item.mValue[ index ] ) + \
+                    "\tDelta: " + " {0:.3}".format( item.mDelta[ index ] ) + " [ {0:.2%} ]".format( item.mOtmProbability[ index ] ) + "\n"
+
+            final_report += report
+
+    print( "\n\n")
+    print( "FINAL REPORT" )
+    print( "---------------------------------------------------------" )
+    print( final_report )
+
+            # print( "---------------------------------------------------\n" + \
+        #                                         "Stock:\t\t" + str( option_obj.mTicker ) + "\n" + \
+        #                                         "Next week:\t" + str( option_obj.mDte ) + "\n" + \
+        #                                         "Current price:\t$ {0:.2f}".format( option_obj.mStockPrice ) + "\n" + \
+        #                                         "Net Change:\t% {0:.2%}".format( option_obj.mPercentChange ) + "\n" )
+        # result =  "[ " + str( option_obj.mDate ) + " ]\t" + \
+        #             "Stike: " + str( option_obj.mStrike ) + \
+        #             "\tMark: " + str( option_obj.mMark ) + \
+        #             "\tBid: " + str( option_obj.mBid ) + \
+        #             "\tValue: {0:.2%}".format( option_obj.mValue ) + "  [ {0:.3} ]".format( option_obj.mValue ) + \
+        #             "\tDelta: " + " {0:.3}".format( option_obj.mDelta ) + " [ {0:.2%} ]".format( option_obj.mOtmProbability )
+        # option_obj.mOptionTextArr.append( result )
+
+
+
+    # msg.system( "Finished searching options chain for " + str( option_obj.mTicker ) )
+
+        # msg.system( "[ " + str( option_obj.mDate ) + " ]\t" +\
+        #             "Stike: " + str( option_obj.mStrike ) +
+        #             "\tMark: " + str( option_obj.mMark ) +\
+        #             "\tBid: " + str( option_obj.mBid ) +\
+        #             "\tValue: {0:.2%}".format( option_obj.mValue ) + "  [ {0:.3} ]".format( option_obj.mValue ) +\
+        #             "\tDelta: " + " {0:.3}".format( option_obj.mDelta ) + " [ {0:.2%} ]".format( option_obj.mOtmProbability ))
 
 
 
